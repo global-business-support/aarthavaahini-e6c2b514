@@ -22,13 +22,13 @@ export function EmiCalculator() {
   }, [amount, rate, years]);
 
   return (
-    <section id="calculator" className="relative scroll-mt-24 overflow-hidden bg-gradient-hero py-24 text-primary-foreground">
-      <div className="absolute inset-0 bg-gradient-glow opacity-70" />
+    <section id="calculator" className="relative scroll-mt-24 overflow-hidden bg-gradient-hero py-24 text-foreground">
+      <div className="absolute inset-0 bg-gradient-glow opacity-80" />
       <div className="container relative mx-auto grid items-center gap-12 px-6 lg:grid-cols-2">
         <div>
           <span className="text-sm font-semibold uppercase tracking-[0.2em] text-primary-glow">Futuristic Tools</span>
           <h2 className="mt-3 font-display text-4xl font-bold sm:text-5xl">EMI Calculator</h2>
-          <p className="mt-4 max-w-md text-primary-foreground/80">
+          <p className="mt-4 max-w-md text-muted-foreground">
             Plan your loan with precision. Adjust the sliders and see your monthly EMI, total interest and payable amount instantly.
           </p>
           <div className="mt-8 grid grid-cols-3 gap-4">
@@ -36,12 +36,12 @@ export function EmiCalculator() {
             <Stat label="Total Interest" value={`₹ ${formatINR(interest)}`} />
             <Stat label="Total Payable" value={`₹ ${formatINR(total)}`} />
           </div>
-          <Button size="lg" className="mt-8 bg-white text-primary hover:bg-white/90 shadow-glow">
+          <Button size="lg" className="mt-8 bg-gradient-primary text-primary-foreground shadow-glow hover:opacity-95">
             <Calculator className="mr-2 h-4 w-4" /> Apply for this Loan
           </Button>
         </div>
 
-        <Card className="relative border-white/10 bg-white/5 p-8 backdrop-blur-xl shadow-elegant">
+        <Card className="relative border-border/70 bg-card/80 p-8 backdrop-blur-xl shadow-elegant">
           <div className="space-y-8">
             <Field label="Loan Amount" value={`₹ ${formatINR(amount)}`}>
               <Slider value={[amount]} min={100000} max={20000000} step={50000} onValueChange={(v) => setAmount(v[0])} />
@@ -63,7 +63,7 @@ function Field({ label, value, children }: { label: string; value: string; child
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-sm font-medium text-primary-foreground/80">{label}</span>
+        <span className="text-sm font-medium text-muted-foreground">{label}</span>
         <span className="font-display text-lg font-semibold">{value}</span>
       </div>
       {children}
@@ -73,8 +73,8 @@ function Field({ label, value, children }: { label: string; value: string; child
 
 function Stat({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className={`rounded-xl border border-white/10 p-4 ${highlight ? "bg-white/15" : "bg-white/5"}`}>
-      <p className="text-[11px] uppercase tracking-wider text-primary-foreground/70">{label}</p>
+    <div className={`rounded-xl border border-border/70 p-4 shadow-soft ${highlight ? "bg-primary/10" : "bg-card/70"}`}>
+      <p className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</p>
       <p className="mt-1 font-display text-lg font-bold">{value}</p>
     </div>
   );
