@@ -46,7 +46,7 @@ const LEAD_STAGES = [
   "Closed",
 ] as const;
 
-const PRODUCT_INTERESTS = ["loan", "insurance", "mutual_fund", "banking"] as const;
+const PRODUCT_TYPES = ["loan", "insurance", "mutual_fund", "banking"] as const;
 const LEAD_SOURCES = ["Website", "Referral", "Walk-in", "Campaign", "Cold Call", "Partner"] as const;
 
 type Lead = {
@@ -58,7 +58,7 @@ type Lead = {
   pan: string | null;
   city: string | null;
   state: string | null;
-  product_interest: string | null;
+  product_type: string | null;
   product_type: string;
   lead_source: string | null;
   status: string;
@@ -77,7 +77,7 @@ function LeadsPage() {
     const { data, error } = await supabase
       .from("leads")
       .select(
-        "id, lead_name, full_name, phone, email, pan, city, state, product_interest, product_type, lead_source, status, created_at",
+        "id, lead_name, full_name, phone, email, pan, city, state, product_type, product_type, lead_source, status, created_at",
       )
       .order("created_at", { ascending: false })
       .limit(500);
@@ -195,7 +195,7 @@ function LeadsPage() {
                   </TableCell>
                   <TableCell>
                     <Badge variant="secondary" className="capitalize">
-                      {(l.product_interest ?? l.product_type ?? "").replace(/_/g, " ")}
+                      {(l.product_type ?? l.product_type ?? "").replace(/_/g, " ")}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-sm text-slate-600">{l.lead_source ?? "—"}</TableCell>
@@ -233,7 +233,7 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
     aadhaar: "",
     city: "",
     state: "",
-    product_interest: "loan",
+    product_type: "loan",
     lead_source: "Website",
   });
   const [saving, setSaving] = useState(false);
@@ -250,8 +250,8 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
       aadhaar: f.aadhaar || null,
       city: f.city || null,
       state: f.state || null,
-      product_interest: f.product_interest,
-      product_type: f.product_interest,
+      product_type: f.product_type,
+      product_type: f.product_type,
       lead_source: f.lead_source,
       status: "New",
     });
@@ -271,10 +271,10 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
       <Field label="City"><Input value={f.city} onChange={(e) => setF({ ...f, city: e.target.value })} /></Field>
       <Field label="State"><Input value={f.state} onChange={(e) => setF({ ...f, state: e.target.value })} /></Field>
       <Field label="Product Interest">
-        <Select value={f.product_interest} onValueChange={(v) => setF({ ...f, product_interest: v })}>
+        <Select value={f.product_type} onValueChange={(v) => setF({ ...f, product_type: v })}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
-            {PRODUCT_INTERESTS.map((p) => <SelectItem key={p} value={p} className="capitalize">{p.replace(/_/g, " ")}</SelectItem>)}
+            {PRODUCT_TYPES.map((p) => <SelectItem key={p} value={p} className="capitalize">{p.replace(/_/g, " ")}</SelectItem>)}
           </SelectContent>
         </Select>
       </Field>
