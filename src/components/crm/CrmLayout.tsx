@@ -17,7 +17,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-const NAV = [
+type NavItem = {
+  to: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  exact?: boolean;
+};
+
+const NAV: NavItem[] = [
   { to: "/crm", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/crm/leads", label: "Leads", icon: Users },
   { to: "/crm/customers", label: "Customers", icon: UserCircle2 },
@@ -26,7 +33,7 @@ const NAV = [
   { to: "/crm/mutual-funds", label: "Mutual Funds", icon: TrendingUp },
   { to: "/crm/tasks", label: "Tasks", icon: CheckSquare },
   { to: "/crm/reports", label: "Reports", icon: FileText },
-] as const;
+];
 
 export function CrmLayout() {
   const { user, isStaff, primaryRole, loading } = useCrmAuth();
