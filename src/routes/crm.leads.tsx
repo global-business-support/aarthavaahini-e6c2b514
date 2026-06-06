@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Plus, Search } from "lucide-react";
+import { Loader2, Plus, Search, ArrowRightLeft } from "lucide-react";
 
 export const Route = createFileRoute("/crm/leads")({
   component: LeadsPage,
@@ -43,6 +43,7 @@ const LEAD_STAGES = [
   "Login Ready",
   "Sanction Pending",
   "Disbursed",
+  "Converted",
   "Closed",
 ] as const;
 
