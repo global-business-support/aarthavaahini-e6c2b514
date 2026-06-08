@@ -20,7 +20,6 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import logoUrl from "@/assets/logo.png";
 import { useCrmAuth } from "@/hooks/useCrmAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
