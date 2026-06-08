@@ -96,7 +96,7 @@ export function CrmLayout() {
     .toUpperCase();
 
   return (
-    <div className="flex min-h-screen w-full bg-slate-100">
+    <div className="flex min-h-screen w-full bg-gradient-to-br from-violet-50 via-rose-50 to-sky-50">
       {/* Sidebar */}
       <aside
         className={cn(
