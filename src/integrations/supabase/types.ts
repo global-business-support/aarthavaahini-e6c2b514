@@ -118,6 +118,51 @@ export type Database = {
         }
         Relationships: []
       }
+      employee_schedules: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          duration_minutes: number
+          employee_id: string
+          id: string
+          location: string | null
+          priority: string
+          scheduled_for: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration_minutes?: number
+          employee_id: string
+          id?: string
+          location?: string | null
+          priority?: string
+          scheduled_for: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration_minutes?: number
+          employee_id?: string
+          id?: string
+          location?: string | null
+          priority?: string
+          scheduled_for?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       insurance_cases: {
         Row: {
           created_at: string
