@@ -154,13 +154,13 @@ export function CrmLayout() {
           })}
         </nav>
 
-        {/* Upgrade card */}
-        <div className="mx-3 mb-3 rounded-xl border border-white/10 bg-gradient-to-br from-blue-600/30 to-indigo-600/10 p-3">
+        {/* Help card */}
+        <div className="mx-3 mb-3 rounded-xl border border-white/10 bg-gradient-to-br from-pink-500/30 to-violet-500/20 p-3">
           <div className="text-xs font-semibold text-white">Need help?</div>
-          <p className="mt-1 text-[11px] leading-relaxed text-blue-100/70">
+          <p className="mt-1 text-[11px] leading-relaxed text-white/70">
             Check our docs or contact support for personalised guidance.
           </p>
-          <Button size="sm" className="mt-2 h-7 w-full bg-white/10 text-xs text-white hover:bg-white/20">
+          <Button size="sm" className="mt-2 h-7 w-full bg-white/15 text-xs text-white hover:bg-white/25">
             Open Docs
           </Button>
         </div>
