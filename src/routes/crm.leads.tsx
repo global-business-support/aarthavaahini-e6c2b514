@@ -212,7 +212,7 @@ function LeadsPage() {
                 <Plus className="mr-2 h-4 w-4" /> New Lead
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl bg-white">
               <DialogHeader>
                 <DialogTitle>Add New Lead</DialogTitle>
               </DialogHeader>
