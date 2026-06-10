@@ -243,10 +243,22 @@ function LeadsPage() {
             <Input placeholder="Search name, phone, email, PAN…" value={filter} onChange={(e) => setFilter(e.target.value)} className="pl-9" />
           </div>
           <Select value={stageFilter} onValueChange={setStageFilter}>
-            <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
-            <SelectContent>
+            <SelectTrigger className="w-[170px] bg-white"><SelectValue placeholder="Stage" /></SelectTrigger>
+            <SelectContent className="bg-white">
               <SelectItem value="all">All stages</SelectItem>
               {LEAD_STAGES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
+            <SelectTrigger className="w-[200px] bg-white"><SelectValue placeholder="Assignee" /></SelectTrigger>
+            <SelectContent className="bg-white">
+              <SelectItem value="all">All assignees</SelectItem>
+              <SelectItem value="unassigned">Unassigned</SelectItem>
+              {staff.map((s) => (
+                <SelectItem key={s.id} value={s.id}>
+                  {(s.full_name || s.email || "Staff")} · {s.role}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -264,8 +276,8 @@ function LeadsPage() {
                 <TableHead>Name</TableHead>
                 <TableHead>Contact</TableHead>
                 <TableHead>Product</TableHead>
-                <TableHead>Source</TableHead>
                 <TableHead>Stage</TableHead>
+                <TableHead>Assigned To</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
