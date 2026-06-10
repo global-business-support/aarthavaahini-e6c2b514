@@ -1,14 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, StickyNote, Phone, Mail, MapPin, Briefcase, IndianRupee, User2 } from "lucide-react";
+import { Loader2, StickyNote, Phone, Mail, MapPin, Briefcase, IndianRupee, User2, Search } from "lucide-react";
+
 
 export const Route = createFileRoute("/crm/customers")({ component: CustomersPage });
 
@@ -32,14 +34,39 @@ function CustomersPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState<Row | null>(null);
+  const [q, setQ] = useState("");
 
   useEffect(() => {
     (async () => {
       const { data } = await supabase.from("customers").select("*").order("created_at", { ascending: false }).limit(500);
-      setRows((data ?? []) as Row[]);
+      const list = (data ?? []) as Row[];
+      setRows(list);
+      // Read ?q= from URL: auto-fill search and open match if exactly one
+      if (typeof window !== "undefined") {
+        const url = new URL(window.location.href);
+        const initial = url.searchParams.get("q") ?? "";
+        if (initial) {
+          setQ(initial);
+          const match = list.find((r) => (r.customer_name ?? "").toLowerCase() === initial.toLowerCase());
+          if (match) setActive(match);
+        }
+      }
       setLoading(false);
     })();
   }, []);
+
+  const filtered = useMemo(() => {
+    const term = q.trim().toLowerCase();
+    if (!term) return rows;
+    return rows.filter((r) =>
+      (r.customer_name ?? "").toLowerCase().includes(term) ||
+      (r.mobile ?? "").toLowerCase().includes(term) ||
+      (r.email ?? "").toLowerCase().includes(term) ||
+      (r.pan ?? "").toLowerCase().includes(term),
+    );
+  }, [q, rows]);
+
+
 
   return (
     <div className="space-y-4">
@@ -54,11 +81,23 @@ function CustomersPage() {
         </div>
       </div>
 
+      <Card className="p-3">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search by name, mobile, email, PAN…"
+            className="pl-9"
+          />
+        </div>
+      </Card>
+
       <Card className="overflow-hidden">
         {loading ? (
           <div className="flex h-40 items-center justify-center"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
-        ) : rows.length === 0 ? (
-          <div className="p-10 text-center text-sm text-slate-500">No customers yet.</div>
+        ) : filtered.length === 0 ? (
+          <div className="p-10 text-center text-sm text-slate-500">{rows.length === 0 ? "No customers yet." : "No customers match your search."}</div>
         ) : (
           <Table>
             <TableHeader>
@@ -72,7 +111,7 @@ function CustomersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rows.map((r) => (
+              {filtered.map((r) => (
                 <TableRow key={r.id} className="cursor-pointer hover:bg-sky-50/60" onClick={() => setActive(r)}>
                   <TableCell className="font-medium">
                     <button className="text-sky-700 hover:underline">{r.customer_name}</button>
@@ -86,11 +125,12 @@ function CustomersPage() {
               ))}
             </TableBody>
           </Table>
+
         )}
       </Card>
 
       <Dialog open={!!active} onOpenChange={(v) => !v && setActive(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl bg-white">
           <DialogHeader>
             <DialogTitle className="text-sky-700">{active?.customer_name}</DialogTitle>
           </DialogHeader>

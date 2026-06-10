@@ -29,10 +29,13 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Plus, Search, MessageCircle, Sparkles } from "lucide-react";
+import { Loader2, Plus, Search, MessageCircle, Sparkles, StickyNote } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/crm/leads")({ component: LeadsPage });
+
 
 const LEAD_STAGES = ["New", "Qualified", "Approved", "Disbursed", "Closed"] as const;
 type Stage = (typeof LEAD_STAGES)[number];
@@ -78,6 +81,7 @@ function normaliseStage(s: string): Stage {
 }
 
 function LeadsPage() {
+  const { user, isAdmin } = useAuth();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [staff, setStaff] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
@@ -85,6 +89,8 @@ function LeadsPage() {
   const [stageFilter, setStageFilter] = useState<string>("all");
   const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
   const [open, setOpen] = useState(false);
+  const [noteLead, setNoteLead] = useState<Lead | null>(null);
+
 
   const load = async () => {
     setLoading(true);
@@ -133,8 +139,12 @@ function LeadsPage() {
     const matchesAssignee =
       assigneeFilter === "all" ||
       (assigneeFilter === "unassigned" ? !l.assigned_to : l.assigned_to === assigneeFilter);
-    return matchesText && matchesStage && matchesAssignee;
+    // Admin sees partner-sourced leads ONLY if assigned to them.
+    const partnerVisible =
+      !isAdmin || (l.lead_source ?? "").toLowerCase() !== "partner" || (!!user && l.assigned_to === user.id);
+    return matchesText && matchesStage && matchesAssignee && partnerVisible;
   });
+
 
   const stageCounts = LEAD_STAGES.reduce<Record<Stage, number>>((acc, s) => {
     acc[s] = leads.filter((l) => normaliseStage(l.status) === s).length;
@@ -202,7 +212,7 @@ function LeadsPage() {
                 <Plus className="mr-2 h-4 w-4" /> New Lead
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl bg-white">
               <DialogHeader>
                 <DialogTitle>Add New Lead</DialogTitle>
               </DialogHeader>
@@ -343,17 +353,29 @@ function LeadsPage() {
                     </TableCell>
                     <TableCell className="text-xs text-slate-500">{new Date(l.created_at).toLocaleDateString()}</TableCell>
                     <TableCell className="text-right">
-                      <a
-                        href={`https://wa.me/${(l.phone || "").replace(/\D/g, "")}?text=${encodeURIComponent(`Hi ${l.lead_name ?? l.full_name ?? "there"}, this is from Aarthvaahini. Following up on your ${(l.product_type ?? "").replace(/_/g, " ")} enquiry.`)}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        title="Send WhatsApp"
-                      >
-                        <Button size="sm" variant="outline" className="border-green-200 bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800">
-                          <MessageCircle className="h-3.5 w-3.5" />
+                      <div className="inline-flex items-center gap-1.5">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100"
+                          title="Add / view notes"
+                          onClick={() => setNoteLead(l)}
+                        >
+                          <StickyNote className="h-3.5 w-3.5" />
                         </Button>
-                      </a>
+                        <a
+                          href={`https://wa.me/${(l.phone || "").replace(/\D/g, "")}?text=${encodeURIComponent(`Hi ${l.lead_name ?? l.full_name ?? "there"}, this is from Aarthvaahini. Following up on your ${(l.product_type ?? "").replace(/_/g, " ")} enquiry.`)}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          title="Send WhatsApp"
+                        >
+                          <Button size="sm" variant="outline" className="border-green-200 bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800">
+                            <MessageCircle className="h-3.5 w-3.5" />
+                          </Button>
+                        </a>
+                      </div>
                     </TableCell>
+
                   </TableRow>
                 );
               })}
@@ -361,9 +383,20 @@ function LeadsPage() {
           </Table>
         )}
       </Card>
+
+      {/* Notes dialog */}
+      <Dialog open={!!noteLead} onOpenChange={(v) => !v && setNoteLead(null)}>
+        <DialogContent className="max-w-lg bg-white">
+          <DialogHeader>
+            <DialogTitle>Notes — {noteLead?.lead_name ?? noteLead?.full_name}</DialogTitle>
+          </DialogHeader>
+          {noteLead && <LeadNotes lead={noteLead} />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+
 
 function NewLeadForm({ onSaved }: { onSaved: () => void }) {
   const [f, setF] = useState({
@@ -399,7 +432,7 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
       <Field label="Product Interest">
         <Select value={f.product_type} onValueChange={(v) => setF({ ...f, product_type: v })}>
           <SelectTrigger className="border-violet-200 focus:ring-violet-400"><SelectValue /></SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white">
             {PRODUCT_TYPES.map((p) => <SelectItem key={p} value={p} className="capitalize">{p.replace(/_/g, " ")}</SelectItem>)}
           </SelectContent>
         </Select>
@@ -407,9 +440,10 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
       <Field label="Lead Source">
         <Select value={f.lead_source} onValueChange={(v) => setF({ ...f, lead_source: v })}>
           <SelectTrigger className="border-pink-200 focus:ring-pink-400"><SelectValue /></SelectTrigger>
-          <SelectContent>{LEAD_SOURCES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+          <SelectContent className="bg-white">{LEAD_SOURCES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
         </Select>
       </Field>
+
       <div className="col-span-2 mt-2 flex justify-end">
         <Button type="submit" disabled={saving} className="bg-gradient-to-r from-sky-600 via-blue-600 to-cyan-600 text-white shadow-md hover:opacity-90">
           {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Create Lead
@@ -418,6 +452,76 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
     </form>
   );
 }
+
+function LeadNotes({ lead }: { lead: Lead }) {
+  const [notes, setNotes] = useState<{ id: string; notes: string | null; created_at: string }[]>([]);
+  const [text, setText] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const load = async () => {
+    const { data } = await supabase
+      .from("activities")
+      .select("id, notes, created_at")
+      .eq("lead_id", lead.id)
+      .eq("activity_type", "note")
+      .order("created_at", { ascending: false })
+      .limit(50);
+    setNotes(data ?? []);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [lead.id]);
+
+  const add = async () => {
+    if (!text.trim()) return;
+    setSaving(true);
+    const { error } = await supabase.from("activities").insert({
+      lead_id: lead.id,
+      activity_type: "note",
+      notes: text.trim(),
+    });
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    setText("");
+    toast.success("Note added");
+    load();
+  };
+
+  return (
+    <div className="space-y-3">
+      <Textarea
+        rows={3}
+        placeholder="Add a follow-up note (call summary, next action, document pending…)"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        className="border-amber-200 focus-visible:ring-amber-400"
+      />
+      <div className="flex justify-end">
+        <Button onClick={add} disabled={saving || !text.trim()} className="bg-gradient-to-r from-amber-500 to-orange-500 text-white">
+          {saving && <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />} Save Note
+        </Button>
+      </div>
+      <div className="max-h-64 space-y-2 overflow-auto pr-1">
+        {loading ? (
+          <div className="py-3 text-center"><Loader2 className="mx-auto h-4 w-4 animate-spin text-slate-400" /></div>
+        ) : notes.length === 0 ? (
+          <p className="py-2 text-center text-xs text-slate-400">No notes yet for this lead.</p>
+        ) : (
+          notes.map((n) => (
+            <div key={n.id} className="rounded-lg border border-amber-100 bg-amber-50/60 p-3 text-sm">
+              <div className="whitespace-pre-wrap text-slate-800">{n.notes}</div>
+              <div className="mt-1 text-[10px] uppercase tracking-wide text-slate-500">
+                {new Date(n.created_at).toLocaleString("en-IN")}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return <div><Label className="text-xs">{label}</Label><div className="mt-1">{children}</div></div>;
