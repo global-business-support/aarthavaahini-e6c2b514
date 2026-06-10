@@ -383,9 +383,20 @@ function LeadsPage() {
           </Table>
         )}
       </Card>
+
+      {/* Notes dialog */}
+      <Dialog open={!!noteLead} onOpenChange={(v) => !v && setNoteLead(null)}>
+        <DialogContent className="max-w-lg bg-white">
+          <DialogHeader>
+            <DialogTitle>Notes — {noteLead?.lead_name ?? noteLead?.full_name}</DialogTitle>
+          </DialogHeader>
+          {noteLead && <LeadNotes lead={noteLead} />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+
 
 function NewLeadForm({ onSaved }: { onSaved: () => void }) {
   const [f, setF] = useState({
