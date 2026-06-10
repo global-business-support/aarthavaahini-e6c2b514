@@ -176,6 +176,12 @@ html {
 }
 .animate-bg-zoom { animation: bg-zoom 24s ease-in-out infinite; }
 
+@keyframes bg-fade {
+  0%, 18%, 100% { opacity: 0; }
+  4%, 14% { opacity: 1; }
+}
+.animate-bg-fade { animation: bg-fade 24s ease-in-out infinite; }
+
 /* 3D card effect for product boxes */
 .card-3d {
   transform-style: preserve-3d;
