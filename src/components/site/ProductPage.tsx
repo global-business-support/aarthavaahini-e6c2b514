@@ -75,7 +75,7 @@ export function ProductPage({ title, subtitle, items, productType, accentClass }
       <div className="container mx-auto px-6 py-20">
         <div className="mx-auto max-w-2xl text-center">
           <h1 className={`font-display text-4xl font-bold sm:text-5xl ${accentClass}`}>{title}</h1>
-          <p className={cn("mt-4", isLoanPage ? "font-medium text-slate-700" : "text-muted-foreground")}>{subtitle}</p>
+          <p className={cn("mt-4", hasBg ? "font-medium text-slate-700" : "text-muted-foreground")}>{subtitle}</p>
         </div>
         <div className="mt-14 grid gap-10 sm:grid-cols-1 md:grid-cols-2 [perspective:1400px]">
           {items.map((p, i) => {
@@ -85,7 +85,8 @@ export function ProductPage({ title, subtitle, items, productType, accentClass }
                 key={p.slug}
                 className={cn(
                   "card-3d group relative flex flex-col overflow-hidden rounded-2xl p-7 ring-1 border-0 shadow-[0_20px_50px_-20px_rgba(15,23,42,0.25)] backdrop-blur-sm",
-                  isLoanPage && "loan-product-card",
+                  hasBg && "product-card-glass",
+
                   palette.bg,
                   palette.ring,
                 )}
