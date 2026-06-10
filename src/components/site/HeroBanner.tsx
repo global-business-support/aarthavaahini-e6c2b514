@@ -62,9 +62,6 @@ export function HeroBanner() {
               <Button asChild size="lg" variant="outline" className="border-primary/30 bg-white/60">
                 <Link to="/contact">Talk to Advisor</Link>
               </Button>
-                <Button asChild size="lg" variant="outline" className="border-primary/30 bg-white/60">
-                <Link to="/contact">contact</Link>
-              </Button>
             </div>
           </div>
           <div className="hidden md:flex justify-center">
