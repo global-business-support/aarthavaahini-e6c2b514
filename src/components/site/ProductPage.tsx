@@ -8,6 +8,7 @@ import { LeadForm } from "./LeadForm";
 import type { ProductItem } from "@/data/products";
 import { CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import loanBg from "@/assets/loan-bg.jpg.asset.json";
 
 type Props = {
   title: string;
@@ -30,12 +31,25 @@ const CARD_PALETTES = [
 // Backdrop is now provided globally by <AnimatedBackground /> on each product route.
 
 export function ProductPage({ title, subtitle, items, productType, accentClass }: Props) {
+  const isLoanPage = productType === "loan";
+
   return (
-    <div className="relative isolate">
+    <div className={cn("relative isolate overflow-hidden", isLoanPage && "loan-products-bg") }>
+      {isLoanPage && (
+        <>
+          <div
+            aria-hidden
+            className="absolute inset-0 -z-10 scale-110 bg-cover bg-center opacity-55 animate-loan-products-bg"
+            style={{ backgroundImage: `url('${loanBg.url}')` }}
+          />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-white/80 via-white/35 to-white/75" />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_22%,rgba(37,99,235,0.22),transparent_34%),radial-gradient(circle_at_82%_72%,rgba(14,165,233,0.2),transparent_32%)]" />
+        </>
+      )}
       <div className="container mx-auto px-6 py-20">
         <div className="mx-auto max-w-2xl text-center">
           <h1 className={`font-display text-4xl font-bold sm:text-5xl ${accentClass}`}>{title}</h1>
-          <p className="mt-4 text-muted-foreground">{subtitle}</p>
+          <p className={cn("mt-4", isLoanPage ? "font-medium text-slate-700" : "text-muted-foreground")}>{subtitle}</p>
         </div>
         <div className="mt-14 grid gap-10 sm:grid-cols-1 md:grid-cols-2 [perspective:1400px]">
           {items.map((p, i) => {
@@ -45,6 +59,7 @@ export function ProductPage({ title, subtitle, items, productType, accentClass }
                 key={p.slug}
                 className={cn(
                   "card-3d group relative flex flex-col overflow-hidden rounded-2xl p-7 ring-1 border-0 shadow-[0_20px_50px_-20px_rgba(15,23,42,0.25)] backdrop-blur-sm",
+                  isLoanPage && "loan-product-card",
                   palette.bg,
                   palette.ring,
                 )}
