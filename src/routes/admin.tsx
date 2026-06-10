@@ -23,6 +23,11 @@ import {
   CheckSquare,
   IndianRupee,
 } from "lucide-react";
+import {
+  ResponsiveContainer, AreaChart, Area, XAxis, YAxis,
+  Tooltip as RTooltip, CartesianGrid, BarChart, Bar, Legend,
+  PieChart, Pie, Cell,
+} from "recharts";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin Panel — Aarthvaahini" }] }),
@@ -60,10 +65,12 @@ function AdminPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [busy, setBusy] = useState(false);
   const [q, setQ] = useState("");
+  const [trend, setTrend] = useState<{ day: string; leads: number }[]>([]);
 
   const load = async () => {
     setBusy(true);
-    const [leadsRes, customers, loans, insurance, mf, tasks, disb] = await Promise.all([
+    const since = new Date(Date.now() - 13 * 24 * 60 * 60 * 1000).toISOString();
+    const [leadsRes, customers, loans, insurance, mf, tasks, disb, last14] = await Promise.all([
       supabase.from("leads").select("*").order("created_at", { ascending: false }).limit(100),
       supabase.from("customers").select("id", { count: "exact", head: true }),
       supabase.from("loan_cases").select("id", { count: "exact", head: true }),
@@ -71,6 +78,7 @@ function AdminPage() {
       supabase.from("mutual_funds").select("id", { count: "exact", head: true }),
       supabase.from("tasks").select("id", { count: "exact", head: true }).neq("status", "done"),
       supabase.from("loan_cases").select("disbursement_amount"),
+      supabase.from("leads").select("created_at, product_type").gte("created_at", since),
     ]);
 
     setLeads((leadsRes.data ?? []) as Lead[]);
@@ -83,6 +91,21 @@ function AdminPage() {
       pendingTasks: tasks.count ?? 0,
       revenue: (disb.data ?? []).reduce((a, r) => a + (Number(r.disbursement_amount) || 0), 0),
     });
+
+    const buckets: Record<string, number> = {};
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+      buckets[d.toISOString().slice(0, 10)] = 0;
+    }
+    (last14.data ?? []).forEach((r: { created_at: string }) => {
+      const k = r.created_at.slice(0, 10);
+      if (buckets[k] !== undefined) buckets[k] += 1;
+    });
+    setTrend(Object.entries(buckets).map(([k, v]) => ({
+      day: new Date(k).toLocaleDateString("en-IN", { day: "numeric", month: "short" }),
+      leads: v,
+    })));
+
     setBusy(false);
   };
 
@@ -224,6 +247,59 @@ function AdminPage() {
               </Link>
             );
           })}
+        </div>
+
+        {/* Charts */}
+        <div className="mt-6 grid gap-4 lg:grid-cols-3">
+          <Card className="lg:col-span-2 p-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-sm font-semibold text-slate-900">Leads — Last 14 days</h2>
+                <p className="text-xs text-slate-500">Daily new leads captured.</p>
+              </div>
+              <Badge variant="outline" className="border-blue-200 bg-blue-50 text-blue-700">Trend</Badge>
+            </div>
+            <div className="mt-4 h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={trend} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="adminLeadFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.5} />
+                      <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                  <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#64748b" }} tickLine={false} axisLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: "#64748b" }} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <RTooltip contentStyle={{ borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 12 }} />
+                  <Area type="monotone" dataKey="leads" stroke="#2563eb" strokeWidth={2} fill="url(#adminLeadFill)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+
+          <Card className="p-5">
+            <h2 className="text-sm font-semibold text-slate-900">Product Mix</h2>
+            <p className="text-xs text-slate-500">Active cases across products.</p>
+            <div className="mt-4 h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[
+                      { name: "Loans", value: stats?.loans ?? 0 },
+                      { name: "Insurance", value: stats?.insurance ?? 0 },
+                      { name: "Mutual Funds", value: stats?.mf ?? 0 },
+                    ]}
+                    cx="50%" cy="50%" outerRadius={70} innerRadius={40} paddingAngle={3} dataKey="value"
+                  >
+                    {["#3b82f6", "#8b5cf6", "#10b981"].map((c, i) => <Cell key={i} fill={c} />)}
+                  </Pie>
+                  <RTooltip contentStyle={{ borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 12 }} />
+                  <Legend wrapperStyle={{ fontSize: 11 }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
         </div>
 
         {/* Leads */}

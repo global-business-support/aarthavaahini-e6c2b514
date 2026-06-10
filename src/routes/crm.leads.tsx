@@ -61,8 +61,11 @@ type Lead = {
   product_type: string;
   lead_source: string | null;
   status: string;
+  assigned_to: string | null;
   created_at: string;
 };
+
+type Staff = { id: string; full_name: string | null; email: string | null; role: string };
 
 function normaliseStage(s: string): Stage {
   if ((LEAD_STAGES as readonly string[]).includes(s)) return s as Stage;
@@ -76,20 +79,42 @@ function normaliseStage(s: string): Stage {
 
 function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [staff, setStaff] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
   const [stageFilter, setStageFilter] = useState<string>("all");
+  const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
   const [open, setOpen] = useState(false);
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("leads")
-      .select("id, lead_name, full_name, phone, email, pan, city, state, product_type, lead_source, status, created_at")
-      .order("created_at", { ascending: false })
-      .limit(500);
+    const [{ data, error }, roles] = await Promise.all([
+      supabase
+        .from("leads")
+        .select("id, lead_name, full_name, phone, email, pan, city, state, product_type, lead_source, status, assigned_to, created_at")
+        .order("created_at", { ascending: false })
+        .limit(500),
+      supabase.from("user_roles").select("user_id, role"),
+    ]);
     if (error) toast.error(error.message);
     setLeads((data ?? []) as Lead[]);
+
+    const ids = (roles.data ?? []).map((r: { user_id: string }) => r.user_id);
+    if (ids.length) {
+      const { data: profs } = await supabase
+        .from("profiles")
+        .select("id, full_name, email")
+        .in("id", ids);
+      const byId = new Map((profs ?? []).map((p) => [p.id, p]));
+      setStaff(
+        (roles.data ?? []).map((r: { user_id: string; role: string }) => ({
+          id: r.user_id,
+          full_name: byId.get(r.user_id)?.full_name ?? null,
+          email: byId.get(r.user_id)?.email ?? null,
+          role: r.role,
+        })),
+      );
+    }
     setLoading(false);
   };
 
@@ -105,7 +130,10 @@ function LeadsPage() {
       (l.email ?? "").toLowerCase().includes(term) ||
       (l.pan ?? "").toLowerCase().includes(term);
     const matchesStage = stageFilter === "all" || stage === stageFilter;
-    return matchesText && matchesStage;
+    const matchesAssignee =
+      assigneeFilter === "all" ||
+      (assigneeFilter === "unassigned" ? !l.assigned_to : l.assigned_to === assigneeFilter);
+    return matchesText && matchesStage && matchesAssignee;
   });
 
   const stageCounts = LEAD_STAGES.reduce<Record<Stage, number>>((acc, s) => {
@@ -113,13 +141,26 @@ function LeadsPage() {
     return acc;
   }, { New: 0, Qualified: 0, Approved: 0, Disbursed: 0, Closed: 0 });
 
+  const staffLabel = (id: string | null) => {
+    if (!id) return "Unassigned";
+    const s = staff.find((x) => x.id === id);
+    return s?.full_name || s?.email || "Staff";
+  };
+
+  const updateAssignee = async (lead: Lead, value: string) => {
+    const newId = value === "unassigned" ? null : value;
+    const { error } = await supabase.from("leads").update({ assigned_to: newId }).eq("id", lead.id);
+    if (error) return toast.error(error.message);
+    setLeads((prev) => prev.map((l) => (l.id === lead.id ? { ...l, assigned_to: newId } : l)));
+    toast.success(`Assigned → ${staffLabel(newId)}`);
+  };
+
   const updateStage = async (lead: Lead, status: Stage) => {
     const { error } = await supabase.from("leads").update({ status }).eq("id", lead.id);
     if (error) return toast.error(error.message);
     setLeads((prev) => prev.map((l) => (l.id === lead.id ? { ...l, status } : l)));
     toast.success(`Stage → ${status}`);
 
-    // Auto-create a customer when stage reaches Disbursed
     if (status === "Disbursed") {
       const { data: existing } = await supabase
         .from("customers")
@@ -202,10 +243,22 @@ function LeadsPage() {
             <Input placeholder="Search name, phone, email, PAN…" value={filter} onChange={(e) => setFilter(e.target.value)} className="pl-9" />
           </div>
           <Select value={stageFilter} onValueChange={setStageFilter}>
-            <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
-            <SelectContent>
+            <SelectTrigger className="w-[170px] bg-white"><SelectValue placeholder="Stage" /></SelectTrigger>
+            <SelectContent className="bg-white">
               <SelectItem value="all">All stages</SelectItem>
               {LEAD_STAGES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
+            <SelectTrigger className="w-[200px] bg-white"><SelectValue placeholder="Assignee" /></SelectTrigger>
+            <SelectContent className="bg-white">
+              <SelectItem value="all">All assignees</SelectItem>
+              <SelectItem value="unassigned">Unassigned</SelectItem>
+              {staff.map((s) => (
+                <SelectItem key={s.id} value={s.id}>
+                  {(s.full_name || s.email || "Staff")} · {s.role}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -223,8 +276,8 @@ function LeadsPage() {
                 <TableHead>Name</TableHead>
                 <TableHead>Contact</TableHead>
                 <TableHead>Product</TableHead>
-                <TableHead>Source</TableHead>
                 <TableHead>Stage</TableHead>
+                <TableHead>Assigned To</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
@@ -246,16 +299,15 @@ function LeadsPage() {
                     <TableCell>
                       <Badge variant="secondary" className="capitalize">{(l.product_type ?? "").replace(/_/g, " ")}</Badge>
                     </TableCell>
-                    <TableCell className="text-sm text-slate-600">{l.lead_source ?? "—"}</TableCell>
                     <TableCell>
                       <Select value={stage} onValueChange={(v) => updateStage(l, v as Stage)}>
-                        <SelectTrigger className={cn("h-8 w-[150px] font-semibold", st.trigger)}>
+                        <SelectTrigger className={cn("h-8 w-[150px] font-semibold bg-white", st.trigger)}>
                           <span className="flex items-center gap-2">
                             <span className={cn("h-2 w-2 rounded-full", st.dot)} />
                             <SelectValue />
                           </span>
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-white">
                           {LEAD_STAGES.map((s) => {
                             const ss = STAGE_STYLES[s];
                             return (
@@ -267,6 +319,25 @@ function LeadsPage() {
                               </SelectItem>
                             );
                           })}
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      <Select value={l.assigned_to ?? "unassigned"} onValueChange={(v) => updateAssignee(l, v)}>
+                        <SelectTrigger className="h-8 w-[170px] bg-white">
+                          <SelectValue placeholder="Unassigned" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white">
+                          <SelectItem value="unassigned">Unassigned</SelectItem>
+                          {staff.map((s) => (
+                            <SelectItem key={s.id} value={s.id}>
+                              <span className="flex items-center gap-2">
+                                <span className={cn("h-2 w-2 rounded-full", s.role === "admin" ? "bg-rose-500" : "bg-emerald-500")} />
+                                {(s.full_name || s.email || "Staff")}
+                                <span className="text-[10px] uppercase text-slate-400">{s.role}</span>
+                              </span>
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </TableCell>
