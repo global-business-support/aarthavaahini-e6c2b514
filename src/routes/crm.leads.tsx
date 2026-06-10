@@ -353,17 +353,29 @@ function LeadsPage() {
                     </TableCell>
                     <TableCell className="text-xs text-slate-500">{new Date(l.created_at).toLocaleDateString()}</TableCell>
                     <TableCell className="text-right">
-                      <a
-                        href={`https://wa.me/${(l.phone || "").replace(/\D/g, "")}?text=${encodeURIComponent(`Hi ${l.lead_name ?? l.full_name ?? "there"}, this is from Aarthvaahini. Following up on your ${(l.product_type ?? "").replace(/_/g, " ")} enquiry.`)}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        title="Send WhatsApp"
-                      >
-                        <Button size="sm" variant="outline" className="border-green-200 bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800">
-                          <MessageCircle className="h-3.5 w-3.5" />
+                      <div className="inline-flex items-center gap-1.5">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100"
+                          title="Add / view notes"
+                          onClick={() => setNoteLead(l)}
+                        >
+                          <StickyNote className="h-3.5 w-3.5" />
                         </Button>
-                      </a>
+                        <a
+                          href={`https://wa.me/${(l.phone || "").replace(/\D/g, "")}?text=${encodeURIComponent(`Hi ${l.lead_name ?? l.full_name ?? "there"}, this is from Aarthvaahini. Following up on your ${(l.product_type ?? "").replace(/_/g, " ")} enquiry.`)}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          title="Send WhatsApp"
+                        >
+                          <Button size="sm" variant="outline" className="border-green-200 bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800">
+                            <MessageCircle className="h-3.5 w-3.5" />
+                          </Button>
+                        </a>
+                      </div>
                     </TableCell>
+
                   </TableRow>
                 );
               })}
