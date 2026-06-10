@@ -61,8 +61,11 @@ type Lead = {
   product_type: string;
   lead_source: string | null;
   status: string;
+  assigned_to: string | null;
   created_at: string;
 };
+
+type Staff = { id: string; full_name: string | null; email: string | null; role: string };
 
 function normaliseStage(s: string): Stage {
   if ((LEAD_STAGES as readonly string[]).includes(s)) return s as Stage;
