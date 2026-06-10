@@ -1,14 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, StickyNote, Phone, Mail, MapPin, Briefcase, IndianRupee, User2 } from "lucide-react";
+import { Loader2, StickyNote, Phone, Mail, MapPin, Briefcase, IndianRupee, User2, Search } from "lucide-react";
+
 
 export const Route = createFileRoute("/crm/customers")({ component: CustomersPage });
 
