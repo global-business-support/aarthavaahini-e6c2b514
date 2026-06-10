@@ -65,10 +65,12 @@ function AdminPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [busy, setBusy] = useState(false);
   const [q, setQ] = useState("");
+  const [trend, setTrend] = useState<{ day: string; leads: number }[]>([]);
 
   const load = async () => {
     setBusy(true);
-    const [leadsRes, customers, loans, insurance, mf, tasks, disb] = await Promise.all([
+    const since = new Date(Date.now() - 13 * 24 * 60 * 60 * 1000).toISOString();
+    const [leadsRes, customers, loans, insurance, mf, tasks, disb, last14] = await Promise.all([
       supabase.from("leads").select("*").order("created_at", { ascending: false }).limit(100),
       supabase.from("customers").select("id", { count: "exact", head: true }),
       supabase.from("loan_cases").select("id", { count: "exact", head: true }),
@@ -76,6 +78,7 @@ function AdminPage() {
       supabase.from("mutual_funds").select("id", { count: "exact", head: true }),
       supabase.from("tasks").select("id", { count: "exact", head: true }).neq("status", "done"),
       supabase.from("loan_cases").select("disbursement_amount"),
+      supabase.from("leads").select("created_at, product_type").gte("created_at", since),
     ]);
 
     setLeads((leadsRes.data ?? []) as Lead[]);
@@ -88,6 +91,21 @@ function AdminPage() {
       pendingTasks: tasks.count ?? 0,
       revenue: (disb.data ?? []).reduce((a, r) => a + (Number(r.disbursement_amount) || 0), 0),
     });
+
+    const buckets: Record<string, number> = {};
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+      buckets[d.toISOString().slice(0, 10)] = 0;
+    }
+    (last14.data ?? []).forEach((r: { created_at: string }) => {
+      const k = r.created_at.slice(0, 10);
+      if (buckets[k] !== undefined) buckets[k] += 1;
+    });
+    setTrend(Object.entries(buckets).map(([k, v]) => ({
+      day: new Date(k).toLocaleDateString("en-IN", { day: "numeric", month: "short" }),
+      leads: v,
+    })));
+
     setBusy(false);
   };
 
