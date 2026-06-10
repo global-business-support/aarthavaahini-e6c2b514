@@ -139,8 +139,12 @@ function LeadsPage() {
     const matchesAssignee =
       assigneeFilter === "all" ||
       (assigneeFilter === "unassigned" ? !l.assigned_to : l.assigned_to === assigneeFilter);
-    return matchesText && matchesStage && matchesAssignee;
+    // Admin sees partner-sourced leads ONLY if assigned to them.
+    const partnerVisible =
+      !isAdmin || (l.lead_source ?? "").toLowerCase() !== "partner" || (!!user && l.assigned_to === user.id);
+    return matchesText && matchesStage && matchesAssignee && partnerVisible;
   });
+
 
   const stageCounts = LEAD_STAGES.reduce<Record<Stage, number>>((acc, s) => {
     acc[s] = leads.filter((l) => normaliseStage(l.status) === s).length;
