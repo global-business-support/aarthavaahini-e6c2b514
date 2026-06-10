@@ -29,10 +29,13 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Plus, Search, MessageCircle, Sparkles } from "lucide-react";
+import { Loader2, Plus, Search, MessageCircle, Sparkles, StickyNote } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/crm/leads")({ component: LeadsPage });
+
 
 const LEAD_STAGES = ["New", "Qualified", "Approved", "Disbursed", "Closed"] as const;
 type Stage = (typeof LEAD_STAGES)[number];
