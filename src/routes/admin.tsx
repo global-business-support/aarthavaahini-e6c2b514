@@ -23,6 +23,11 @@ import {
   CheckSquare,
   IndianRupee,
 } from "lucide-react";
+import {
+  ResponsiveContainer, AreaChart, Area, XAxis, YAxis,
+  Tooltip as RTooltip, CartesianGrid, BarChart, Bar, Legend,
+  PieChart, Pie, Cell,
+} from "recharts";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin Panel — Aarthvaahini" }] }),
