@@ -22,7 +22,9 @@ import {
   UserCircle2,
   CheckSquare,
   IndianRupee,
+  Download,
 } from "lucide-react";
+import * as XLSX from "xlsx";
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis,
   Tooltip as RTooltip, CartesianGrid, BarChart, Bar, Legend,
@@ -309,14 +311,19 @@ function AdminPage() {
               <h2 className="text-sm font-semibold text-slate-900">Latest Leads</h2>
               <p className="text-xs text-slate-500">Recent submissions across the website and team entry.</p>
             </div>
-            <div className="relative w-full sm:w-72">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <Input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Search name, phone, product…"
-                className="h-9 border-slate-200 bg-slate-50 pl-9 text-sm"
-              />
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="relative w-full sm:w-64">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Input
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  placeholder="Search name, phone, product…"
+                  className="h-9 border-slate-200 bg-slate-50 pl-9 text-sm"
+                />
+              </div>
+              <Button onClick={() => downloadLeadsXlsx(filtered)} variant="outline" className="h-9 border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100">
+                <Download className="mr-2 h-4 w-4" /> Excel
+              </Button>
             </div>
           </div>
           <div className="overflow-x-auto">
@@ -396,4 +403,26 @@ function toneBlur(t: string) {
     blue: "bg-blue-300/40", amber: "bg-amber-300/40", emerald: "bg-emerald-300/40",
     violet: "bg-violet-300/40", cyan: "bg-cyan-300/40", slate: "bg-slate-300/40", rose: "bg-rose-300/40",
   } as Record<string, string>)[t];
+}
+
+function downloadLeadsXlsx(leads: Lead[]) {
+  if (!leads || leads.length === 0) return;
+  const rows = leads.map((l) => ({
+    "Created At": new Date(l.created_at).toLocaleString("en-IN"),
+    "Name": l.full_name,
+    "Phone": l.phone,
+    "Email": l.email ?? "",
+    "Product Type": l.product_type,
+    "Product Name": l.product_name ?? "",
+    "Amount": l.amount ?? "",
+    "City": l.city ?? "",
+    "Source": l.lead_source ?? "",
+    "Status": l.status,
+    "Message": l.message ?? "",
+  }));
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws["!cols"] = [{ wch: 20 }, { wch: 22 }, { wch: 16 }, { wch: 26 }, { wch: 14 }, { wch: 18 }, { wch: 12 }, { wch: 14 }, { wch: 14 }, { wch: 12 }, { wch: 40 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Leads");
+  XLSX.writeFile(wb, `aarthvaahini-leads-${new Date().toISOString().slice(0, 10)}.xlsx`);
 }
