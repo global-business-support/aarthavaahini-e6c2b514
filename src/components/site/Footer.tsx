@@ -399,6 +399,7 @@ export function Footer() {
       </div>
 
 
+      <WhatsAppFab />
     </footer>
 
   );
