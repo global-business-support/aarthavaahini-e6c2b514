@@ -116,26 +116,26 @@ export function CrmLayout() {
         {/* Sidebar */}
         <aside
           className={cn(
-            "fixed inset-y-0 left-0 z-40 shrink-0 flex-col bg-gradient-to-b from-sky-300 via-sky-400 to-cyan-300 text-white shadow-xl shadow-sky-300/30 transition-all md:relative md:flex md:translate-x-0",
+            "fixed inset-y-0 left-0 z-40 shrink-0 flex-col border-r border-sky-200 bg-gradient-to-b from-sky-50 via-sky-100 to-cyan-50 text-sky-900 shadow-lg shadow-sky-200/40 transition-all md:relative md:flex md:translate-x-0",
             collapsed ? "w-16" : "w-64",
             mobileOpen ? "flex translate-x-0 w-64" : "hidden -translate-x-full md:flex",
           )}
         >
-          <div className={cn("flex items-center border-b border-white/10 px-3 py-4", collapsed ? "justify-center" : "justify-between px-5")}>
+          <div className={cn("flex items-center border-b border-sky-200/60 px-3 py-4", collapsed ? "justify-center" : "justify-between px-5")}>
             <Link to="/crm" className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg bg-white shadow-md">
+              <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg bg-white shadow-md ring-1 ring-sky-200">
                 <img src={logoUrl} alt="Aarthvaahini" className="h-8 w-8 object-contain" />
               </div>
               {!collapsed && (
                 <div>
-                  <div className="text-sm font-semibold tracking-tight text-white">Aarthvaahini</div>
-                  <div className="text-[10px] uppercase tracking-wider text-sky-200/90">Enterprise CRM</div>
+                  <div className="text-sm font-semibold tracking-tight text-sky-900">Aarthvaahini</div>
+                  <div className="text-[10px] uppercase tracking-wider text-sky-600">Enterprise CRM</div>
                 </div>
               )}
             </Link>
             {!collapsed && (
               <button
-                className="rounded-md p-1 text-white/70 hover:bg-white/10 md:hidden"
+                className="rounded-md p-1 text-sky-600 hover:bg-sky-100 md:hidden"
                 onClick={() => setMobileOpen(false)}
               >
                 <X className="h-4 w-4" />
@@ -154,7 +154,7 @@ export function CrmLayout() {
 
           <nav className={cn("flex-1 space-y-0.5 overflow-y-auto py-4", collapsed ? "px-2" : "px-3")}>
             {!collapsed && (
-              <div className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-wider text-sky-100/80">
+              <div className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-wider text-sky-500">
                 Main Menu
               </div>
             )}
@@ -171,14 +171,14 @@ export function CrmLayout() {
                     "group relative flex items-center gap-3 rounded-lg text-sm font-medium transition-all",
                     collapsed ? "justify-center p-2.5" : "px-3 py-2.5",
                     active
-                      ? "bg-white/20 text-white shadow-inner"
-                      : "text-white/75 hover:bg-white/10 hover:text-white",
+                      ? "bg-white text-sky-700 shadow-sm ring-1 ring-sky-200"
+                      : "text-sky-800/80 hover:bg-white/70 hover:text-sky-900",
                   )}
                 >
                   {active && !collapsed && (
-                    <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-white" />
+                    <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-sky-500" />
                   )}
-                  <Icon className={cn("h-4 w-4", active ? "text-white" : "text-white/70 group-hover:text-white")} />
+                  <Icon className={cn("h-4 w-4", active ? "text-sky-600" : "text-sky-500/80 group-hover:text-sky-700")} />
                   {!collapsed && item.label}
                 </Link>
               );
