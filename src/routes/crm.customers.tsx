@@ -90,7 +90,7 @@ function CustomersPage() {
       </Card>
 
       <Dialog open={!!active} onOpenChange={(v) => !v && setActive(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl bg-white">
           <DialogHeader>
             <DialogTitle className="text-sky-700">{active?.customer_name}</DialogTitle>
           </DialogHeader>
