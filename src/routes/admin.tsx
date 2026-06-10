@@ -153,7 +153,15 @@ function AdminPage() {
     );
   }
 
-  const filtered = leads.filter((l) => {
+  const visibleLeads = leads.filter((l) => {
+    // Admin only sees partner-sourced leads if explicitly assigned to them.
+    if ((l.lead_source ?? "").toLowerCase() === "partner") {
+      return !!user && (l as unknown as { assigned_to?: string | null }).assigned_to === user.id;
+    }
+    return true;
+  });
+
+  const filtered = visibleLeads.filter((l) => {
     if (!q) return true;
     const s = q.toLowerCase();
     return (
@@ -163,6 +171,7 @@ function AdminPage() {
       l.product_type?.toLowerCase().includes(s)
     );
   });
+
 
   const statCards = [
     { label: "Total Leads", value: stats?.totalLeads ?? 0, icon: Users, tone: "blue" },
