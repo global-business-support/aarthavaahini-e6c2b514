@@ -79,20 +79,42 @@ function normaliseStage(s: string): Stage {
 
 function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [staff, setStaff] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
   const [stageFilter, setStageFilter] = useState<string>("all");
+  const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
   const [open, setOpen] = useState(false);
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("leads")
-      .select("id, lead_name, full_name, phone, email, pan, city, state, product_type, lead_source, status, created_at")
-      .order("created_at", { ascending: false })
-      .limit(500);
+    const [{ data, error }, roles] = await Promise.all([
+      supabase
+        .from("leads")
+        .select("id, lead_name, full_name, phone, email, pan, city, state, product_type, lead_source, status, assigned_to, created_at")
+        .order("created_at", { ascending: false })
+        .limit(500),
+      supabase.from("user_roles").select("user_id, role"),
+    ]);
     if (error) toast.error(error.message);
     setLeads((data ?? []) as Lead[]);
+
+    const ids = (roles.data ?? []).map((r: { user_id: string }) => r.user_id);
+    if (ids.length) {
+      const { data: profs } = await supabase
+        .from("profiles")
+        .select("id, full_name, email")
+        .in("id", ids);
+      const byId = new Map((profs ?? []).map((p) => [p.id, p]));
+      setStaff(
+        (roles.data ?? []).map((r: { user_id: string; role: string }) => ({
+          id: r.user_id,
+          full_name: byId.get(r.user_id)?.full_name ?? null,
+          email: byId.get(r.user_id)?.email ?? null,
+          role: r.role,
+        })),
+      );
+    }
     setLoading(false);
   };
 
