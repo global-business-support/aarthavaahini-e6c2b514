@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
-import { sendWhatsApp } from "@/lib/twilio.functions";
+import { sendWhatsApp, twilioConfig } from "@/lib/twilio.functions";
 import * as XLSX from "xlsx";
 
 export const Route = createFileRoute("/admin/whatsapp")({
