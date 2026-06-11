@@ -24,6 +24,7 @@ import {
   X,
   FolderOpen,
   Activity,
+  MessageCircle,
 } from "lucide-react";
 import { useCrmAuth } from "@/hooks/useCrmAuth";
 import { supabase } from "@/integrations/supabase/client";
