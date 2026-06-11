@@ -233,32 +233,37 @@ function AdminPage() {
           })}
         </div>
 
-        {/* Quick links */}
+        {/* Quick links — Admin-only tools */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { to: "/admin/employees", label: "Manage Employees", icon: UserCircle2 },
-            { to: "/crm/schedule", label: "Employee Schedule", icon: CheckSquare },
-            { to: "/admin/whatsapp", label: "WhatsApp Sender", icon: Phone },
-            { to: "/crm/leads", label: "Manage Leads", icon: Users },
+            { to: "/admin/employees", label: "Manage Employees", desc: "Add, reset, remove staff", icon: UserCircle2, tone: "blue" },
+            { to: "/admin/whatsapp", label: "WhatsApp Sender", desc: "Single & bulk Twilio sends", icon: Phone, tone: "emerald" },
+            { to: "/crm/leads", label: "All Leads", desc: "Open full CRM pipeline", icon: Users, tone: "violet" },
+            { to: "/crm/reports", label: "Reports & MIS", desc: "Export & analytics", icon: Download, tone: "amber" },
           ].map((l) => {
             const Icon = l.icon;
             return (
               <Link
                 key={l.to}
                 to={l.to as never}
-                className="group flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 transition hover:border-blue-300 hover:shadow-md"
+                className="group relative flex items-center justify-between overflow-hidden rounded-xl border border-slate-200 bg-white p-4 transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
               >
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-blue-50 p-2 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition">
+                <div className={`absolute -right-6 -top-6 h-16 w-16 rounded-full opacity-30 blur-2xl ${toneBlur(l.tone)}`} />
+                <div className="relative flex items-center gap-3">
+                  <div className={`rounded-lg p-2 ${toneBg(l.tone)} ${toneFg(l.tone)} group-hover:scale-110 transition`}>
                     <Icon className="h-4 w-4" />
                   </div>
-                  <span className="text-sm font-semibold text-slate-800">{l.label}</span>
+                  <div>
+                    <div className="text-sm font-semibold text-slate-800">{l.label}</div>
+                    <div className="text-[11px] text-slate-500">{l.desc}</div>
+                  </div>
                 </div>
-                <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover:text-blue-600" />
+                <ArrowUpRight className="relative h-4 w-4 text-slate-400 group-hover:text-blue-600" />
               </Link>
             );
           })}
         </div>
+
 
         {/* Charts */}
         <div className="mt-6 grid gap-4 lg:grid-cols-3">
