@@ -60,12 +60,15 @@ function WhatsAppPage() {
   const [bulkRunning, setBulkRunning] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const sendFn = useServerFn(sendWhatsApp);
+  const cfgFn = useServerFn(twilioConfig);
+  const [cfg, setCfg] = useState<{ hasLovableKey: boolean; hasTwilioKey: boolean; hasFromNumber: boolean; fromNumber: string | null } | null>(null);
 
   useEffect(() => {
     if (!isAdmin) return;
     supabase.from("leads").select("*").order("created_at", { ascending: false }).limit(500)
       .then(({ data }) => setLeads((data as Lead[]) ?? []));
-  }, [isAdmin]);
+    cfgFn().then(setCfg).catch(() => setCfg({ hasLovableKey: false, hasTwilioKey: false, hasFromNumber: false, fromNumber: null }));
+  }, [isAdmin, cfgFn]);
 
   if (loading) return <div className="flex min-h-screen items-center justify-center"><Loader2 className="h-6 w-6 animate-spin" /></div>;
   if (!user || !isAdmin) {
