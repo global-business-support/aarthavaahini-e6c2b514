@@ -12,7 +12,6 @@ import {
   FileText,
   CalendarClock,
   Handshake,
-  MessageCircle,
   LogOut,
   Loader2,
   Search,
