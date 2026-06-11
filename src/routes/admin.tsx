@@ -233,32 +233,37 @@ function AdminPage() {
           })}
         </div>
 
-        {/* Quick links */}
+        {/* Quick links — Admin-only tools */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { to: "/admin/employees", label: "Manage Employees", icon: UserCircle2 },
-            { to: "/crm/schedule", label: "Employee Schedule", icon: CheckSquare },
-            { to: "/admin/whatsapp", label: "WhatsApp Sender", icon: Phone },
-            { to: "/crm/leads", label: "Manage Leads", icon: Users },
+            { to: "/admin/employees", label: "Manage Employees", desc: "Add, reset, remove staff", icon: UserCircle2, tone: "blue" },
+            { to: "/admin/whatsapp", label: "WhatsApp Sender", desc: "Single & bulk Twilio sends", icon: Phone, tone: "emerald" },
+            { to: "/crm/leads", label: "All Leads", desc: "Open full CRM pipeline", icon: Users, tone: "violet" },
+            { to: "/crm/reports", label: "Reports & MIS", desc: "Export & analytics", icon: Download, tone: "amber" },
           ].map((l) => {
             const Icon = l.icon;
             return (
               <Link
                 key={l.to}
                 to={l.to as never}
-                className="group flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 transition hover:border-blue-300 hover:shadow-md"
+                className="group relative flex items-center justify-between overflow-hidden rounded-xl border border-slate-200 bg-white p-4 transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
               >
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-blue-50 p-2 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition">
+                <div className={`absolute -right-6 -top-6 h-16 w-16 rounded-full opacity-30 blur-2xl ${toneBlur(l.tone)}`} />
+                <div className="relative flex items-center gap-3">
+                  <div className={`rounded-lg p-2 ${toneBg(l.tone)} ${toneFg(l.tone)} group-hover:scale-110 transition`}>
                     <Icon className="h-4 w-4" />
                   </div>
-                  <span className="text-sm font-semibold text-slate-800">{l.label}</span>
+                  <div>
+                    <div className="text-sm font-semibold text-slate-800">{l.label}</div>
+                    <div className="text-[11px] text-slate-500">{l.desc}</div>
+                  </div>
                 </div>
-                <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover:text-blue-600" />
+                <ArrowUpRight className="relative h-4 w-4 text-slate-400 group-hover:text-blue-600" />
               </Link>
             );
           })}
         </div>
+
 
         {/* Charts */}
         <div className="mt-6 grid gap-4 lg:grid-cols-3">
@@ -335,7 +340,8 @@ function AdminPage() {
               </Button>
             </div>
           </div>
-          <div className="overflow-x-auto">
+          {/* Desktop table */}
+          <div className="hidden overflow-x-auto md:block">
             <table className="w-full text-sm">
               <thead className="bg-slate-50 text-left text-[11px] uppercase tracking-wider text-slate-500">
                 <tr>
@@ -382,6 +388,43 @@ function AdminPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile cards */}
+          <div className="divide-y divide-slate-100 md:hidden">
+            {filtered.length === 0 && (
+              <div className="p-10 text-center text-sm text-slate-400">
+                {busy ? "Loading…" : "No leads found."}
+              </div>
+            )}
+            {filtered.map((l) => (
+              <div key={l.id} className="p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="truncate font-semibold text-slate-900">{l.full_name}</div>
+                    <div className="text-[11px] text-slate-500">
+                      {new Date(l.created_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="shrink-0 capitalize">{l.status}</Badge>
+                </div>
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                  <Badge variant="secondary" className="capitalize">{l.product_type?.replace(/_/g, " ")}</Badge>
+                  {l.amount && <span className="font-medium text-slate-700">₹{Number(l.amount).toLocaleString("en-IN")}</span>}
+                  {l.city && <span className="text-slate-500">• {l.city}</span>}
+                </div>
+                <div className="mt-3 flex gap-2">
+                  <a href={`tel:${l.phone}`} className="inline-flex flex-1 items-center justify-center gap-1 rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50">
+                    <Phone className="h-3 w-3" /> {l.phone}
+                  </a>
+                  <a
+                    href={`https://wa.me/${l.phone.replace(/\D/g, "")}`}
+                    target="_blank" rel="noreferrer"
+                    className="inline-flex items-center justify-center rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
+                  >WhatsApp</a>
+                </div>
+              </div>
+            ))}
           </div>
         </Card>
       </main>

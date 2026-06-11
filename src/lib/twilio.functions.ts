@@ -3,6 +3,20 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/twilio";
 
+export const twilioConfig = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async () => {
+    const from = (process.env.TWILIO_WHATSAPP_FROM || "").trim();
+    return {
+      hasLovableKey: !!process.env.LOVABLE_API_KEY,
+      hasTwilioKey: !!process.env.TWILIO_API_KEY,
+      hasFromNumber: !!from,
+      fromNumber: from
+        ? from.replace(/^whatsapp:/, "").replace(/(\+\d{2})\d+(\d{2})$/, "$1••••$2")
+        : null,
+    };
+  });
+
 export const sendWhatsApp = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { to: string; body: string; from?: string }) => {

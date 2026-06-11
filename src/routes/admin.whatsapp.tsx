@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
-import { sendWhatsApp } from "@/lib/twilio.functions";
+import { sendWhatsApp, twilioConfig } from "@/lib/twilio.functions";
 import * as XLSX from "xlsx";
 
 export const Route = createFileRoute("/admin/whatsapp")({
@@ -60,12 +60,15 @@ function WhatsAppPage() {
   const [bulkRunning, setBulkRunning] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const sendFn = useServerFn(sendWhatsApp);
+  const cfgFn = useServerFn(twilioConfig);
+  const [cfg, setCfg] = useState<{ hasLovableKey: boolean; hasTwilioKey: boolean; hasFromNumber: boolean; fromNumber: string | null } | null>(null);
 
   useEffect(() => {
     if (!isAdmin) return;
     supabase.from("leads").select("*").order("created_at", { ascending: false }).limit(500)
       .then(({ data }) => setLeads((data as Lead[]) ?? []));
-  }, [isAdmin]);
+    cfgFn().then(setCfg).catch(() => setCfg({ hasLovableKey: false, hasTwilioKey: false, hasFromNumber: false, fromNumber: null }));
+  }, [isAdmin, cfgFn]);
 
   if (loading) return <div className="flex min-h-screen items-center justify-center"><Loader2 className="h-6 w-6 animate-spin" /></div>;
   if (!user || !isAdmin) {
@@ -215,6 +218,37 @@ function WhatsAppPage() {
             <Download className="mr-2 h-4 w-4" /> Download Leads (Excel)
           </Button>
         </div>
+
+        {/* Config status banner */}
+        {cfg && (
+          <Card className={`mb-4 border p-4 ${cfg.hasTwilioKey && cfg.hasFromNumber ? "border-emerald-200 bg-emerald-50" : "border-amber-300 bg-amber-50"}`}>
+            <div className="flex flex-wrap items-start gap-3">
+              <div className={`rounded-lg p-2 ${cfg.hasTwilioKey && cfg.hasFromNumber ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                {cfg.hasTwilioKey && cfg.hasFromNumber ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
+              </div>
+              <div className="min-w-0 flex-1 text-sm">
+                <div className="font-semibold text-slate-900">
+                  {cfg.hasTwilioKey && cfg.hasFromNumber ? "WhatsApp Sender is ready" : "Setup required to send WhatsApp messages"}
+                </div>
+                <ul className="mt-1 grid gap-0.5 text-[12px] text-slate-700">
+                  <li className="flex items-center gap-2">
+                    {cfg.hasTwilioKey ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> : <XCircle className="h-3.5 w-3.5 text-rose-600" />}
+                    Twilio connector linked
+                  </li>
+                  <li className="flex items-center gap-2">
+                    {cfg.hasFromNumber ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> : <XCircle className="h-3.5 w-3.5 text-rose-600" />}
+                    WhatsApp sender number {cfg.fromNumber ? <span className="font-mono text-slate-500">({cfg.fromNumber})</span> : <span className="text-amber-700">(secret <code className="rounded bg-white px-1">TWILIO_WHATSAPP_FROM</code> not set)</span>}
+                  </li>
+                </ul>
+                {!cfg.hasFromNumber && (
+                  <p className="mt-2 text-[12px] text-amber-800">
+                    Add your Twilio WhatsApp number (e.g. <code className="rounded bg-white px-1">+14155238886</code> for sandbox, or your approved business number) as a project secret named <b>TWILIO_WHATSAPP_FROM</b>. For the sandbox, recipients must first send <b>"join &lt;your-sandbox-word&gt;"</b> to that number.
+                  </p>
+                )}
+              </div>
+            </div>
+          </Card>
+        )}
 
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Composer */}

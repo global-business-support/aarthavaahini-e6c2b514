@@ -12,7 +12,6 @@ import {
   FileText,
   CalendarClock,
   Handshake,
-  MessageCircle,
   LogOut,
   Loader2,
   Search,
@@ -66,7 +65,6 @@ const NAV: NavItem[] = [
   { to: "/crm/tasks", label: "Tasks", icon: CheckSquare },
   { to: "/crm/schedule", label: "Schedule", icon: CalendarClock },
   { to: "/crm/activity", label: "Activity", icon: Activity },
-  { to: "/crm/whatsapp", label: "WhatsApp", icon: MessageCircle },
   { to: "/crm/reports", label: "Reports & MIS", icon: FileText },
   { to: "/crm/settings", label: "Settings", icon: Settings },
 ];
