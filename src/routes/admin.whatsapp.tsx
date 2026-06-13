@@ -61,7 +61,7 @@ function WhatsAppPage() {
   const fileRef = useRef<HTMLInputElement>(null);
   const sendFn = useServerFn(sendWhatsApp);
   const cfgFn = useServerFn(twilioConfig);
-  const [cfg, setCfg] = useState<{ hasLovableKey: boolean; hasTwilioKey: boolean; hasFromNumber: boolean; fromNumber: string | null } | null>(null);
+  const [cfg, setCfg] = useState<{ hasLovableKey: boolean; hasTwilioKey: boolean; hasFromNumber: boolean; fromNumber: string | null; gatewayVerified?: boolean; gatewayMessage?: string } | null>(null);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -80,7 +80,9 @@ function WhatsAppPage() {
   const waLink = cleanPhone && finalMsg ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(finalMsg)}` : null;
 
   const sendOne = async (to: string, body: string) => {
-    const normalised = to.startsWith("+") ? to.replace(/\s/g, "") : `+${to.replace(/\D/g, "")}`;
+    const trimmed = to.trim();
+    const digits = trimmed.replace(/\D/g, "");
+    const normalised = trimmed.startsWith("+") ? trimmed.replace(/\s/g, "") : digits.length === 10 ? `+91${digits}` : `+${digits}`;
     return sendFn({ data: { to: normalised, body } });
   };
 
@@ -221,15 +223,16 @@ function WhatsAppPage() {
 
         {/* Config status banner */}
         {cfg && (
-          <Card className={`mb-4 border p-4 ${cfg.hasTwilioKey && cfg.hasFromNumber ? "border-emerald-200 bg-emerald-50" : "border-amber-300 bg-amber-50"}`}>
+          <Card className={`mb-4 border p-4 ${cfg.gatewayVerified && cfg.hasFromNumber ? "border-emerald-200 bg-emerald-50" : "border-amber-300 bg-amber-50"}`}>
             <div className="flex flex-wrap items-start gap-3">
-              <div className={`rounded-lg p-2 ${cfg.hasTwilioKey && cfg.hasFromNumber ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
-                {cfg.hasTwilioKey && cfg.hasFromNumber ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
+              <div className={`rounded-lg p-2 ${cfg.gatewayVerified && cfg.hasFromNumber ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                {cfg.gatewayVerified && cfg.hasFromNumber ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
               </div>
               <div className="min-w-0 flex-1 text-sm">
                 <div className="font-semibold text-slate-900">
-                  {cfg.hasTwilioKey && cfg.hasFromNumber ? "WhatsApp Sender is ready" : "Setup required to send WhatsApp messages"}
+                  {cfg.gatewayVerified && cfg.hasFromNumber ? "WhatsApp Sender is ready" : "Setup required to send WhatsApp messages"}
                 </div>
+                <p className="mt-1 text-[12px] text-slate-700">{cfg.gatewayMessage ?? "Checking Twilio token"}</p>
                 <ul className="mt-1 grid gap-0.5 text-[12px] text-slate-700">
                   <li className="flex items-center gap-2">
                     {cfg.hasTwilioKey ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> : <XCircle className="h-3.5 w-3.5 text-rose-600" />}
