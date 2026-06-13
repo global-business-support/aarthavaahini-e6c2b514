@@ -25,9 +25,24 @@ const parseGatewayBody = async (res: Response) => {
   }
 };
 
+const assertStaffUser = async (token: string) => {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.auth.getUser(token);
+  if (error || !data.user) throw new Error("Unauthorized: Please login again.");
+  const { data: role } = await supabaseAdmin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", data.user.id)
+    .in("role", ["admin", "manager", "sales_executive", "operations", "insurance_executive", "mf_executive"])
+    .limit(1)
+    .maybeSingle();
+  if (!role) throw new Error("Forbidden: CRM staff access required.");
+};
+
 export const twilioConfig = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async () => {
+  .handler(async ({ context }) => {
+    await assertStaffUser(context.token);
     const lovableKey = process.env.LOVABLE_API_KEY;
     const twilioKey = process.env.TWILIO_API_KEY;
     const from = normalizeE164(process.env.TWILIO_WHATSAPP_FROM || DEFAULT_WHATSAPP_FROM);
@@ -63,7 +78,8 @@ export const sendWhatsApp = createServerFn({ method: "POST" })
     if (!data?.to || !data?.body) throw new Error("Missing 'to' or 'body'");
     return data;
   })
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await assertStaffUser(context.token);
     const lovableKey = process.env.LOVABLE_API_KEY;
     const twilioKey = process.env.TWILIO_API_KEY;
     if (!lovableKey || !twilioKey) {
