@@ -47,7 +47,17 @@ type Row = {
   loan_amount: number | null;
   cibil_score: number | null;
   stage: string;
+  bank_name: string | null;
+  note: string | null;
 };
+
+const BANK_OPTIONS = [
+  "HDFC Bank", "ICICI Bank", "State Bank of India", "Axis Bank", "Kotak Mahindra Bank",
+  "IDFC First Bank", "Yes Bank", "IndusInd Bank", "Punjab National Bank", "Bank of Baroda",
+  "Canara Bank", "Union Bank of India", "Federal Bank", "RBL Bank", "Bajaj Finserv",
+  "Tata Capital", "Aditya Birla Finance", "L&T Finance", "Mahindra Finance", "IDBI Bank",
+  "Piramal Finance", "DCB Bank", "Karnataka Bank", "South Indian Bank",
+];
 
 type Note = { id: string; notes: string | null; created_at: string };
 
