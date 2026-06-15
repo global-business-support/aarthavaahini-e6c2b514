@@ -255,6 +255,20 @@ export function EmiCalculator() {
                 <span className="rounded-full bg-orange-100 px-3 py-1 text-orange-700">Interest ₹ {formatINR(totalInterest)}</span>
               </div>
             </div>
+
+            {/* Year-wise chart */}
+            <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <h4 className="text-sm font-bold text-[#07142f]">Year-wise Breakup</h4>
+                <div className="flex items-center gap-3 text-xs">
+                  <span className="flex items-center gap-1"><span className="inline-block h-3 w-3 rounded-sm bg-blue-600" /> Principal</span>
+                  <span className="flex items-center gap-1"><span className="inline-block h-3 w-3 rounded-sm bg-orange-400" /> Interest</span>
+                  <span className="flex items-center gap-1"><span className="inline-block h-3 w-1 rounded-sm bg-emerald-500" /> Balance</span>
+                </div>
+              </div>
+              <YearlyChart data={yearly} loan={finalAmount} />
+            </div>
+
             <div className="max-h-[520px] overflow-auto rounded-xl border border-gray-200 bg-white">
               <table className="w-full text-sm">
                 <thead className="sticky top-0 bg-[#17357e] text-white">
