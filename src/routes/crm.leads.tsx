@@ -228,6 +228,7 @@ function LeadsPage() {
           loan_sub_type: lead.loan_sub_type,
           loan_amount: lead.loan_amount,
           cibil_score: lead.cibil_score,
+          bank_name: lead.bank_name,
           stage: "Docs Pending",
         });
         toast.success("Approved → Customer created");
