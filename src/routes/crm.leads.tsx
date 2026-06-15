@@ -337,6 +337,7 @@ function LeadsPage() {
                 <TableHead>Loan Amount</TableHead>
                 <TableHead>CIBIL</TableHead>
                 <TableHead>Stage</TableHead>
+                <TableHead>Bank</TableHead>
                 <TableHead>Assigned</TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
