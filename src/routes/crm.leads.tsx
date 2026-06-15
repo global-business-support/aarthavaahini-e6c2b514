@@ -482,6 +482,18 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
         </Select>
       </Field>
 
+      <Field label="Loan Type">
+        <Select value={f.loan_type} onValueChange={(v) => setF({ ...f, loan_type: v })}>
+          <SelectTrigger className="border-blue-200 focus:ring-blue-400"><SelectValue placeholder="Choose loan type" /></SelectTrigger>
+          <SelectContent className="bg-white">
+            {LOAN_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </Field>
+      <Field label="Sub Loan Type"><Input className="border-blue-200 focus-visible:ring-blue-400" placeholder="e.g. Home Purchase" value={f.loan_sub_type} onChange={(e) => setF({ ...f, loan_sub_type: e.target.value })} /></Field>
+      <Field label="Loan Amount (₹)"><Input type="number" className="border-emerald-200 focus-visible:ring-emerald-400" placeholder="500000" value={f.loan_amount} onChange={(e) => setF({ ...f, loan_amount: e.target.value })} /></Field>
+      <Field label="CIBIL Score"><Input type="number" min={300} max={900} className="border-amber-200 focus-visible:ring-amber-400" placeholder="750" value={f.cibil_score} onChange={(e) => setF({ ...f, cibil_score: e.target.value })} /></Field>
+
       <div className="col-span-2 mt-2 flex justify-end">
         <Button type="submit" disabled={saving} className="bg-gradient-to-r from-sky-600 via-blue-600 to-cyan-600 text-white shadow-md hover:opacity-90">
           {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Create Lead
