@@ -361,3 +361,62 @@ function Detail({ icon: Icon, label, value, full }: { icon?: React.ComponentType
     </div>
   );
 }
+
+function NoteCell({ row, onSaved }: { row: Row; onSaved: (text: string) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState(row.note ?? "");
+  const [saving, setSaving] = useState(false);
+
+  const save = async () => {
+    setSaving(true);
+    const trimmed = text.trim();
+    const { error } = await supabase.from("customers").update({ note: trimmed || null }).eq("id", row.id);
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    onSaved(trimmed);
+    setEditing(false);
+    toast.success("Note saved");
+  };
+
+  if (editing) {
+    return (
+      <div className="space-y-1.5">
+        <Textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          rows={3}
+          placeholder="Quick note about this customer…"
+          className="border-amber-300 focus-visible:ring-amber-400 text-sm"
+          autoFocus
+        />
+        <div className="flex justify-end gap-1.5">
+          <Button size="sm" variant="outline" className="h-7 px-2 text-xs" onClick={() => { setText(row.note ?? ""); setEditing(false); }}>
+            Cancel
+          </Button>
+          <Button size="sm" disabled={saving} onClick={save} className="h-7 bg-amber-500 px-2 text-xs text-white hover:bg-amber-600">
+            {saving && <Loader2 className="mr-1 h-3 w-3 animate-spin" />} Save
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={() => setEditing(true)}
+      className={cn(
+        "group block w-full rounded-md border px-2 py-1.5 text-left text-xs transition",
+        row.note
+          ? "border-amber-200 bg-amber-50/60 text-slate-800 hover:bg-amber-50"
+          : "border-dashed border-slate-300 bg-white text-slate-400 hover:border-amber-300 hover:text-amber-700",
+      )}
+      title="Click to edit note"
+    >
+      {row.note ? (
+        <span className="line-clamp-2 whitespace-pre-wrap">{row.note}</span>
+      ) : (
+        <span>+ Add note</span>
+      )}
+    </button>
+  );
+}
