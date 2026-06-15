@@ -477,8 +477,11 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
     lead_name: "", phone: "", email: "", pan: "", aadhaar: "", city: "", state: "",
     product_type: "loan", lead_source: "Website",
     loan_type: "", loan_sub_type: "", loan_amount: "", cibil_score: "",
+    bank_name: "",
   });
   const [saving, setSaving] = useState(false);
+
+  const subOptions = SUB_LOAN_TYPES[f.loan_type] ?? [];
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -494,6 +497,7 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
       amount: f.loan_amount ? Number(f.loan_amount) : null,
       cibil_score: f.cibil_score ? Number(f.cibil_score) : null,
       product_name: f.loan_sub_type || f.loan_type || null,
+      bank_name: f.bank_name || null,
     });
     setSaving(false);
     if (error) return toast.error(error.message);
