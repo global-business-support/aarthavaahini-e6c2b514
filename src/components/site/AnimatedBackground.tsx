@@ -58,7 +58,8 @@ export function AnimatedBackground({ variant }: { variant: Variant }) {
 
       {/* Color tint + white wash for readability */}
       <div className={`absolute inset-0 bg-gradient-to-br ${preset.tint}`} />
-      <div className="absolute inset-0 bg-white/55" />
+      <div className="absolute inset-0 bg-white/30" />
+
 
       {/* Animated soft color blobs */}
       <div className={`absolute -top-40 -left-32 h-[32rem] w-[32rem] rounded-full ${preset.blob1} blur-3xl animate-blob`} />
