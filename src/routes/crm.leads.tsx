@@ -372,6 +372,26 @@ function LeadsPage() {
                       </span>
                     </TableCell>
                     <TableCell>
+                      <Select
+                        value={l.bank_name ?? "none"}
+                        onValueChange={async (v) => {
+                          const bn = v === "none" ? null : v;
+                          const { error } = await supabase.from("leads").update({ bank_name: bn }).eq("id", l.id);
+                          if (error) return toast.error(error.message);
+                          setLeads((p) => p.map((x) => (x.id === l.id ? { ...x, bank_name: bn } : x)));
+                          toast.success(bn ? `Bank → ${bn}` : "Bank cleared");
+                        }}
+                      >
+                        <SelectTrigger className="h-8 w-[150px] bg-white">
+                          <SelectValue placeholder="—" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white max-h-72">
+                          <SelectItem value="none">— None —</SelectItem>
+                          {BANK_OPTIONS.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
                       <Select value={l.assigned_to ?? "unassigned"} onValueChange={(v) => updateAssignee(l, v)}>
                         <SelectTrigger className="h-8 w-[150px] bg-white">
                           <SelectValue placeholder="Unassigned" />
