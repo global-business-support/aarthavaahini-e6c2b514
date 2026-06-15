@@ -17,7 +17,7 @@ async function assertStaff(token: string) {
     .from("user_roles")
     .select("role")
     .eq("user_id", user.id)
-    .in("role", STAFF_ROLES as unknown as string[])
+    .in("role", STAFF_ROLES as unknown as never)
     .limit(1)
     .maybeSingle();
   if (!data) throw new Error("Forbidden: staff access required.");
@@ -124,7 +124,7 @@ export const updatePartner = createServerFn({ method: "POST" })
     const patch: Record<string, unknown> = {};
     for (const k of allowed) if (k in data.patch) patch[k] = data.patch[k];
     const { data: row, error } = await supabaseAdmin
-      .from("partners").update(patch).eq("id", data.id).select().single();
+      .from("partners").update(patch as never).eq("id", data.id).select().single();
     if (error) throw new Error(error.message);
     return { partner: row };
   });
@@ -187,7 +187,7 @@ export const updateMyPartner = createServerFn({ method: "POST" })
       if (data[k] !== undefined) patch[k] = data[k];
     }
     const { data: row, error } = await supabaseAdmin
-      .from("partners").update(patch).eq("user_id", user.id).select().single();
+      .from("partners").update(patch as never).eq("user_id", user.id).select().single();
     if (error) throw new Error(error.message);
     return { partner: row };
   });
@@ -227,7 +227,7 @@ export const createMyPartnerLead = createServerFn({ method: "POST" })
       .from("leads").insert({
         full_name: data.full_name,
         phone: data.phone,
-        email: data.email || null,
+        email: data.email || "",
         product_type: data.product_type || null,
         product_name: data.product_name || null,
         amount: data.amount ?? null,

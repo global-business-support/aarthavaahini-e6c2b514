@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PartnerRouteImport } from './routes/partner'
 import { Route as MutualFundsRouteImport } from './routes/mutual-funds'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LoansRouteImport } from './routes/loans'
@@ -43,6 +44,11 @@ import { Route as BlogsCibilScoreRouteImport } from './routes/blogs/cibil-score'
 import { Route as AdminWhatsappRouteImport } from './routes/admin.whatsapp'
 import { Route as AdminEmployeesRouteImport } from './routes/admin.employees'
 
+const PartnerRoute = PartnerRouteImport.update({
+  id: '/partner',
+  path: '/partner',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MutualFundsRoute = MutualFundsRouteImport.update({
   id: '/mutual-funds',
   path: '/mutual-funds',
@@ -223,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/loans': typeof LoansRoute
   '/login': typeof LoginRoute
   '/mutual-funds': typeof MutualFundsRoute
+  '/partner': typeof PartnerRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/whatsapp': typeof AdminWhatsappRoute
   '/blogs/cibil-score': typeof BlogsCibilScoreRoute
@@ -257,6 +264,7 @@ export interface FileRoutesByTo {
   '/loans': typeof LoansRoute
   '/login': typeof LoginRoute
   '/mutual-funds': typeof MutualFundsRoute
+  '/partner': typeof PartnerRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/whatsapp': typeof AdminWhatsappRoute
   '/blogs/cibil-score': typeof BlogsCibilScoreRoute
@@ -293,6 +301,7 @@ export interface FileRoutesById {
   '/loans': typeof LoansRoute
   '/login': typeof LoginRoute
   '/mutual-funds': typeof MutualFundsRoute
+  '/partner': typeof PartnerRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/whatsapp': typeof AdminWhatsappRoute
   '/blogs/cibil-score': typeof BlogsCibilScoreRoute
@@ -330,6 +339,7 @@ export interface FileRouteTypes {
     | '/loans'
     | '/login'
     | '/mutual-funds'
+    | '/partner'
     | '/admin/employees'
     | '/admin/whatsapp'
     | '/blogs/cibil-score'
@@ -364,6 +374,7 @@ export interface FileRouteTypes {
     | '/loans'
     | '/login'
     | '/mutual-funds'
+    | '/partner'
     | '/admin/employees'
     | '/admin/whatsapp'
     | '/blogs/cibil-score'
@@ -399,6 +410,7 @@ export interface FileRouteTypes {
     | '/loans'
     | '/login'
     | '/mutual-funds'
+    | '/partner'
     | '/admin/employees'
     | '/admin/whatsapp'
     | '/blogs/cibil-score'
@@ -435,10 +447,18 @@ export interface RootRouteChildren {
   LoansRoute: typeof LoansRoute
   LoginRoute: typeof LoginRoute
   MutualFundsRoute: typeof MutualFundsRoute
+  PartnerRoute: typeof PartnerRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/partner': {
+      id: '/partner'
+      path: '/partner'
+      fullPath: '/partner'
+      preLoaderRoute: typeof PartnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mutual-funds': {
       id: '/mutual-funds'
       path: '/mutual-funds'
@@ -751,6 +771,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoansRoute: LoansRoute,
   LoginRoute: LoginRoute,
   MutualFundsRoute: MutualFundsRoute,
+  PartnerRoute: PartnerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
