@@ -255,13 +255,14 @@ export function EmiCalculator() {
               </div>
 
               {mode !== "Loan Amount" && (
-                <Slider label="Loan Amount" value={`₹ ${formatINR(amount)}`} min={100000} max={50000000} step={50000} v={amount} onChange={setAmount} />
+                <Slider label="Loan Amount" value={`₹ ${formatINR(amount)}`} min={100000} max={50000000} step={50000} v={amount} onChange={setAmount} unit="₹" />
               )}
               {mode !== "ROI" && (
-                <Slider label="Interest Rate" value={`${rate}%`} min={5} max={24} step={0.05} v={rate} onChange={setRate} />
+                <Slider label="Interest Rate %" value={`${rate}%`} min={5} max={24} step={0.05} v={rate} onChange={setRate} unit="%" />
               )}
+              <Slider label="Loan Tenure (Years)" value={`${years} Years`} min={1} max={30} step={1} v={years} onChange={setYears} unit="Yr" />
               {mode !== "EMI" && (
-                <Slider label="Monthly EMI" value={`₹ ${formatINR(emiInput)}`} min={1000} max={500000} step={500} v={emiInput} onChange={setEmiInput} />
+                <Slider label="Monthly EMI" value={`₹ ${formatINR(emiInput)}`} min={1000} max={500000} step={500} v={emiInput} onChange={setEmiInput} unit="₹" />
               )}
             </div>
 
@@ -275,8 +276,10 @@ export function EmiCalculator() {
               </div>
               <Stat label="Monthly EMI" value={`₹ ${formatINR(finalEmi)}`} />
               <Stat label="Loan Amount" value={`₹ ${formatINR(finalAmount)}`} />
+              <Stat label="Loan Tenure" value={`${years} Years (${finalMonths} mo)`} />
+              <Stat label="Interest Rate" value={`${(finalRate * 12 * 100).toFixed(2)}%`} />
               <Stat label="Total Interest" value={`₹ ${formatINR(totalInterest)}`} />
-              <Stat label="Total Payable" value={`₹ ${formatINR(totalPayable)}`} />
+              <Stat label="Total Amount (Principal + Interest)" value={`₹ ${formatINR(totalPayable)}`} />
 
               <div>
                 <div className="mb-2 flex justify-between text-xs text-gray-600">
