@@ -49,8 +49,7 @@ export function EmiCalculator() {
   const [mode, setMode] = useState<Mode>("EMI");
   const [amount, setAmount] = useState(2700000);
   const [rate, setRate] = useState(8.5);
-  // Tenure is fixed internally (20 years) — UI does not expose it per requirement
-  const years = 20;
+  const [years, setYears] = useState(20);
   const [emiInput, setEmiInput] = useState(42324);
 
   const months = years * 12;
@@ -256,13 +255,14 @@ export function EmiCalculator() {
               </div>
 
               {mode !== "Loan Amount" && (
-                <Slider label="Loan Amount" value={`₹ ${formatINR(amount)}`} min={100000} max={50000000} step={50000} v={amount} onChange={setAmount} />
+                <Slider label="Loan Amount" value={`₹ ${formatINR(amount)}`} min={100000} max={50000000} step={50000} v={amount} onChange={setAmount} unit="₹" />
               )}
               {mode !== "ROI" && (
-                <Slider label="Interest Rate" value={`${rate}%`} min={5} max={24} step={0.05} v={rate} onChange={setRate} />
+                <Slider label="Interest Rate %" value={`${rate}%`} min={5} max={24} step={0.05} v={rate} onChange={setRate} unit="%" />
               )}
+              <Slider label="Loan Tenure (Years)" value={`${years} Years`} min={1} max={30} step={1} v={years} onChange={setYears} unit="Yr" />
               {mode !== "EMI" && (
-                <Slider label="Monthly EMI" value={`₹ ${formatINR(emiInput)}`} min={1000} max={500000} step={500} v={emiInput} onChange={setEmiInput} />
+                <Slider label="Monthly EMI" value={`₹ ${formatINR(emiInput)}`} min={1000} max={500000} step={500} v={emiInput} onChange={setEmiInput} unit="₹" />
               )}
             </div>
 
@@ -276,8 +276,10 @@ export function EmiCalculator() {
               </div>
               <Stat label="Monthly EMI" value={`₹ ${formatINR(finalEmi)}`} />
               <Stat label="Loan Amount" value={`₹ ${formatINR(finalAmount)}`} />
+              <Stat label="Loan Tenure" value={`${years} Years (${finalMonths} mo)`} />
+              <Stat label="Interest Rate" value={`${(finalRate * 12 * 100).toFixed(2)}%`} />
               <Stat label="Total Interest" value={`₹ ${formatINR(totalInterest)}`} />
-              <Stat label="Total Payable" value={`₹ ${formatINR(totalPayable)}`} />
+              <Stat label="Total Amount (Principal + Interest)" value={`₹ ${formatINR(totalPayable)}`} />
 
               <div>
                 <div className="mb-2 flex justify-between text-xs text-gray-600">
@@ -501,17 +503,36 @@ function YearlyChart({ data, loan }: { data: { year: number; interest: number; p
   );
 }
 
-function Slider({ label, value, v, min, max, step, onChange }: {
-  label: string; value: string; v: number; min: number; max: number; step: number; onChange: (n: number) => void;
+function Slider({ label, value, v, min, max, step, onChange, unit }: {
+  label: string; value: string; v: number; min: number; max: number; step: number; onChange: (n: number) => void; unit?: string;
 }) {
   return (
     <div>
-      <div className="mb-2 flex justify-between">
+      <div className="mb-2 flex items-center justify-between gap-2">
         <span className="font-medium">{label}</span>
-        <span className="font-semibold text-blue-700">{value}</span>
+        <div className="flex items-center gap-1 rounded-lg border border-blue-200 bg-white px-2 py-1">
+          {unit && <span className="text-xs text-gray-500">{unit}</span>}
+          <input
+            type="number"
+            min={min}
+            max={max}
+            step={step}
+            value={v}
+            onChange={(e) => {
+              const n = Number(e.target.value);
+              if (!isNaN(n)) onChange(n);
+            }}
+            className="w-28 bg-transparent text-right text-sm font-semibold text-blue-700 outline-none"
+          />
+        </div>
       </div>
       <input type="range" min={min} max={max} step={step} value={v}
         onChange={(e) => onChange(Number(e.target.value))} className="w-full accent-blue-600" />
+      <div className="mt-1 flex justify-between text-[10px] text-gray-400">
+        <span>{typeof min === "number" && min >= 1000 ? `₹ ${formatINR(min)}` : min}</span>
+        <span className="text-blue-700">{value}</span>
+        <span>{typeof max === "number" && max >= 1000 ? `₹ ${formatINR(max)}` : max}</span>
+      </div>
     </div>
   );
 }
