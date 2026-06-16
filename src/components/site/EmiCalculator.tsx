@@ -503,17 +503,36 @@ function YearlyChart({ data, loan }: { data: { year: number; interest: number; p
   );
 }
 
-function Slider({ label, value, v, min, max, step, onChange }: {
-  label: string; value: string; v: number; min: number; max: number; step: number; onChange: (n: number) => void;
+function Slider({ label, value, v, min, max, step, onChange, unit }: {
+  label: string; value: string; v: number; min: number; max: number; step: number; onChange: (n: number) => void; unit?: string;
 }) {
   return (
     <div>
-      <div className="mb-2 flex justify-between">
+      <div className="mb-2 flex items-center justify-between gap-2">
         <span className="font-medium">{label}</span>
-        <span className="font-semibold text-blue-700">{value}</span>
+        <div className="flex items-center gap-1 rounded-lg border border-blue-200 bg-white px-2 py-1">
+          {unit && <span className="text-xs text-gray-500">{unit}</span>}
+          <input
+            type="number"
+            min={min}
+            max={max}
+            step={step}
+            value={v}
+            onChange={(e) => {
+              const n = Number(e.target.value);
+              if (!isNaN(n)) onChange(n);
+            }}
+            className="w-28 bg-transparent text-right text-sm font-semibold text-blue-700 outline-none"
+          />
+        </div>
       </div>
       <input type="range" min={min} max={max} step={step} value={v}
         onChange={(e) => onChange(Number(e.target.value))} className="w-full accent-blue-600" />
+      <div className="mt-1 flex justify-between text-[10px] text-gray-400">
+        <span>{typeof min === "number" && min >= 1000 ? `₹ ${formatINR(min)}` : min}</span>
+        <span className="text-blue-700">{value}</span>
+        <span>{typeof max === "number" && max >= 1000 ? `₹ ${formatINR(max)}` : max}</span>
+      </div>
     </div>
   );
 }
