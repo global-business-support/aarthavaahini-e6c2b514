@@ -443,8 +443,6 @@ export function EligibilityChecker() {
                           <LeadForm
                             productType={p.category === "loan" ? "loan" : p.category === "insurance" ? "insurance" : "mutual_fund"}
                             productName={p.name}
-                            showAmount
-                            showMessage
                           />
                         </DialogContent>
                       </Dialog>
