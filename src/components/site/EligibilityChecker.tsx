@@ -233,7 +233,7 @@ export function EligibilityChecker() {
 
         <div className="grid gap-6 lg:grid-cols-5">
           {/* LEFT: Common details */}
-          <div className="lg:col-span-2 rounded-3xl border bg-white p-6 shadow-sm h-fit">
+          <div className="lg:col-span-2 rounded-3xl border bg-white p-6 shadow-sm h-fit overflow-visible">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">Your Details</h3>
 
             <div className="space-y-4">
@@ -251,21 +251,35 @@ export function EligibilityChecker() {
                   <Input value={base.city} onChange={(e) => setBase({ ...base, city: e.target.value })} placeholder="Mumbai" />
                 </div>
               </div>
+               <div>
+  <Label>Employment Type</Label>
 
-              <div>
-                <Label>Employment Type</Label>
-                <Select value={base.employment} onValueChange={(v: EmploymentType) => setBase({ ...base, employment: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="salaried">Salaried</SelectItem>
-                    <SelectItem value="self_employed">Self Employed Professional</SelectItem>
-                    <SelectItem value="business">Business Owner</SelectItem>
-                    <SelectItem value="student">Student</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+  <Select
+    value={base.employment}
+    onValueChange={(v: EmploymentType) =>
+      setBase({ ...base, employment: v })
+    }
+  >
+    <SelectTrigger className="mt-2 h-12 rounded-xl border-slate-300 bg-white">
+      <SelectValue placeholder="Select employment type" />
+    </SelectTrigger>
 
-              <div className="grid grid-cols-2 gap-3">
+    <SelectContent
+      position="popper"
+      sideOffset={8}
+      className="z-[9999] rounded-xl border border-slate-200 bg-white shadow-xl"
+    >
+      <SelectItem value="salaried">Salaried</SelectItem>
+      <SelectItem value="self_employed">
+        Self Employed Professional
+      </SelectItem>
+      <SelectItem value="business">Business Owner</SelectItem>
+      <SelectItem value="student">Student</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
+
+             <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
                 <div>
                   <Label>Monthly Income (₹)</Label>
                   <Input type="number" value={base.monthlyIncome} onChange={(e) => setBase({ ...base, monthlyIncome: +e.target.value })} />
@@ -276,7 +290,7 @@ export function EligibilityChecker() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
                 <div>
                   <Label>CIBIL Score</Label>
                   <Input type="number" value={base.cibil} onChange={(e) => setBase({ ...base, cibil: +e.target.value })} />

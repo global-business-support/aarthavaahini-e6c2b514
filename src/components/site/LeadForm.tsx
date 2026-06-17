@@ -118,152 +118,197 @@ export function LeadForm({
   };
 
   return (
-    <div className="w-full rounded-[24px] bg-gradient-to-br from-slate-950 via-slate-900 to-black p-6 sm:p-8 shadow-2xl">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white">
-          {productName ? `${productName} — Enquiry` : "Apply Now"}
-        </h2>
-        <p className="mt-1 text-sm text-slate-400">
-          Fill in your details and our expert will contact you shortly.
-        </p>
+  <div className="w-full rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-black p-4 shadow-2xl sm:p-5">
+    <div className="mb-4">
+      <h2 className="text-xl font-bold text-white">
+        {productName ? `${productName} — Enquiry` : "Apply Now"}
+      </h2>
+
+      <p className="mt-1 text-xs text-slate-400">
+        Fill in your details and our expert will contact you shortly.
+      </p>
+    </div>
+
+    <form onSubmit={submit} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="sm:col-span-2">
+        <Label className="mb-1 block text-xs font-medium text-slate-300">
+          Full Name
+        </Label>
+        <Input
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          placeholder="Enter your full name"
+          required
+          className="h-10 rounded-lg border-slate-700 bg-slate-800/60 px-3 text-sm text-white placeholder:text-slate-500 focus-visible:ring-sky-500"
+        />
       </div>
 
-      <form onSubmit={submit} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="sm:col-span-2">
-          <Label className="mb-1.5 block text-xs font-medium text-slate-300">Full Name</Label>
-          <Input
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            placeholder="Enter your full name"
-            required
-            className="h-11 rounded-xl border-slate-700 bg-slate-800/60 px-4 text-white placeholder:text-slate-500 focus-visible:ring-sky-500"
-          />
-        </div>
+      <div>
+        <Label className="mb-1 block text-xs font-medium text-slate-300">
+          Email
+        </Label>
+        <Input
+          type="email"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          placeholder="you@example.com"
+          className="h-10 rounded-lg border-slate-700 bg-slate-800/60 px-3 text-sm text-white placeholder:text-slate-500 focus-visible:ring-sky-500"
+        />
+      </div>
 
-        <div>
-          <Label className="mb-1.5 block text-xs font-medium text-slate-300">Email</Label>
-          <Input
-            type="email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            placeholder="you@example.com"
-            className="h-11 rounded-xl border-slate-700 bg-slate-800/60 px-4 text-white placeholder:text-slate-500 focus-visible:ring-sky-500"
-          />
-        </div>
+      <div>
+        <Label className="mb-1 block text-xs font-medium text-slate-300">
+          Phone
+        </Label>
+        <Input
+          value={form.phone}
+          onChange={(e) => setForm({ ...form, phone: e.target.value })}
+          placeholder="+91 9xxxxxxxxx"
+          required
+          className="h-10 rounded-lg border-slate-700 bg-slate-800/60 px-3 text-sm text-white placeholder:text-slate-500 focus-visible:ring-sky-500"
+        />
+      </div>
 
-        <div>
-          <Label className="mb-1.5 block text-xs font-medium text-slate-300">Phone</Label>
-          <Input
-            value={form.phone}
-            onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            placeholder="+91 9xxxxxxxxx"
-            required
-            className="h-11 rounded-xl border-slate-700 bg-slate-800/60 px-4 text-white placeholder:text-slate-500 focus-visible:ring-sky-500"
-          />
-        </div>
-
-        {/* LOAN TYPE + SUB-TYPE for loan applications */}
-        {isLoanFlow && (
-          <>
-            <div>
-              <Label className="mb-1.5 block text-xs font-medium text-slate-300">Loan Type</Label>
-              <Select
-                value={form.loan_type}
-                onValueChange={(v) => setForm({ ...form, loan_type: v, loan_sub_type: "" })}
-              >
-                <SelectTrigger className="h-11 rounded-xl border-slate-700 bg-slate-800/60 px-4 text-white">
-                  <SelectValue placeholder="Choose loan type" />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  {LOAN_TYPES.map((l) => (
-                    <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="mb-1.5 block text-xs font-medium text-slate-300">Sub-Loan Type</Label>
-              <Select
-                value={form.loan_sub_type}
-                onValueChange={(v) => setForm({ ...form, loan_sub_type: v })}
-                disabled={!form.loan_type}
-              >
-                <SelectTrigger className="h-11 rounded-xl border-slate-700 bg-slate-800/60 px-4 text-white disabled:opacity-50">
-                  <SelectValue placeholder={form.loan_type ? "Choose sub-type" : "Select loan type first"} />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  {subOptions.map((s) => (
-                    <SelectItem key={s} value={s}>{s}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </>
-        )}
-
-        {!productName && !isLoanFlow && productOptions.length > 0 && (
-          <div className="sm:col-span-2">
-            <Label className="mb-1.5 block text-xs font-medium text-slate-300">{productLabel}</Label>
+      {isLoanFlow && (
+        <>
+          <div>
+            <Label className="mb-1 block text-xs font-medium text-slate-300">
+              Loan Type
+            </Label>
             <Select
-              value={form.product}
-              onValueChange={(v) => setForm({ ...form, product: v })}
+              value={form.loan_type}
+              onValueChange={(v) =>
+                setForm({ ...form, loan_type: v, loan_sub_type: "" })
+              }
             >
-              <SelectTrigger className="h-11 rounded-xl border-slate-700 bg-slate-800/60 px-4 text-white">
-                <SelectValue placeholder={`Choose a ${productType.replace(/_/g, " ")}`} />
+              <SelectTrigger className="h-10 rounded-lg border-slate-700 bg-slate-800/60 px-3 text-sm text-white">
+                <SelectValue placeholder="Choose loan type" />
               </SelectTrigger>
-              <SelectContent className="bg-white">
-                {productOptions.map((p) => (
-                  <SelectItem key={p.slug} value={p.name}>
-                    {p.name}
+              <SelectContent
+                position="popper"
+                sideOffset={6}
+                className="z-[9999] bg-white"
+              >
+                {LOAN_TYPES.map((l) => (
+                  <SelectItem key={l.value} value={l.value}>
+                    {l.label}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-        )}
 
-        <div>
-          <Label className="mb-1.5 block text-xs font-medium text-slate-300">{isLoanFlow ? "Loan Amount (₹)" : "Amount (₹)"}</Label>
-          <Input
-            type="number"
-            value={form.amount}
-            onChange={(e) => setForm({ ...form, amount: e.target.value })}
-            placeholder="5,00,000"
-            className="h-11 rounded-xl border-slate-700 bg-slate-800/60 px-4 text-white placeholder:text-slate-500 focus-visible:ring-sky-500"
-          />
-        </div>
+          <div>
+            <Label className="mb-1 block text-xs font-medium text-slate-300">
+              Sub-Loan Type
+            </Label>
+            <Select
+              value={form.loan_sub_type}
+              onValueChange={(v) => setForm({ ...form, loan_sub_type: v })}
+              disabled={!form.loan_type}
+            >
+              <SelectTrigger className="h-10 rounded-lg border-slate-700 bg-slate-800/60 px-3 text-sm text-white disabled:opacity-50">
+                <SelectValue
+                  placeholder={
+                    form.loan_type ? "Choose sub-type" : "Select loan type first"
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent
+                position="popper"
+                sideOffset={6}
+                className="z-[9999] bg-white"
+              >
+                {subOptions.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </>
+      )}
 
-        <div>
-          <Label className="mb-1.5 block text-xs font-medium text-slate-300">Monthly Income</Label>
-          <Input
-            type="number"
-            value={form.monthly_income}
-            onChange={(e) => setForm({ ...form, monthly_income: e.target.value })}
-            placeholder="50,000"
-            className="h-11 rounded-xl border-slate-700 bg-slate-800/60 px-4 text-white placeholder:text-slate-500 focus-visible:ring-sky-500"
-          />
-        </div>
-
+      {!productName && !isLoanFlow && productOptions.length > 0 && (
         <div className="sm:col-span-2">
-          <Label className="mb-1.5 block text-xs font-medium text-slate-300">Message</Label>
-          <Textarea
-            rows={3}
-            value={form.message}
-            onChange={(e) => setForm({ ...form, message: e.target.value })}
-            placeholder="Write your message..."
-            className="rounded-xl border-slate-700 bg-slate-800/60 px-4 py-3 text-white placeholder:text-slate-500 focus-visible:ring-sky-500 resize-none"
-          />
+          <Label className="mb-1 block text-xs font-medium text-slate-300">
+            {productLabel}
+          </Label>
+          <Select
+            value={form.product}
+            onValueChange={(v) => setForm({ ...form, product: v })}
+          >
+            <SelectTrigger className="h-10 rounded-lg border-slate-700 bg-slate-800/60 px-3 text-sm text-white">
+              <SelectValue
+                placeholder={`Choose a ${productType.replace(/_/g, " ")}`}
+              />
+            </SelectTrigger>
+            <SelectContent
+              position="popper"
+              sideOffset={6}
+              className="z-[9999] bg-white"
+            >
+              {productOptions.map((p) => (
+                <SelectItem key={p.slug} value={p.name}>
+                  {p.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
+      )}
 
-        <Button
-          type="submit"
-          disabled={loading}
-          className="sm:col-span-2 h-12 rounded-xl bg-gradient-to-r from-sky-500 via-blue-500 to-cyan-500 text-base font-semibold text-white shadow-lg shadow-sky-500/30 transition-all hover:scale-[1.01] hover:opacity-95"
-        >
-          {loading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-          {buttonLabel}
-        </Button>
-      </form>
-    </div>
-  );
+      <div>
+        <Label className="mb-1 block text-xs font-medium text-slate-300">
+          {isLoanFlow ? "Loan Amount (₹)" : "Amount (₹)"}
+        </Label>
+        <Input
+          type="number"
+          value={form.amount}
+          onChange={(e) => setForm({ ...form, amount: e.target.value })}
+          placeholder="5,00,000"
+          className="h-10 rounded-lg border-slate-700 bg-slate-800/60 px-3 text-sm text-white placeholder:text-slate-500 focus-visible:ring-sky-500"
+        />
+      </div>
+
+      <div>
+        <Label className="mb-1 block text-xs font-medium text-slate-300">
+          Monthly Income
+        </Label>
+        <Input
+          type="number"
+          value={form.monthly_income}
+          onChange={(e) =>
+            setForm({ ...form, monthly_income: e.target.value })
+          }
+          placeholder="50,000"
+          className="h-10 rounded-lg border-slate-700 bg-slate-800/60 px-3 text-sm text-white placeholder:text-slate-500 focus-visible:ring-sky-500"
+        />
+      </div>
+
+      <div className="sm:col-span-2">
+        <Label className="mb-1 block text-xs font-medium text-slate-300">
+          Message
+        </Label>
+        <Textarea
+          rows={2}
+          value={form.message}
+          onChange={(e) => setForm({ ...form, message: e.target.value })}
+          placeholder="Write your message..."
+          className="min-h-[70px] resize-none rounded-lg border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus-visible:ring-sky-500"
+        />
+      </div>
+
+      <Button
+        type="submit"
+        disabled={loading}
+        className="h-11 rounded-lg bg-gradient-to-r from-sky-500 via-blue-500 to-cyan-500 text-sm font-semibold text-white shadow-lg shadow-sky-500/30 transition-all hover:scale-[1.01] hover:opacity-95 sm:col-span-2"
+      >
+        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {buttonLabel}
+      </Button>
+    </form>
+  </div>
+);
 }
