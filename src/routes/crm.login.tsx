@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Loader2, Sparkles, Lock, Mail, ArrowLeft, ShieldCheck, TrendingUp, Users } from "lucide-react";
+import { Loader2, Lock, Mail, ArrowLeft, ShieldCheck, TrendingUp, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
+import aarthvaahiniLogo from "@/assets/aarthvaahini.png";
 export const Route = createFileRoute("/crm/login")({
   validateSearch: (s: Record<string, unknown>) => ({
     unauthorized: s.unauthorized === "1" ? "1" : undefined,
@@ -88,9 +88,13 @@ function CrmLoginPage() {
             <ArrowLeft className="h-4 w-4" /> Back to website
           </Link>
           <div className="mt-12 flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/40">
-              <Sparkles className="h-6 w-6 text-white" />
-            </div>
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2 shadow-lg shadow-blue-500/40">
+  <img
+    src={aarthvaahiniLogo}
+    alt="Aarthvaahini Logo"
+    className="h-full w-full object-contain"
+  />
+</div>
             <div>
               <div className="text-xl font-bold tracking-tight">Aarthvaahini</div>
               <div className="text-xs uppercase tracking-[0.2em] text-blue-300/80">Enterprise CRM</div>
@@ -130,9 +134,13 @@ function CrmLoginPage() {
           </Link>
           <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-8 shadow-2xl backdrop-blur-xl">
             <div className="mb-6 text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/30 lg:hidden">
-                <Sparkles className="h-6 w-6 text-white" />
-              </div>
+             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2 shadow-lg shadow-blue-500/30 lg:hidden">
+  <img
+    src={aarthvaahiniLogo}
+    alt="Aarthvaahini Logo"
+    className="h-full w-full object-contain"
+  />
+</div>
               <h2 className="text-2xl font-bold text-white">Welcome back</h2>
               <p className="mt-1 text-sm text-blue-100/60">Sign in to your CRM workspace</p>
             </div>
