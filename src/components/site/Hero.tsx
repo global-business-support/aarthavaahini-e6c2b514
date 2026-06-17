@@ -419,8 +419,8 @@ import {
 import { Button } from "@/components/ui/button";
 
 import advisor17 from "@/assets/hero-advisor17.jpeg";
-import insuranceBanner from "@/assets/insurance-banner.png.asset.json";
-import mutualFundsBanner from "@/assets/mutual-funds-banner.png.asset.json";
+import advisor0 from "@/assets/hero-advisor0.jpg";
+import advisor044 from "@/assets/hero-advisior044.jpeg";
 
 type Slide = {
   title: React.ReactNode;
@@ -454,7 +454,7 @@ const slides: Slide[] = [
     subtitle:
       "Comprehensive Life, Health, Motor and Home insurance plans from India's most trusted insurers — safeguarding your family, home and assets against life's uncertainties.",
 
-    image: insuranceBanner.url,
+    image: advisor0,
   },
 
   {
@@ -468,7 +468,7 @@ const slides: Slide[] = [
     subtitle:
       "Build long-term wealth with curated Mutual Funds, SIPs and tax-saving investment plans — expert-led advisory designed to help your money grow steadily.",
 
-    image: mutualFundsBanner.url,
+    image: advisor044,
   },
 ];
 
@@ -526,15 +526,14 @@ export function Hero() {
             {/* CONTENT */}
 
             <div className="relative z-10 flex h-full items-center">
-              <div className={`container mx-auto px-6 ${index === 1 ? "flex justify-center text-center" : ""}`}>
+             <div className="container mx-auto px-6">
 
-                <div className={`max-w-3xl ${index === 1 ? "mx-auto text-center" : ""}`}>
-
+               <div className="max-w-3xl text-left">
                   <h1 className="text-5xl font-bold leading-tight text-black md:text-7xl">
                     {slide.title}
                   </h1>
 
-                  <p className={`mt-6 text-lg leading-8 text-gray-200 md:text-xl ${index === 1 ? "mx-auto max-w-2xl" : "max-w-2xl"}`}>
+                 <p className="mt-6 max-w-2xl text-lg leading-8 text-gray-200 md:text-xl">
                     {slide.subtitle}
                   </p>
 

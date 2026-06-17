@@ -32,15 +32,12 @@ export const loans: ProductItem[] = [
   { slug: "education-loan", name: "Education Loan", rate: "8.85% p.a.*",
     desc: "Complete funding solutions for education in India or abroad.",
     features: ["Up to ₹1.5 Cr", "Moratorium period", "Tax benefits 80E", "Collateral free up to ₹40L"],
-    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80" },
+    image: "https://images.unsplash.com/photo-1758270704522-f091f8064a81?q=80&w=1631&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
   { slug: "project-loan", name: "Project Loan", rate: "Starting from 8.50%*",
     desc: "Funding solutions for MSME projects, startups, infrastructure development, and business expansion requirements.",
     features: ["Collateral & collateral-free options", "Quick approval process", "Long repayment tenure", "Customized funding solutions"],
     image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80" },
-  { slug: "credit-card", name: "Credit Card", rate: "Lifetime Free*",
-    desc: "Cashback, travel, and fuel credit cards from top banks.",
-    features: ["Reward points", "Airport lounge access", "EMI conversion", "5% cashback options"],
-    image: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?auto=format&fit=crop&w=1200&q=80" },
+  
 ];
 
 export const insurance: ProductItem[] = [

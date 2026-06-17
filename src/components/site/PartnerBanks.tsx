@@ -85,8 +85,7 @@ export function PartnerBanks() {
         </div>
 
         <p className="mt-8 text-center text-xs text-gray-500">
-          *Logos and trademarks are property of their respective banks/NBFCs
-          and are used here solely to indicate channel partnerships.
+          
         </p>
       </div>
     </section>

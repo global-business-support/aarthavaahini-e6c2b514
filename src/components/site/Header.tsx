@@ -2183,6 +2183,7 @@ import {
   Briefcase,
   MessageSquare,
   Phone,
+  Star,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -2663,16 +2664,13 @@ console.log("HEADER USER:", user);
 
             </a>
 
-            <a
-              href="#services"
-              className="flex items-center gap-2 font-medium text-[#17357e] transition hover:text-blue-600"
-            >
-
-              <Briefcase className="h-5 w-5" />
-
-              Services
-
-            </a>
+           <a
+  href="#testimonials"
+  className="flex items-center gap-2 font-medium text-[#17357e] transition hover:text-blue-600"
+>
+  <Star className="h-5 w-5" />
+  Testimonials
+</a>
 
             <a
               href="#products"
