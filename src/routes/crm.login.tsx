@@ -97,7 +97,7 @@ function CrmLoginPage() {
 </div>
             <div>
               <div className="text-xl font-bold tracking-tight">Aarthvaahini</div>
-              <div className="text-xs uppercase tracking-[0.2em] text-blue-300/80">Enterprise CRM</div>
+              <div className="text-xs uppercase tracking-[0.2em] text-blue-300/80"> CRM</div>
             </div>
           </div>
           <h1 className="mt-12 text-4xl font-bold leading-tight">
