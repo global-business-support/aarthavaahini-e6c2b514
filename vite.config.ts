@@ -1,28 +1,11 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
-  server: {
-    host: "0.0.0.0",
-    allowedHosts: [
-      ".lovable.app",
-      ".lovableproject.com",
-      ".vercel.app",
-      ".netlify.app",
-      "localhost",
-      "127.0.0.1",
-    ],
-  },
-
-  preview: {
-    host: "0.0.0.0",
-    allowedHosts: [
-      ".lovable.app",
-      ".lovableproject.com",
-      ".vercel.app",
-      ".netlify.app",
-      "localhost",
-      "127.0.0.1",
-    ],
+  // Deploy target: Vercel (Nitro preset). In the Lovable sandbox the preset
+  // is forced to cloudflare-module internally, so this only affects external
+  // builds (e.g. Vercel CI).
+  nitro: {
+    preset: "vercel",
   },
 
   tanstackStart: {
@@ -31,9 +14,28 @@ export default defineConfig({
     },
   },
 
-  // Deploy target: Vercel (Nitro preset). Lovable sandbox/Cloudflare still works
-  // because the sandbox build forces the cloudflare-module preset internally.
-  nitro: {
-    preset: "vercel",
+  vite: {
+    server: {
+      host: "0.0.0.0",
+      allowedHosts: [
+        ".lovable.app",
+        ".lovableproject.com",
+        ".vercel.app",
+        ".netlify.app",
+        "localhost",
+        "127.0.0.1",
+      ],
+    },
+    preview: {
+      host: "0.0.0.0",
+      allowedHosts: [
+        ".lovable.app",
+        ".lovableproject.com",
+        ".vercel.app",
+        ".netlify.app",
+        "localhost",
+        "127.0.0.1",
+      ],
+    },
   },
 });
