@@ -420,7 +420,7 @@ export function Products() {
 
     <section
       id="products"
-      className="container mx-auto scroll-mt-24 px-6 py-24"
+      className="container mx-auto scroll-mt-24 px-4 py-14 sm:px-6 sm:py-24"
     >
 
       {/* TOP FEATURES */}
