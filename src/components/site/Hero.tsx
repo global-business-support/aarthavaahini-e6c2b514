@@ -497,19 +497,18 @@ export function Hero() {
     
     <section 
     id="hero"
-     className="relative h-screen w-full overflow-hidden">
+     className="relative min-h-[88vh] w-full overflow-hidden pt-16 sm:min-h-screen sm:pt-0">
 
       {/* SLIDER */}
 
-      {/* eslint-disable-next-line react/no-inline-styles */}
       <div
-        className="flex h-full transition-transform duration-700 ease-in-out"
+        className="flex min-h-[88vh] transition-transform duration-700 ease-in-out sm:min-h-screen"
         style={{ transform: `translateX(-${current * 100}%)` }}
       >
         {slides.map((slide, index) => (
           <div
             key={index}
-            className="relative h-screen min-w-full"
+            className="relative min-h-[88vh] min-w-full sm:min-h-screen"
           >
             {/* BACKGROUND IMAGE */}
 
@@ -521,36 +520,36 @@ export function Hero() {
 
             {/* OVERLAY */}
 
-            <div className="absolute inset-0 bg-black/55" />
+            <div className="absolute inset-0 bg-black/60" />
 
             {/* CONTENT */}
 
-            <div className="relative z-10 flex h-full items-center">
-             <div className="container mx-auto px-6">
+            <div className="relative z-10 flex min-h-[88vh] items-center sm:min-h-screen">
+             <div className="container mx-auto px-4 sm:px-6">
 
                <div className="max-w-3xl text-left">
-                  <h1 className="text-5xl font-bold leading-tight text-black md:text-7xl">
+                  <h1 className="text-3xl font-bold leading-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
                     {slide.title}
                   </h1>
 
-                 <p className="mt-6 max-w-2xl text-lg leading-8 text-gray-200 md:text-xl">
+                 <p className="mt-4 max-w-2xl text-sm leading-6 text-gray-200 sm:mt-6 sm:text-base sm:leading-7 md:text-lg lg:text-xl">
                     {slide.subtitle}
                   </p>
 
                   {current === 0 && (
-                    <div className="mt-10 flex flex-wrap gap-5">
+                    <div className="mt-6 flex flex-wrap gap-3 sm:mt-10 sm:gap-5">
 
                       <Link to="/contact">
-                        <Button className="h-14 rounded-xl bg-linear-to-r from-[#17357e] to-blue-600 px-8 text-lg font-semibold text-white transition-all hover:scale-105">
+                        <Button className="h-11 rounded-xl bg-linear-to-r from-[#17357e] to-blue-600 px-5 text-sm font-semibold text-white transition-all hover:scale-105 sm:h-14 sm:px-8 sm:text-lg">
                           Free Consultation
-                          <ArrowRight className="ml-2 h-5 w-5" />
+                          <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                         </Button>
                       </Link>
 
                       <Link to="/about">
                         <Button
                           variant="outline"
-                          className="h-14 rounded-xl border-white bg-transparent px-8 text-lg font-semibold text-white hover:bg-white hover:text-black"
+                          className="h-11 rounded-xl border-white bg-transparent px-5 text-sm font-semibold text-white hover:bg-white hover:text-black sm:h-14 sm:px-8 sm:text-lg"
                         >
                           Meet Our Team
                         </Button>
