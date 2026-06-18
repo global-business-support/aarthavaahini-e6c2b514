@@ -299,7 +299,7 @@ export function EmiCalculator() {
 
         {/* Eligibility Engine */}
         {tab === "eligibility" && (
-          <div className="mx-auto mt-10 grid max-w-6xl gap-8 rounded-3xl bg-[#f7f9ff] p-8 shadow-xl lg:grid-cols-5 lg:p-10">
+          <div className="mx-auto mt-8 grid max-w-6xl gap-6 rounded-3xl bg-[#f7f9ff] p-4 shadow-xl sm:mt-10 sm:gap-8 sm:p-8 lg:grid-cols-5 lg:p-10">
             <div className="space-y-6 lg:col-span-3">
               <Slider label="Monthly Net Income" value={`₹ ${formatINR(income)}`} min={15000} max={1000000} step={5000} v={income} onChange={setIncome} />
               <Slider label="Existing EMI" value={`₹ ${formatINR(existingEmi)}`} min={0} max={500000} step={1000} v={existingEmi} onChange={setExistingEmi} />
@@ -324,7 +324,7 @@ export function EmiCalculator() {
 
         {/* Prepayment */}
         {tab === "prepayment" && (
-          <div className="mx-auto mt-10 grid max-w-6xl gap-8 rounded-3xl bg-[#f7f9ff] p-8 shadow-xl lg:grid-cols-5 lg:p-10">
+          <div className="mx-auto mt-8 grid max-w-6xl gap-6 rounded-3xl bg-[#f7f9ff] p-4 shadow-xl sm:mt-10 sm:gap-8 sm:p-8 lg:grid-cols-5 lg:p-10">
             <div className="space-y-6 lg:col-span-3">
               <Slider label="Loan Amount" value={`₹ ${formatINR(ppAmount)}`} min={100000} max={50000000} step={50000} v={ppAmount} onChange={setPpAmount} />
               <Slider label="Interest Rate" value={`${ppRate}%`} min={5} max={24} step={0.05} v={ppRate} onChange={setPpRate} />
@@ -348,7 +348,7 @@ export function EmiCalculator() {
 
         {/* Balance Transfer */}
         {tab === "balance-transfer" && (
-          <div className="mx-auto mt-10 grid max-w-6xl gap-8 rounded-3xl bg-[#f7f9ff] p-8 shadow-xl lg:grid-cols-5 lg:p-10">
+          <div className="mx-auto mt-8 grid max-w-6xl gap-6 rounded-3xl bg-[#f7f9ff] p-4 shadow-xl sm:mt-10 sm:gap-8 sm:p-8 lg:grid-cols-5 lg:p-10">
             <div className="space-y-6 lg:col-span-3">
               <Slider label="Outstanding Loan" value={`₹ ${formatINR(btOutstanding)}`} min={100000} max={50000000} step={50000} v={btOutstanding} onChange={setBtOutstanding} />
               <Slider label="Current Rate" value={`${btCurRate}%`} min={5} max={24} step={0.05} v={btCurRate} onChange={setBtCurRate} />
@@ -373,7 +373,7 @@ export function EmiCalculator() {
 
 
         {tab === "amortization" && (
-          <div className="mx-auto mt-10 max-w-6xl rounded-3xl bg-[#f7f9ff] p-6 shadow-xl lg:p-8">
+          <div className="mx-auto mt-8 max-w-6xl rounded-3xl bg-[#f7f9ff] p-4 shadow-xl sm:mt-10 sm:p-6 lg:p-8">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h3 className="text-lg font-bold text-[#07142f]">Month-wise Schedule</h3>
