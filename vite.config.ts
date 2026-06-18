@@ -30,4 +30,10 @@ export default defineConfig({
       entry: "server",
     },
   },
+
+  // Deploy target: Vercel (Nitro preset). Lovable sandbox/Cloudflare still works
+  // because the sandbox build forces the cloudflare-module preset internally.
+  nitro: {
+    preset: "vercel",
+  },
 });
