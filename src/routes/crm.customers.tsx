@@ -60,6 +60,8 @@ const BANK_OPTIONS = [
 ];
 
 type Note = { id: string; notes: string | null; created_at: string };
+type LoanCase = { id: string; loan_amount: number | null; disbursement_amount: number | null; lender_name: string | null; stage: string };
+type CustomerTask = { id: string; title: string; task_type: string | null; priority: string; status: string; due_date: string | null; description: string | null };
 
 function normaliseStage(s: string | null | undefined): Stage {
   if (!s) return "New";
@@ -261,18 +263,52 @@ function CustomersPage() {
 
 function CustomerDetails({ customer }: { customer: Row }) {
   const [notes, setNotes] = useState<Note[]>([]);
+  const [loanCases, setLoanCases] = useState<LoanCase[]>([]);
+  const [customerTasks, setCustomerTasks] = useState<CustomerTask[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loanLoading, setLoanLoading] = useState(true);
   const [noteText, setNoteText] = useState("");
   const [saving, setSaving] = useState(false);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newTaskType, setNewTaskType] = useState("");
+  const [newTaskPriority, setNewTaskPriority] = useState("medium");
+  const [newTaskDueDate, setNewTaskDueDate] = useState("");
+  const [newTaskDescription, setNewTaskDescription] = useState("");
+  const [savingTask, setSavingTask] = useState(false);
+
+  const loadLoanCases = async () => {
+    setLoanLoading(true);
+    const { data } = await supabase
+      .from("loan_cases")
+      .select("id, loan_amount, disbursement_amount, lender_name, stage")
+      .eq("customer_id", customer.id)
+      .order("created_at", { ascending: false });
+    setLoanCases((data ?? []) as LoanCase[]);
+    setLoanLoading(false);
+  };
+
+  const loadCustomerTasks = async () => {
+    const { data } = await supabase
+      .from("tasks")
+      .select("id, title, task_type, priority, status, due_date, description")
+      .eq("related_customer_id", customer.id)
+      .order("due_date", { ascending: true });
+    setCustomerTasks((data ?? []) as CustomerTask[]);
+  };
 
   const reload = async () => {
-    const { data } = await supabase
+    setLoading(true);
+    const activityPromise = supabase
       .from("activities")
       .select("id, notes, created_at")
       .eq("customer_id", customer.id)
       .eq("activity_type", "note")
       .order("created_at", { ascending: false })
       .limit(50);
+
+    await Promise.all([loadLoanCases(), loadCustomerTasks()]);
+
+    const { data } = await activityPromise;
     setNotes((data ?? []) as Note[]);
     setLoading(false);
   };
@@ -295,56 +331,235 @@ function CustomerDetails({ customer }: { customer: Row }) {
     reload();
   };
 
+  const loanTotal = loanCases.reduce((acc, loan) => acc + (loan.loan_amount ?? 0), 0);
+  const disbursedTotal = loanCases.reduce((acc, loan) => acc + (loan.disbursement_amount ?? 0), 0);
+
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3 rounded-lg border border-sky-100 bg-sky-50/40 p-4 text-sm">
-        <Detail icon={Phone} label="Mobile" value={customer.mobile} />
-        <Detail icon={Mail} label="Email" value={customer.email} />
-        <Detail label="Loan Type" value={customer.loan_type} />
-        <Detail label="Sub Loan" value={customer.loan_sub_type} />
-        <Detail icon={IndianRupee} label="Loan Amount" value={customer.loan_amount ? `₹${Number(customer.loan_amount).toLocaleString("en-IN")}` : null} />
-        <Detail label="CIBIL Score" value={customer.cibil_score ? String(customer.cibil_score) : null} />
-        <Detail icon={Briefcase} label="Occupation" value={customer.occupation} />
-        <Detail icon={IndianRupee} label="Income" value={customer.income ? `₹${Number(customer.income).toLocaleString("en-IN")}` : null} />
-        <Detail icon={MapPin} label="Address" value={customer.address} full />
-        <Detail label="PAN" value={customer.pan} />
-        <Detail label="Aadhaar" value={customer.aadhaar} />
-      </div>
+      <div className="grid gap-4 lg:grid-cols-[1.3fr_0.95fr]">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3 rounded-lg border border-sky-100 bg-sky-50/40 p-4 text-sm">
+            <Detail icon={Phone} label="Mobile" value={customer.mobile} />
+            <Detail icon={Mail} label="Email" value={customer.email} />
+            <Detail label="Loan Type" value={customer.loan_type} />
+            <Detail label="Sub Loan" value={customer.loan_sub_type} />
+            <Detail icon={IndianRupee} label="Loan Amount" value={customer.loan_amount ? `₹${Number(customer.loan_amount).toLocaleString("en-IN")}` : null} />
+            <Detail label="CIBIL Score" value={customer.cibil_score ? String(customer.cibil_score) : null} />
+            <Detail icon={Briefcase} label="Occupation" value={customer.occupation} />
+            <Detail icon={IndianRupee} label="Income" value={customer.income ? `₹${Number(customer.income).toLocaleString("en-IN")}` : null} />
+            <Detail icon={MapPin} label="Address" value={customer.address} full />
+            <Detail label="PAN" value={customer.pan} />
+            <Detail label="Aadhaar" value={customer.aadhaar} />
+            <Detail label="Stage" value={customer.stage} />
+            <Detail label="Bank" value={customer.bank_name} />
+          </div>
 
-      <div>
-        <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-800">
-          <StickyNote className="h-4 w-4 text-amber-500" /> Notes
-        </div>
-        <div className="space-y-2">
-          <Textarea
-            value={noteText}
-            onChange={(e) => setNoteText(e.target.value)}
-            placeholder="Add a note about this customer (KYC pending, follow-up next week, etc.)…"
-            className="border-sky-200 focus-visible:ring-sky-400"
-            rows={3}
-          />
-          <div className="flex justify-end">
-            <Button onClick={addNote} disabled={saving || !noteText.trim()} className="bg-gradient-to-r from-sky-600 to-blue-600 text-white">
-              {saving && <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />} Save Note
-            </Button>
+          <div>
+            <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-800">
+              <StickyNote className="h-4 w-4 text-amber-500" /> Notes
+            </div>
+            <div className="space-y-2">
+              <Textarea
+                value={noteText}
+                onChange={(e) => setNoteText(e.target.value)}
+                placeholder="Add a note about this customer (KYC pending, follow-up next week, etc.)…"
+                className="border-sky-200 focus-visible:ring-sky-400"
+                rows={3}
+              />
+              <div className="flex justify-end">
+                <Button onClick={addNote} disabled={saving || !noteText.trim()} className="bg-gradient-to-r from-sky-600 to-blue-600 text-white">
+                  {saving && <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />} Save Note
+                </Button>
+              </div>
+            </div>
+
+            <div className="mt-3 max-h-48 space-y-2 overflow-auto pr-1">
+              {loading ? (
+                <div className="py-4 text-center"><Loader2 className="mx-auto h-4 w-4 animate-spin text-slate-400" /></div>
+              ) : notes.length === 0 ? (
+                <p className="py-2 text-center text-xs text-slate-400">No notes yet.</p>
+              ) : (
+                notes.map((n) => (
+                  <div key={n.id} className="rounded-lg border border-amber-100 bg-amber-50/60 p-3 text-sm">
+                    <div className="whitespace-pre-wrap text-slate-800">{n.notes}</div>
+                    <div className="mt-1 text-[10px] uppercase tracking-wide text-slate-500">
+                      {new Date(n.created_at).toLocaleString("en-IN")}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="mt-3 max-h-48 space-y-2 overflow-auto pr-1">
-          {loading ? (
-            <div className="py-4 text-center"><Loader2 className="mx-auto h-4 w-4 animate-spin text-slate-400" /></div>
-          ) : notes.length === 0 ? (
-            <p className="py-2 text-center text-xs text-slate-400">No notes yet.</p>
-          ) : (
-            notes.map((n) => (
-              <div key={n.id} className="rounded-lg border border-amber-100 bg-amber-50/60 p-3 text-sm">
-                <div className="whitespace-pre-wrap text-slate-800">{n.notes}</div>
-                <div className="mt-1 text-[10px] uppercase tracking-wide text-slate-500">
-                  {new Date(n.created_at).toLocaleString("en-IN")}
+        <div className="space-y-4">
+          <Card className="rounded-xl border border-slate-200 p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900">Loan case summary</h3>
+                <p className="text-xs text-slate-500">Full loan details and disbursement status for this customer.</p>
+              </div>
+              <Badge variant="secondary" className="text-xs uppercase tracking-[0.18em]">
+                {loanCases.length} case{loanCases.length === 1 ? "" : "s"}
+              </Badge>
+            </div>
+            {loanLoading ? (
+              <div className="py-4 text-center"><Loader2 className="mx-auto h-4 w-4 animate-spin text-slate-400" /></div>
+            ) : loanCases.length === 0 ? (
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-500">No loan case found for this customer.</div>
+            ) : (
+              <div className="space-y-3">
+                <div className="grid gap-2">
+                  <Detail label="Total loan amount" value={loanTotal ? `₹${loanTotal.toLocaleString("en-IN")}` : "—"} />
+                  <Detail label="Total disbursed" value={disbursedTotal ? `₹${disbursedTotal.toLocaleString("en-IN")}` : "—"} />
+                  <Detail label="Latest stage" value={loanCases[0].stage ?? "—"} />
+                </div>
+                <div className="space-y-2">
+                  {loanCases.map((loan) => (
+                    <div key={loan.id} className="rounded-xl border border-slate-200 bg-white p-3 text-sm">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="font-semibold text-slate-900">{loan.lender_name ?? "Loan case"}</div>
+                        <div className="text-xs uppercase tracking-[0.12em] text-slate-500">{loan.stage}</div>
+                      </div>
+                      <div className="mt-1 text-slate-500">
+                        {loan.loan_amount ? `Loan ₹${loan.loan_amount.toLocaleString("en-IN")}` : "Loan amount not set"}
+                        {loan.disbursement_amount ? ` · Disbursed ₹${loan.disbursement_amount.toLocaleString("en-IN")}` : " · Not disbursed yet"}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))
-          )}
+            )}
+          </Card>
+
+          <Card className="rounded-xl border border-slate-200 p-4">
+            <div className="mb-3">
+              <h3 className="text-sm font-semibold text-slate-900">Add task for customer</h3>
+              <p className="text-xs text-slate-500">Create a follow-up, document request, or call task linked to this customer.</p>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">Task title</label>
+                <Input
+                  value={newTaskTitle}
+                  onChange={(e) => setNewTaskTitle(e.target.value)}
+                  placeholder="Enter task summary"
+                />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">Task type</label>
+                  <Input
+                    value={newTaskType}
+                    onChange={(e) => setNewTaskType(e.target.value)}
+                    placeholder="Follow-up, call, document"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">Priority</label>
+                  <select
+                    value={newTaskPriority}
+                    onChange={(e) => setNewTaskPriority(e.target.value)}
+                    className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+                  >
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">Due date</label>
+                <Input
+                  type="datetime-local"
+                  value={newTaskDueDate}
+                  onChange={(e) => setNewTaskDueDate(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">Description</label>
+                <Textarea
+                  rows={4}
+                  value={newTaskDescription}
+                  onChange={(e) => setNewTaskDescription(e.target.value)}
+                  placeholder="Task details, follow-up notes, or document instructions"
+                />
+              </div>
+            </div>
+            <div className="mt-4 flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setNewTaskTitle("");
+                  setNewTaskType("");
+                  setNewTaskPriority("medium");
+                  setNewTaskDueDate("");
+                  setNewTaskDescription("");
+                }}
+              >
+                Clear
+              </Button>
+              <Button
+                onClick={async () => {
+                  if (!newTaskTitle.trim()) {
+                    toast.error("Task title is required.");
+                    return;
+                  }
+                  setSavingTask(true);
+                  const { error } = await supabase.from("tasks").insert({
+                    title: newTaskTitle.trim(),
+                    task_type: newTaskType || null,
+                    priority: newTaskPriority,
+                    status: "pending",
+                    due_date: newTaskDueDate ? new Date(newTaskDueDate).toISOString() : null,
+                    description: newTaskDescription.trim() || null,
+                    related_customer_id: customer.id,
+                  });
+                  setSavingTask(false);
+                  if (error) {
+                    toast.error(error.message);
+                  } else {
+                    setNewTaskTitle("");
+                    setNewTaskType("");
+                    setNewTaskPriority("medium");
+                    setNewTaskDueDate("");
+                    setNewTaskDescription("");
+                    toast.success("Customer task added.");
+                    loadCustomerTasks();
+                  }
+                }}
+                disabled={savingTask || !newTaskTitle.trim()}
+              >
+                {savingTask ? "Saving..." : "Create task"}
+              </Button>
+            </div>
+
+            <div className="mt-4">
+              <div className="mb-2 text-sm font-semibold text-slate-900">Tasks for this customer</div>
+              {customerTasks.length === 0 ? (
+                <p className="text-sm text-slate-500">No related tasks yet.</p>
+              ) : (
+                <div className="space-y-2">
+                  {customerTasks.map((task) => (
+                    <div key={task.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <div className="font-semibold text-slate-900">{task.title}</div>
+                          <div className="text-slate-500">{task.task_type || "General task"}</div>
+                        </div>
+                        <Badge className={cn(
+                          task.priority === "high" && "bg-rose-100 text-rose-700",
+                          task.priority === "medium" && "bg-amber-100 text-amber-700",
+                          task.priority === "low" && "bg-slate-100 text-slate-700",
+                        )}>{task.priority}</Badge>
+                      </div>
+                      <div className="mt-1 text-xs text-slate-500">{task.status} · {task.due_date ? new Date(task.due_date).toLocaleString("en-IN") : "No due date"}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </Card>
         </div>
       </div>
     </div>
