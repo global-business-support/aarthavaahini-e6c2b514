@@ -157,7 +157,10 @@ const items = [
 
 export function Testimonials() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-sky-50 via-white to-blue-50 py-24">
+    <section
+  id="testimonials"
+  className="relative overflow-hidden bg-gradient-to-br from-sky-50 via-white to-blue-50 py-24 scroll-mt-24"
+>
       {/* Background texture */}
       <div className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-blue-200/40 blur-3xl" />
       <div className="absolute -right-24 bottom-20 h-72 w-72 rounded-full bg-indigo-200/40 blur-3xl" />

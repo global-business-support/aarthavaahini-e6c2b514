@@ -123,7 +123,46 @@ export function ProductPage({
                       palette.ring
                     )}
                   >
-                    <div className="relative h-56 w-full overflow-hidden bg-slate-200">
+                    <div className="relative h-[300px] w-full overflow-hidden bg-white">
+  {p.image && (
+    <img
+      src={p.image}
+      alt={p.name}
+      loading="lazy"
+      className="h-full w-full object-contain p-3 transition-transform duration-700 group-hover:scale-105"
+    />
+  )}
+
+  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+
+  {p.tag && (
+    <Badge
+      className={cn(
+        "absolute right-3 top-3 border-0 shadow",
+        palette.chip
+      )}
+    >
+      {p.tag}
+    </Badge>
+  )}
+
+  <div className="absolute inset-x-0 bottom-0 p-5">
+    <h3 className="font-display text-2xl font-bold leading-tight text-white drop-shadow">
+      {p.name}
+    </h3>
+
+    {p.rate && (
+      <p className="mt-1 text-sm font-semibold text-white/90">
+        {p.rate}
+      </p>
+    )}
+
+    <p className="mt-1 text-xs font-medium uppercase tracking-wide text-white/80">
+      Tap to view details
+    </p>
+  </div>
+</div>
+                    {/* <div className="relative h-56 w-full overflow-hidden bg-slate-200">
                       {p.image && (
                         <img
                           src={p.image}
@@ -155,34 +194,55 @@ export function ProductPage({
                           Tap to view details
                         </p>
                       </div>
-                    </div>
+                    </div> */}
                   </Card>
                 </DialogTrigger>
 
                 <DialogContent className="z-[9999] max-h-[88vh] w-[94vw] max-w-3xl overflow-y-auto rounded-3xl border-0 bg-transparent p-0 shadow-none">
                   <div className="overflow-hidden rounded-3xl bg-white shadow-2xl">
                     {p.image && (
-                      <div className="relative h-32 w-full overflow-hidden sm:h-36">
-                        <img
-                          src={p.image}
-                          alt={p.name}
-                          className="h-full w-full object-cover"
-                        />
+                      // <div className="relative h-32 w-full overflow-hidden sm:h-36">
+                      //   <img
+                      //     src={p.image}
+                      //     alt={p.name}
+                      //     className="h-full w-full object-cover"
+                      //   />
 
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent" />
+                      //   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent" />
 
-                        <div className="absolute inset-x-0 bottom-0 p-4">
-                          <h3 className="font-display text-xl font-bold text-white sm:text-2xl">
-                            {p.name}
-                          </h3>
+                      //   <div className="absolute inset-x-0 bottom-0 p-4">
+                      //     <h3 className="font-display text-xl font-bold text-white sm:text-2xl">
+                      //       {p.name}
+                      //     </h3>
 
-                          {p.rate && (
-                            <p className="text-sm font-semibold text-white/90">
-                              {p.rate}
-                            </p>
-                          )}
-                        </div>
-                      </div>
+                      //     {p.rate && (
+                      //       <p className="text-sm font-semibold text-white/90">
+                      //         {p.rate}
+                      //       </p>
+                      //     )}
+                      //   </div>
+                      // </div>
+                      <div className="relative h-[260px] w-full overflow-hidden bg-white sm:h-[320px]">
+  <img
+    src={p.image}
+    alt={p.name}
+    className="h-full w-full object-contain p-3"
+  />
+
+  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+
+  <div className="absolute inset-x-0 bottom-0 p-4">
+    <h3 className="font-display text-xl font-bold text-white sm:text-2xl">
+      {p.name}
+    </h3>
+
+    {p.rate && (
+      <p className="text-sm font-semibold text-white/90">
+        {p.rate}
+      </p>
+    )}
+  </div>
+</div>
                     )}
 
                     <div className="px-4 py-4 sm:px-5">
