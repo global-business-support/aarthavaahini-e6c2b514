@@ -196,42 +196,45 @@ export function EmiCalculator() {
   }, [schedule]);
 
   return (
-    <section id="calculator" className="bg-white py-24">
-      <div className="container mx-auto px-6">
-        <h2 className="text-center text-4xl font-bold text-[#07142f] md:text-5xl">
+    <section id="calculator" className="bg-white py-14 sm:py-24">
+      <div className="container mx-auto px-4 sm:px-6">
+        <h2 className="text-center text-2xl font-bold text-[#07142f] sm:text-4xl md:text-5xl">
           Professional Loan Calculator
         </h2>
-        <p className="mt-3 text-center text-gray-500">
+        <p className="mt-3 text-center text-sm text-gray-500 sm:text-base">
           EMI engine, eligibility calculator and full amortization schedule.
         </p>
 
-        {/* Tabs */}
-        <div className="mx-auto mt-8 flex max-w-3xl flex-wrap justify-center gap-2 rounded-2xl bg-blue-50 p-1.5">
-          {([
-            { k: "emi", label: "EMI Engine" },
-            { k: "eligibility", label: "Eligibility" },
-            { k: "prepayment", label: "Prepayment" },
-            { k: "balance-transfer", label: "Balance Transfer" },
-            { k: "amortization", label: "Amortization" },
-          ] as { k: Tab; label: string }[]).map((t) => (
-            <button
-              key={t.k}
-              onClick={() => setTab(t.k)}
-              className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
-                tab === t.k
-                  ? "bg-gradient-to-r from-[#17357e] to-blue-600 text-white shadow"
-                  : "text-blue-900 hover:bg-white"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
+        {/* Tabs - horizontally scrollable on mobile */}
+        <div className="mx-auto mt-6 max-w-3xl overflow-x-auto sm:mt-8">
+          <div className="flex min-w-max justify-start gap-2 rounded-2xl bg-blue-50 p-1.5 sm:justify-center">
+            {([
+              { k: "emi", label: "EMI Engine" },
+              { k: "eligibility", label: "Eligibility" },
+              { k: "prepayment", label: "Prepayment" },
+              { k: "balance-transfer", label: "Balance Transfer" },
+              { k: "amortization", label: "Amortization" },
+            ] as { k: Tab; label: string }[]).map((t) => (
+              <button
+                key={t.k}
+                onClick={() => setTab(t.k)}
+                className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold transition sm:px-5 sm:text-sm ${
+                  tab === t.k
+                    ? "bg-gradient-to-r from-[#17357e] to-blue-600 text-white shadow"
+                    : "text-blue-900 hover:bg-white"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* EMI Engine */}
         {tab === "emi" && (
-          <div className="mx-auto mt-10 grid max-w-6xl gap-8 rounded-3xl bg-[#f7f9ff] p-8 shadow-xl lg:grid-cols-5 lg:p-10">
+          <div className="mx-auto mt-8 grid max-w-6xl gap-6 rounded-3xl bg-[#f7f9ff] p-4 shadow-xl sm:mt-10 sm:gap-8 sm:p-8 lg:grid-cols-5 lg:p-10">
             <div className="space-y-6 lg:col-span-3">
+
               <div>
                 <label className="mb-2 block font-medium">Calculation Mode</label>
                 <div className="grid grid-cols-3 gap-2">
