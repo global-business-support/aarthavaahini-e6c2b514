@@ -36,14 +36,14 @@ export function Footer() {
 
       <div
         id="faqs"
-        className="border/60 px-6 py-16"
+        className="border/60 px-4 py-12 sm:px-6 sm:py-16"
       >
 
         <div className="container mx-auto max-w-4xl">
 
           <div className="text-center">
 
-            <h2 className="font-display text-5xl font-bold text-foreground">
+            <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl md:text-5xl">
 
               Frequently
 
