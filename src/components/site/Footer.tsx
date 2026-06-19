@@ -320,7 +320,7 @@ export function Footer() {
             </div>
             <div className="flex items-start gap-3">
               <MapPin className="mt-1 h-4 w-4 text-primary" />
-              <span>2nd Floor, Shrinath Tower, Opposite C3 Hospital, Behind C21 Mall, Vijay Nagar, Indore, MP 452010</span>
+              <span>📍2nd Floor, Shrinath Tower, Opposite C3 Hospital, Behind C21 Mall, Vijay Nagar, Indore, MP 452010</span>
             </div>
           </div>
 
