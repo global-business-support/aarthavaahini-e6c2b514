@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,58 +49,72 @@ function DashboardPage() {
   >([]);
   const [trend, setTrend] = useState<{ day: string; leads: number }[]>([]);
 
-  useEffect(() => {
-    (async () => {
-      const now = new Date().toISOString();
-      const since = new Date(Date.now() - 13 * 24 * 60 * 60 * 1000).toISOString();
-      const [leads, followups, loans, insurance, funds, tasks, sla, recent, last14] = await Promise.all([
-        supabase.from("leads").select("id", { count: "exact", head: true }),
-        supabase.from("tasks").select("id", { count: "exact", head: true }).lte("due_date", now).neq("status", "done"),
-        supabase.from("loan_cases").select("loan_amount, stage").not("stage", "in", '("Completed","Closed")'),
-        supabase.from("insurance_cases").select("premium, policy_status").not("policy_status", "in", '("Issued","Closed")'),
-        supabase.from("mutual_funds").select("sip_amount, status").not("status", "in", '("Portfolio Review","Closed")'),
-        supabase.from("tasks").select("id", { count: "exact", head: true }).neq("status", "done"),
-        supabase.from("tasks").select("id", { count: "exact", head: true }).lt("due_date", now).neq("status", "done"),
-        supabase.from("leads").select("id, full_name, product_type, status, created_at").order("created_at", { ascending: false }).limit(6),
-        supabase.from("leads").select("created_at").gte("created_at", since),
-      ]);
+  const loadDashboard = useCallback(async () => {
+    const now = new Date().toISOString();
+    const since = new Date(Date.now() - 13 * 24 * 60 * 60 * 1000).toISOString();
+    const [leads, followups, loans, insurance, funds, tasks, sla, recent, last14, disb] = await Promise.all([
+      supabase.from("leads").select("id", { count: "exact", head: true }),
+      supabase.from("tasks").select("id", { count: "exact", head: true }).lte("due_date", now).neq("status", "done"),
+      supabase.from("loan_cases").select("loan_amount, stage").not("stage", "in", '("Completed","Closed")'),
+      supabase.from("insurance_cases").select("premium, policy_status").not("policy_status", "in", '("Issued","Closed")'),
+      supabase.from("mutual_funds").select("sip_amount, status").not("status", "in", '("Portfolio Review","Closed")'),
+      supabase.from("tasks").select("id", { count: "exact", head: true }).neq("status", "done"),
+      supabase.from("tasks").select("id", { count: "exact", head: true }).lt("due_date", now).neq("status", "done"),
+      supabase.from("leads").select("id, full_name, product_type, status, created_at").order("created_at", { ascending: false }).limit(6),
+      supabase.from("leads").select("created_at").gte("created_at", since),
+      supabase.from("loan_cases").select("disbursement_amount"),
+    ]);
 
-      const sum = <T extends Record<string, unknown>>(rows: T[] | null, key: string) =>
-        (rows ?? []).reduce((acc, r) => acc + (Number(r[key]) || 0), 0);
+    const sum = <T extends Record<string, unknown>>(rows: T[] | null, key: string) =>
+      (rows ?? []).reduce((acc, r) => acc + (Number(r[key]) || 0), 0);
 
-      const disb = await supabase.from("loan_cases").select("disbursement_amount");
+    setStats({
+      totalLeads: leads.count ?? 0,
+      followupsDue: followups.count ?? 0,
+      loanPipeline: sum(loans.data, "loan_amount"),
+      insurancePipeline: sum(insurance.data, "premium"),
+      mfPipeline: sum(funds.data, "sip_amount") * 12,
+      revenue: sum(disb.data, "disbursement_amount"),
+      pendingTasks: tasks.count ?? 0,
+      slaAlerts: sla.count ?? 0,
+    });
+    setRecentLeads(recent.data ?? []);
 
-      setStats({
-        totalLeads: leads.count ?? 0,
-        followupsDue: followups.count ?? 0,
-        loanPipeline: sum(loans.data, "loan_amount"),
-        insurancePipeline: sum(insurance.data, "premium"),
-        mfPipeline: sum(funds.data, "sip_amount") * 12,
-        revenue: sum(disb.data, "disbursement_amount"),
-        pendingTasks: tasks.count ?? 0,
-        slaAlerts: sla.count ?? 0,
-      });
-      setRecentLeads(recent.data ?? []);
-
-      // 14-day lead trend
-      const buckets: Record<string, number> = {};
-      for (let i = 13; i >= 0; i--) {
-        const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
-        const key = d.toISOString().slice(0, 10);
-        buckets[key] = 0;
-      }
-      (last14.data ?? []).forEach((r: { created_at: string }) => {
-        const key = r.created_at.slice(0, 10);
-        if (buckets[key] !== undefined) buckets[key] += 1;
-      });
-      setTrend(
-        Object.entries(buckets).map(([k, v]) => ({
-          day: new Date(k).toLocaleDateString("en-IN", { day: "numeric", month: "short" }),
-          leads: v,
-        })),
-      );
-    })();
+    // 14-day lead trend
+    const buckets: Record<string, number> = {};
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+      const key = d.toISOString().slice(0, 10);
+      buckets[key] = 0;
+    }
+    (last14.data ?? []).forEach((r: { created_at: string }) => {
+      const key = r.created_at.slice(0, 10);
+      if (buckets[key] !== undefined) buckets[key] += 1;
+    });
+    setTrend(
+      Object.entries(buckets).map(([k, v]) => ({
+        day: new Date(k).toLocaleDateString("en-IN", { day: "numeric", month: "short" }),
+        leads: v,
+      })),
+    );
   }, []);
+
+  useEffect(() => {
+    loadDashboard();
+
+    const channel = supabase
+      .channel("crm-dashboard")
+      .on("postgres_changes", { event: "*", schema: "public", table: "leads" }, () => loadDashboard())
+      .on("postgres_changes", { event: "*", schema: "public", table: "tasks" }, () => loadDashboard())
+      .on("postgres_changes", { event: "*", schema: "public", table: "loan_cases" }, () => loadDashboard())
+      .on("postgres_changes", { event: "*", schema: "public", table: "insurance_cases" }, () => loadDashboard())
+      .on("postgres_changes", { event: "*", schema: "public", table: "mutual_funds" }, () => loadDashboard())
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [loadDashboard]);
 
   const cards = [
     { label: "Total Leads", value: stats?.totalLeads, icon: Users, tone: "sky", trend: "+12%" },
@@ -173,7 +187,10 @@ function DashboardPage() {
               <h2 className="text-sm font-semibold text-slate-900">Leads — Last 14 days</h2>
               <p className="text-xs text-slate-500">Daily new leads captured.</p>
             </div>
+            <div className="flex items-center gap-2">
+            <Badge variant="outline" className="border-sky-200 bg-sky-50 text-sky-700">Live</Badge>
             <Badge variant="outline" className="border-sky-200 bg-sky-50 text-sky-700">Trend</Badge>
+          </div>
           </div>
           <div className="mt-4 h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">

@@ -118,7 +118,7 @@
 
 //       {/* HEADING */}
 
-//       <div className="mx-auto mt-20 max-w-2xl text-center">
+//       <div className="mx-auto mt-12 max-w-2xl text-center sm:mt-20">
 //         <span className="text-sm font-semibold uppercase tracking-[0.2em] text-primary-glow">
 //           Our Products
 //         </span>
@@ -138,7 +138,7 @@
 
 //       {/* PRODUCT CARDS */}
 
-//       <div className="mt-14 grid gap-6 md:grid-cols-3">
+//       <div className="mt-10 grid gap-5 sm:mt-14 sm:gap-6 md:grid-cols-3">
 //         {products.map(({ icon: Icon, name, title, desc, items }) => (
 //           <Card
 //             key={name}
@@ -420,7 +420,7 @@ export function Products() {
 
     <section
       id="products"
-      className="container mx-auto scroll-mt-24 px-6 py-24"
+      className="container mx-auto scroll-mt-24 px-4 py-14 sm:px-6 sm:py-24"
     >
 
       {/* TOP FEATURES */}
@@ -455,13 +455,13 @@ export function Products() {
 
       {/* HEADING */}
 
-      <div className="mx-auto mt-20 max-w-2xl text-center">
+      <div className="mx-auto mt-12 max-w-2xl text-center sm:mt-20">
 
         <span className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
           Our Products
         </span>
 
-        <h2 className="mt-3 text-4xl font-bold text-gray-900 sm:text-5xl">
+        <h2 className="mt-3 text-2xl font-bold text-gray-900 sm:text-4xl md:text-5xl">
 
           Loans, insurance and investments,
 
@@ -481,7 +481,7 @@ export function Products() {
 
       {/* PRODUCT CARDS */}
 
-      <div className="mt-14 grid gap-6 md:grid-cols-3">
+      <div className="mt-10 grid gap-5 sm:mt-14 sm:gap-6 md:grid-cols-3">
 
         {products.map(
           ({
@@ -494,7 +494,7 @@ export function Products() {
 
             <Card
               key={name}
-              className="glow-border group relative overflow-hidden rounded-[28px] border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              className="glow-border group relative overflow-hidden rounded-[28px] border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-8"
             >
 
               {/* GLOW */}
