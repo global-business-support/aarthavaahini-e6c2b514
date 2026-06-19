@@ -248,22 +248,46 @@ export function CrmLayout() {
                   <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>
-                  <div className="text-xs font-normal text-slate-500">Signed in as</div>
-                  <div className="truncate text-sm font-semibold text-slate-900">{user.email}</div>
-                  <Badge variant="secondary" className="mt-1.5 capitalize">
-                    {primaryRole?.replace(/_/g, " ")}
-                  </Badge>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" /> Preferences
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={signOut} className="text-red-600 focus:text-red-700">
-                  <LogOut className="mr-2 h-4 w-4" /> Sign out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
+              <DropdownMenuContent
+  align="end"
+  sideOffset={10}
+  className="z-[9999] w-80 overflow-hidden rounded-2xl border border-sky-100 bg-white p-0 shadow-2xl"
+>
+  {/* USER INFO */}
+  <div className="bg-gradient-to-r from-sky-500 to-cyan-500 p-4 text-white">
+    <div className="text-xs font-medium text-white/80">Signed in as</div>
+
+    <div className="mt-1 break-all text-sm font-semibold text-white">
+      {user.email}
+    </div>
+
+    <div className="mt-3 flex items-center justify-between gap-3">
+      <Badge className="border-0 bg-white/20 px-3 py-1 capitalize text-white hover:bg-white/20">
+        {primaryRole?.replace(/_/g, " ")}
+      </Badge>
+
+      <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white">
+        Friday, 19 Jun
+      </span>
+    </div>
+  </div>
+
+  {/* MENU ITEMS */}
+  <div className="p-2">
+    <DropdownMenuItem className="cursor-pointer rounded-xl px-3 py-3 text-slate-700 focus:bg-sky-50">
+      <Settings className="mr-3 h-4 w-4 text-slate-600" />
+      <span className="font-medium">Preferences</span>
+    </DropdownMenuItem>
+
+    <DropdownMenuItem
+      onClick={signOut}
+      className="cursor-pointer rounded-xl px-3 py-3 text-red-600 focus:bg-red-50 focus:text-red-700"
+    >
+      <LogOut className="mr-3 h-4 w-4" />
+      <span className="font-medium">Sign out</span>
+    </DropdownMenuItem>
+  </div>
+</DropdownMenuContent>
             </DropdownMenu>
           </header>
 
