@@ -320,13 +320,13 @@ export function Header() {
               Products
             </a>
 
-            <a
-              href="/#contact"
-              className="flex items-center gap-2 font-medium text-[#17357e] transition hover:text-blue-600"
-            >
-              <Phone className="h-5 w-5" />
-              Contact
-            </a>
+            <Link
+  to="/contact"
+  className="flex items-center gap-2 font-medium text-[#17357e] transition hover:text-blue-600"
+>
+  <Phone className="h-5 w-5" />
+  Contact
+</Link>
           </div>
         </div>
       )}
