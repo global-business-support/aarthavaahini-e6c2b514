@@ -1,5 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
-// import { createFileRoute } from "@tanstack/react-router";
+// 
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, CheckSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -52,6 +52,7 @@ const TASK_TYPES = [
 ];
 
 const PRIORITIES = ["low", "medium", "high"];
+
 const STATUSES = ["pending", "in_progress", "completed", "cancelled"];
 
 function TasksPage() {
@@ -81,37 +82,83 @@ function TasksPage() {
     load();
   }, []);
 
+  const updatePriority = async (task: Row, priority: string) => {
+    const { error } = await supabase
+      .from("tasks")
+      .update({ priority })
+      .eq("id", task.id);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    setRows((prev) =>
+      prev.map((r) => (r.id === task.id ? { ...r, priority } : r)),
+    );
+
+    toast.success(`Priority updated → ${priority}`);
+  };
+
+  const updateStatus = async (task: Row, status: string) => {
+    const { error } = await supabase
+      .from("tasks")
+      .update({ status })
+      .eq("id", task.id);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    setRows((prev) =>
+      prev.map((r) => (r.id === task.id ? { ...r, status } : r)),
+    );
+
+    toast.success(`Status updated → ${status.replace(/_/g, " ")}`);
+  };
+
   return (
     <div className="space-y-4">
       {/* HEADER */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Tasks</h1>
-          <p className="text-sm text-slate-500">
-            Followups, calls, meetings, document collection, renewals.
-          </p>
+      <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sky-500 via-blue-500 to-cyan-500 px-4 py-4 text-white shadow-md shadow-sky-500/20">
+        <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/15 blur-2xl" />
+
+        <div className="relative flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20">
+              <CheckSquare className="h-5 w-5" />
+            </div>
+
+            <div>
+              <h1 className="text-lg font-bold">Tasks</h1>
+              <p className="text-xs text-white/80">
+                Followups, calls, meetings, document collection and renewals.
+              </p>
+            </div>
+          </div>
+
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-white text-sky-700 shadow-md hover:bg-sky-50">
+                <Plus className="mr-2 h-4 w-4" />
+                New Task
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent className="max-w-xl bg-white">
+              <DialogHeader>
+                <DialogTitle>Create New Task</DialogTitle>
+              </DialogHeader>
+
+              <NewTaskForm
+                onSaved={() => {
+                  load();
+                }}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
-
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-sky-600 to-blue-600 text-white">
-              <Plus className="mr-2 h-4 w-4" />
-              New Task
-            </Button>
-          </DialogTrigger>
-
-          <DialogContent className="max-w-xl bg-white">
-            <DialogHeader>
-              <DialogTitle>Create New Task</DialogTitle>
-            </DialogHeader>
-
-            <NewTaskForm
-              onSaved={() => {
-                load(); // popup open rahega, table reload hoga
-              }}
-            />
-          </DialogContent>
-        </Dialog>
       </div>
 
       {/* TABLE */}
@@ -138,11 +185,12 @@ function TasksPage() {
 
             <TableBody>
               {rows.map((r) => (
-                <TableRow key={r.id}>
+                <TableRow key={r.id} className="hover:bg-sky-50/60">
                   <TableCell className="font-medium">
                     {r.title}
+
                     {r.description && (
-                      <div className="mt-1 text-xs text-slate-500">
+                      <div className="mt-1 line-clamp-1 text-xs text-slate-500">
                         {r.description}
                       </div>
                     )}
@@ -151,24 +199,39 @@ function TasksPage() {
                   <TableCell>{r.task_type ?? "—"}</TableCell>
 
                   <TableCell>
-                    <Badge
+                    <select
+                      value={r.priority}
+                      onChange={(e) => updatePriority(r, e.target.value)}
                       className={cn(
+                        "h-9 w-[120px] rounded-lg border bg-white px-3 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100",
                         r.priority === "high" &&
-                          "bg-rose-100 text-rose-700 hover:bg-rose-100",
+                          "border-rose-300 text-rose-700",
                         r.priority === "medium" &&
-                          "bg-amber-100 text-amber-700 hover:bg-amber-100",
+                          "border-amber-300 text-amber-700",
                         r.priority === "low" &&
-                          "bg-slate-100 text-slate-700 hover:bg-slate-100",
+                          "border-slate-300 text-slate-700",
                       )}
                     >
-                      {r.priority}
-                    </Badge>
+                      {PRIORITIES.map((p) => (
+                        <option key={p} value={p}>
+                          {p}
+                        </option>
+                      ))}
+                    </select>
                   </TableCell>
 
                   <TableCell>
-                    <Badge variant="secondary">
-                      {r.status?.replace(/_/g, " ")}
-                    </Badge>
+                    <select
+                      value={r.status}
+                      onChange={(e) => updateStatus(r, e.target.value)}
+                      className="h-9 w-[145px] rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+                    >
+                      {STATUSES.map((s) => (
+                        <option key={s} value={s}>
+                          {s.replace(/_/g, " ")}
+                        </option>
+                      ))}
+                    </select>
                   </TableCell>
 
                   <TableCell className="text-sm">
@@ -228,8 +291,8 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
 
     toast.success("Task created");
 
-    setF(initialTask); // form clear hoga
-    onSaved(); // table reload hoga
+    setF(initialTask);
+    onSaved();
   };
 
   return (
@@ -325,9 +388,9 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <p className="text-xs text-slate-500">
-          After save, form will clear so you can add another task.
+          Save ke baad form clear hoga, popup open rahega.
         </p>
 
         <Button
