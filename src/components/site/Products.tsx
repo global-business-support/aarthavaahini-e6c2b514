@@ -3,7 +3,7 @@
 //   DialogContent,
 //   DialogTrigger,
 // } from "@/components/ui/dialog";
-// import { LeadForm } from "./LeadForm";
+
 // import { Card } from "@/components/ui/card";
 // import { Button } from "@/components/ui/button";
 
@@ -56,232 +56,323 @@
 //     title: (
 //       <>
 //         Easy & Fast
-//         <span className="text-gradient"> Loan Solutions</span>
+//         <span className="text-gradient">
+//           {" "}Loan Solutions
+//         </span>
 //       </>
 //     ),
-//     desc: "Get instant access to Home Loans, Personal Loans, Business Loans, and Loan Against Property with low interest rates, flexible EMI options, quick approvals, and trusted banking partners across India.",
-//     items: ["Home Loan", "Personal Loan","Business Loan","Car / Vehicle Loan", "Education Loan", "Gold Loan","Loan Against Property (Mortgage Loan)","Cash Credit (CC) & Overdraft (OD)",]
+//     desc:
+//       "Get instant access to Home Loans, Personal Loans, Business Loans, and Loan Against Property with low interest rates and quick approvals.",
+
+//     items: [
+//       "Home Loan",
+//       "Personal Loan",
+//       "Business Loan",
+//       "Car / Vehicle Loan",
+//       "Education Loan",
+//       "Gold Loan",
+//       "Loan Against Property",
+//       "Cash Credit & Overdraft",
+//     ],
 //   },
+
 //   {
 //     icon: ShieldPlus,
 //     name: "Complete Financial Insurance Protection",
-//      title: (
+
+//     title: (
 //       <>
 //         Complete Financial
-//         <span className="text-gradient"> Insurance Protection</span>
+//         <span className="text-gradient">
+//           {" "}Insurance Protection
+//         </span>
 //       </>
 //     ),
-//     desc:"Protect your family, health, vehicle, and future with comprehensive Health Insurance, Life Insurance, Term Plans, and Motor Insurance from India's most trusted insurance providers.",
-//     items: ["Life Insurance", "Term Insurance", "Health Insurance / Mediclaim", "Motor Insurance","Business Insurance","Travel Insurance"],
+
+//     desc:
+//       "Protect your family, health, vehicle, and future with comprehensive insurance solutions.",
+
+//     items: [
+//       "Life Insurance",
+//       "Term Insurance",
+//       "Health Insurance",
+//       "Motor Insurance",
+//       "Business Insurance",
+//       "Travel Insurance",
+//     ],
 //   },
+
 //   {
 //     icon: LineChart,
 //     name: "Smart Wealth Creation Through Mutual Funds",
-//       title: (
+
+//     title: (
 //       <>
 //         Smart Wealth Creation
-//         <span className="text-gradient"> Through Mutual Funds</span>
+//         <span className="text-gradient">
+//           {" "}Through Mutual Funds
+//         </span>
 //       </>
 //     ),
-//     desc:"Build long-term wealth with SIP investments, ELSS tax-saving funds, equity funds, debt funds, and expert-guided mutual fund solutions tailored to your financial goals and future security.",
-//     items: ["SIP Investment", " Mutual Funds", "Tax Saving Investment","Wealth Management Services"],
+
+//     desc:
+//       "Build long-term wealth with SIP investments and expert-guided mutual fund solutions.",
+
+//     items: [
+//       "SIP Investment",
+//       "Mutual Funds",
+//       "Tax Saving Investment",
+//       "Wealth Management",
+//     ],
 //   },
 // ];
 
 // export function Products() {
+
 //   return (
+
 //     <section
 //       id="products"
-//       className="container mx-auto scroll-mt-24 px-6 py-24"
+//       className="container mx-auto scroll-mt-24 px-4 py-14 sm:px-6 sm:py-24"
 //     >
+
 //       {/* TOP FEATURES */}
 
-//       <div className="grid gap-4 rounded-4xl border-border/70 bg-card/75 p-4 shadow-soft backdrop-blur md:grid-cols-4 md:p-5">
+//       <div className="grid gap-4 rounded-4xl border border-gray-200 bg-white p-4 shadow-sm md:grid-cols-4 md:p-5">
+
 //         {bankingFeatures.map(
 //           ({ icon: Icon, title, desc, bg, color }) => (
-//             <div key={title} className={`rounded-2xl ${bg} p-5`}>
+
+//             <div
+//               key={title}
+//               className={`rounded-2xl ${bg} p-5`}
+//             >
+
 //               <Icon className={`h-6 w-6 ${color}`} />
 
 //               <h3
-//                 className={`mt-4 font-display text-lg font-bold ${color}`}
+//                 className={`mt-4 text-lg font-bold ${color}`}
 //               >
 //                 {title}
 //               </h3>
 
-//               <p className="mt-2 text-sm text-foreground/70">
+//               <p className="mt-2 text-sm text-gray-600">
 //                 {desc}
 //               </p>
+
 //             </div>
 //           )
 //         )}
+
 //       </div>
 
 //       {/* HEADING */}
 
 //       <div className="mx-auto mt-12 max-w-2xl text-center sm:mt-20">
-//         <span className="text-sm font-semibold uppercase tracking-[0.2em] text-primary-glow">
+
+//         <span className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
 //           Our Products
 //         </span>
 
-//         <h2 className="mt-3 font-display text-4xl font-bold text-foreground sm:text-5xl">
-//           Banking, loans and protection,
-//           <span className="text-gradient">
-//             {" "}
-//             in one place
+//         <h2 className="mt-3 text-2xl font-bold text-gray-900 sm:text-4xl md:text-5xl">
+
+//           Loans, insurance and investments,
+
+//           <span className="text-blue-600">
+//             {" "}in one place
 //           </span>
+
 //         </h2>
 
-//         <p className="mt-4 text-muted-foreground">
-//           Aarthvaahini Financial Services Pvt. Ltd. is a trusted financial solutions company offering loans, insurance, mutual funds, and investment services designed to support individuals, families, and businesses.
+//         <p className="mt-4 text-gray-500">
+//           Aarthvaahini Financial Services Pvt. Ltd. offers loans,
+//           insurance, mutual funds, and investment solutions for
+//           individuals and businesses.
 //         </p>
+
 //       </div>
 
 //       {/* PRODUCT CARDS */}
 
 //       <div className="mt-10 grid gap-5 sm:mt-14 sm:gap-6 md:grid-cols-3">
-//         {products.map(({ icon: Icon, name, title, desc, items }) => (
-//           <Card
-//             key={name}
-//             className="group relative overflow-hidden border/60 bg-gradient-card p-8 shadow-soft transition-smooth hover:-translate-y-1 hover:shadow-elegant"
-//           >
-//             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-primary opacity-10 blur-2xl transition-smooth group-hover:opacity-25" />
 
-//             <div className="relative">
-//               {/* ICON */}
+//         {products.map(
+//           ({
+//             icon: Icon,
+//             name,
+//             title,
+//             desc,
+//             items,
+//           }) => (
 
-//               <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary text-primary-foreground shadow-glow">
-//                 <Icon className="h-7 w-7" />
+//             <Card
+//               key={name}
+//               className="glow-border group relative overflow-hidden rounded-[28px] border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-8"
+//             >
+
+//               {/* GLOW */}
+
+//               <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-blue-500/10 blur-3xl transition-all duration-300 group-hover:bg-blue-500/20" />
+
+//               <div className="relative">
+
+//                 {/* ICON */}
+
+//                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-r from-[#17357e] to-blue-600 text-white shadow-lg">
+
+//                   <Icon className="h-7 w-7" />
+
+//                 </div>
+
+//                 {/* TITLE */}
+
+//                 <h3 className="mt-6 text-2xl font-bold text-gray-900">
+//                   {title}
+//                 </h3>
+
+//                 {/* DESC */}
+
+//                 <p className="mt-3 text-sm leading-6 text-gray-500">
+//                   {desc}
+//                 </p>
+
+//                 {/* FEATURES */}
+
+//                 <ul className="mt-5 grid grid-cols-2 gap-3 text-sm text-gray-700">
+
+//                   {items.map((i) => (
+
+//                     <li
+//                       key={i}
+//                       className="flex items-center gap-2"
+//                     >
+
+//                       <span className="h-2 w-2 rounded-full bg-blue-600" />
+
+//                       {i}
+
+//                     </li>
+//                   ))}
+
+//                 </ul>
+
+//                 {/* VIEW FEATURES */}
+
+//                 <Dialog>
+
+//                   <DialogTrigger asChild>
+
+//                     <Button
+//                       variant="ghost"
+//                       className="mt-6 px-0 text-blue-700 hover:bg-transparent hover:text-blue-500"
+//                     >
+
+//                       View Features
+
+//                       <ArrowRight className="ml-2 h-4 w-4" />
+
+//                     </Button>
+
+//                   </DialogTrigger>
+
+//                   {/* POPUP */}
+
+//                   <DialogContent className="max-w-2xl overflow-hidden rounded-[32px] border-0 p-0 shadow-2xl">
+
+//                     {/* TOP */}
+
+//                     <div className="bg-gradient-to-r from-[#17357e] to-blue-600 p-8 text-white">
+
+//                       <h2 className="text-3xl font-bold">
+//                         {title}
+//                       </h2>
+
+//                       <p className="mt-3 text-white/80">
+//                         {desc}
+//                       </p>
+
+//                     </div>
+
+//                     {/* CONTENT */}
+
+//                     <div className="bg-white p-8">
+
+//                       <h3 className="mb-5 text-2xl font-bold text-[#17357e]">
+
+//                         Features Included
+
+//                       </h3>
+
+//                       <ul className="space-y-4">
+
+//                         {items.map((feature) => (
+
+//                           <li
+//                             key={feature}
+//                             className="flex items-start gap-3 rounded-2xl border border-gray-100 bg-gray-50 p-4"
+//                           >
+
+//                             <CheckCircle2 className="mt-0.5 h-5 w-5 text-green-600" />
+
+//                             <span className="text-gray-700">
+//                               {feature}
+//                             </span>
+
+//                           </li>
+//                         ))}
+
+//                       </ul>
+
+//                       {/* BOTTOM INFO */}
+
+//                       <div className="mt-8 rounded-2xl bg-gradient-to-r from-[#17357e]/5 to-blue-50 p-5">
+
+//                         <div className="flex items-start gap-3">
+
+//                           <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#17357e] text-white">
+
+//                             <CheckCircle2 className="h-5 w-5" />
+
+//                           </div>
+
+//                           <div>
+
+//                             <h4 className="text-lg font-semibold text-[#17357e]">
+
+//                               Trusted Financial Solutions
+
+//                             </h4>
+
+//                             <p className="mt-1 text-sm leading-6 text-gray-600">
+
+//                               Aarthvaahini provides fast approvals,
+//                               secure documentation, expert financial
+//                               guidance, and trusted partner support
+//                               for all your loans, insurance, and
+//                               investment needs.
+
+//                             </p>
+
+//                           </div>
+
+//                         </div>
+
+//                       </div>
+
+//                     </div>
+
+//                   </DialogContent>
+
+//                 </Dialog>
+
 //               </div>
 
-//               {/* TITLE */}
+//             </Card>
+//           )
+//         )}
 
-//               <h3 className="mt-6 font-display text-2xl font-bold text-foreground">
-//                 {title}
-//               </h3>
-
-//               {/* DESCRIPTION */}
-
-//               <p className="mt-2 text-sm text-muted-foreground">
-//                 {desc}
-//               </p>
-
-//               {/* FEATURES */}
-
-//               <ul className="mt-5 grid grid-cols-2 gap-2 text-sm text-foreground/80">
-//                 {items.map((i) => (
-//                   <li
-//                     key={i}
-//                     className="flex items-center gap-2"
-//                   >
-//                     <span className="h-1.5 w-1.5 rounded-full bg-primary-glow" />
-
-//                     {i}
-//                   </li>
-//                 ))}
-//               </ul>
-
-//               {/* DIALOG */}
-
-//               <Dialog>
-//                 <DialogTrigger asChild>
-//                   <Button
-//                     variant="ghost"
-//                     className="mt-6 px-0 text-primary hover:bg-transparent hover:text-primary-glow"
-//                   >
-//                     View Features
-
-//                     <ArrowRight className="ml-2 h-4 w-4" />
-//                   </Button>
-//                 </DialogTrigger>
-
-//                 <DialogContent className="max-w-2xl overflow-hidden rounded-[30px] border-0 p-0">
-//                   {/* TOP */}
-
-//                   <div className="bg-linear-to-r from-[#17357e] to-[#51639ad6] p-8 text-white">
-//                     <h2 className="text-3xl font-bold">
-//                       {title}
-//                     </h2>
-
-//                     <p className="mt-3 text-white/80">
-//                       {desc}
-//                     </p>
-//                   </div>
-
-//                   {/* CONTENT */}
-
-//                   <div className="p-8">
-//                     <h3 className="mb-5 text-xl font-semibold text-[#17357e]">
-//                       Features Included
-//                     </h3>
-
-//                     <ul className="space-y-4">
-//                       {items.map((feature) => (
-//                         <li
-//                           key={feature}
-//                           className="flex items-start gap-3 rounded-xl border border-gray-100 p-4"
-//                         >
-//                           <CheckCircle2 className="mt-0.5 h-5 w-5 text-green-600" />
-
-//                           <span className="text-gray-700">
-//                             {feature}
-//                           </span>
-//                         </li>
-//                       ))}
-//                     </ul>
-//                   {/* BUTTONS */}
-
-// <div className="mt-8 flex gap-4">
-
-//   {/* APPLY NOW */}
-
-//   <Dialog>
-//     <DialogTrigger asChild>
-//       <Button className="flex-1 rounded-xl bg-linear-to-r from-[#17357e] to-[#51639ad6] py-6 text-white">
-//         Apply Now
-//       </Button>
-//     </DialogTrigger>
-
-//     <DialogContent className="max-w-lg">
-//       <div className="p-6">
-//         <h2 className="text-2xl font-bold text-[#17357e]">
-//           Apply For {title}
-//         </h2>
-
-//         <p className="mt-2 text-gray-500">
-//           Fill your details and our advisor will contact you.
-//         </p>
-
-//         <div className="mt-6">
-//           <LeadForm
-//             productType="loan"
-//             productName={name}
-//             showAmount
-//             showMessage
-//           />
-//         </div>
 //       </div>
-//     </DialogContent>
 
-//   </Dialog>
-
-//   {/* TALK TO ADVISOR */}
-
-//   <Button
-//     variant="outline"
-//     className="flex-1 rounded-xl border-[#17357e] py-6 text-[#17357e]"
-//     onClick={() => alert("Advisor will contact you soon")}
-//   >
-//     Talk To Advisor
-//   </Button>
-
-// </div>
-//                   </div>
-//                 </DialogContent>
-//               </Dialog>
-//             </div>
-//           </Card>
-//         ))}
-//       </div>
 //     </section>
 //   );
 // }
@@ -299,38 +390,41 @@ import {
   ShieldPlus,
   LineChart,
   ArrowRight,
-  Landmark,
-  FileCheck2,
-  Percent,
+  Building2,
+  Target,
+  UsersRound,
+  MapPinned,
   CheckCircle2,
+  BriefcaseBusiness,
+  HandHeart,
 } from "lucide-react";
 
 const bankingFeatures = [
   {
-    icon: Landmark,
-    title: "40+ bank partners",
-    desc: "Home, business and personal loan options in one place.",
+    icon: Building2,
+    title: "Corporate Financial Consultants",
+    desc: "Expert consulting for Loans, Insurance, Mutual Funds, PE and Alternative Assets under one roof.",
     bg: "bg-[#E3F2FD]",
     color: "text-[#1565C0]",
   },
   {
-    icon: Percent,
-    title: "Low interest offers",
-    desc: "Compare rates and eligibility before you apply.",
+    icon: Target,
+    title: "Tailored Solutions",
+    desc: "Personalized financial solutions designed to meet your goals.",
     bg: "bg-[#FFF4E5]",
     color: "text-[#E65100]",
   },
   {
-    icon: ShieldPlus,
-    title: "Insurance protection",
-    desc: "Health, life, term and motor plans for every family.",
+    icon: UsersRound,
+    title: "Century of Experience",
+    desc: "A combined century of experience amongst our directors.",
     bg: "bg-[#FCE4EC]",
     color: "text-[#AD1457]",
   },
   {
-    icon: FileCheck2,
-    title: "Fast processing",
-    desc: "Guided documentation with advisor support.",
+    icon: MapPinned,
+    title: "Multiple Offices",
+    desc: "Accessible support through multiple office locations.",
     bg: "bg-[#E8F5E9]",
     color: "text-[#2E7D32]",
   },
@@ -339,18 +433,15 @@ const bankingFeatures = [
 const products = [
   {
     icon: Banknote,
-    name: "Easy & Fast Loan Solutions",
+    name: "Wide Range of Loans from 50+ Financiers",
     title: (
       <>
-        Easy & Fast
-        <span className="text-gradient">
-          {" "}Loan Solutions
-        </span>
+        Wide Range of Loans
+        <span className="text-gradient"> from 50+ Financiers</span>
       </>
     ),
     desc:
-      "Get instant access to Home Loans, Personal Loans, Business Loans, and Loan Against Property with low interest rates and quick approvals.",
-
+      "Access a wide range of loan solutions from 50+ financiers with expert guidance, structured documentation and tailored options based on your financial goals.",
     items: [
       "Home Loan",
       "Personal Loan",
@@ -362,304 +453,233 @@ const products = [
       "Cash Credit & Overdraft",
     ],
   },
-
   {
     icon: ShieldPlus,
-    name: "Complete Financial Insurance Protection",
-
+    name: "Corporate Insurance Advisor",
     title: (
       <>
-        Complete Financial
-        <span className="text-gradient">
-          {" "}Insurance Protection
-        </span>
+        Corporate Insurance
+        <span className="text-gradient"> Advisor</span>
       </>
     ),
-
     desc:
-      "Protect your family, health, vehicle, and future with comprehensive insurance solutions.",
-
+      "Get expert advisory for corporate insurance, keyman insurance, tax-saving plans and assured return solutions designed for long-term protection and financial planning.",
     items: [
+      "Corporate Insurance",
+      "Keyman Insurance",
+      "Tax Saving Plans",
+      "Assured Return Plans",
       "Life Insurance",
-      "Term Insurance",
       "Health Insurance",
-      "Motor Insurance",
+      "Term Insurance",
       "Business Insurance",
-      "Travel Insurance",
     ],
   },
-
   {
     icon: LineChart,
-    name: "Smart Wealth Creation Through Mutual Funds",
-
+    name: "Smart Wealth Creation",
     title: (
       <>
-        Smart Wealth Creation
-        <span className="text-gradient">
-          {" "}Through Mutual Funds
-        </span>
+        Smart Wealth
+        <span className="text-gradient"> Creation</span>
       </>
     ),
-
     desc:
-      "Build long-term wealth with SIP investments and expert-guided mutual fund solutions.",
-
+      "Build long-term wealth through diversified investment solutions including mutual funds, PMS, SIF, AIF and high-yield opportunities with expert advisory support.",
     items: [
-      "SIP Investment",
       "Mutual Funds",
+      "PMS",
+      "SIF",
+      "AIF",
+      "High Rental Yields",
       "Tax Saving Investment",
       "Wealth Management",
+      "Portfolio Review",
+    ],
+  },
+  {
+    icon: BriefcaseBusiness,
+    name: "Private Equity & Alternative Assets",
+    title: (
+      <>
+        Private Equity
+        <span className="text-gradient"> & Alternative Assets</span>
+      </>
+    ),
+    desc:
+      "Access curated opportunities across Private Equity, AIFs, PMS, Bonds, REITs, InvITs and other alternative investment solutions.",
+    items: [
+      "Private Equity",
+      "Alternative Investment Funds",
+      "PMS",
+      "Bonds & NCDs",
+      "REITs & InvITs",
+      "Structured Products",
     ],
   },
 ];
 
 export function Products() {
-
   return (
-
     <section
       id="products"
       className="container mx-auto scroll-mt-24 px-4 py-14 sm:px-6 sm:py-24"
     >
-
       {/* TOP FEATURES */}
-
       <div className="grid gap-4 rounded-4xl border border-gray-200 bg-white p-4 shadow-sm md:grid-cols-4 md:p-5">
+        {bankingFeatures.map(({ icon: Icon, title, desc, bg, color }) => (
+          <div key={title} className={`rounded-2xl ${bg} p-5`}>
+            <Icon className={`h-6 w-6 ${color}`} />
 
-        {bankingFeatures.map(
-          ({ icon: Icon, title, desc, bg, color }) => (
+            <h3 className={`mt-4 text-lg font-bold ${color}`}>{title}</h3>
 
-            <div
-              key={title}
-              className={`rounded-2xl ${bg} p-5`}
-            >
-
-              <Icon className={`h-6 w-6 ${color}`} />
-
-              <h3
-                className={`mt-4 text-lg font-bold ${color}`}
-              >
-                {title}
-              </h3>
-
-              <p className="mt-2 text-sm text-gray-600">
-                {desc}
-              </p>
-
-            </div>
-          )
-        )}
-
+            <p className="mt-2 text-sm leading-6 text-gray-600">{desc}</p>
+          </div>
+        ))}
       </div>
 
       {/* HEADING */}
-
       <div className="mx-auto mt-12 max-w-2xl text-center sm:mt-20">
-
         <span className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
           Our Products
         </span>
 
         <h2 className="mt-3 text-2xl font-bold text-gray-900 sm:text-4xl md:text-5xl">
-
-          Loans, insurance and investments,
-
-          <span className="text-blue-600">
-            {" "}in one place
-          </span>
-
+          Loans, Insurance, Wealth Solutions and
+          <span className="text-blue-600"> Alternative Investments</span>
         </h2>
 
         <p className="mt-4 text-gray-500">
-          Aarthvaahini Financial Services Pvt. Ltd. offers loans,
-          insurance, mutual funds, and investment solutions for
-          individuals and businesses.
+          Aarthvaahini Financial Services Pvt. Ltd. offers loans, corporate
+          insurance advisory, wealth solutions, private equity, alternative
+          assets and investment solutions for individuals and businesses.
         </p>
-
       </div>
 
       {/* PRODUCT CARDS */}
-
-      <div className="mt-10 grid gap-5 sm:mt-14 sm:gap-6 md:grid-cols-3">
-
-        {products.map(
-          ({
-            icon: Icon,
-            name,
-            title,
-            desc,
-            items,
-          }) => (
-
-            <Card
-              key={name}
-              className="glow-border group relative overflow-hidden rounded-[28px] border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-8"
-            >
-
-              {/* GLOW */}
-
-              <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-blue-500/10 blur-3xl transition-all duration-300 group-hover:bg-blue-500/20" />
-
-              <div className="relative">
-
-                {/* ICON */}
-
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-r from-[#17357e] to-blue-600 text-white shadow-lg">
-
-                  <Icon className="h-7 w-7" />
-
-                </div>
-
-                {/* TITLE */}
-
-                <h3 className="mt-6 text-2xl font-bold text-gray-900">
-                  {title}
-                </h3>
-
-                {/* DESC */}
-
-                <p className="mt-3 text-sm leading-6 text-gray-500">
-                  {desc}
-                </p>
-
-                {/* FEATURES */}
-
-                <ul className="mt-5 grid grid-cols-2 gap-3 text-sm text-gray-700">
-
-                  {items.map((i) => (
-
-                    <li
-                      key={i}
-                      className="flex items-center gap-2"
-                    >
-
-                      <span className="h-2 w-2 rounded-full bg-blue-600" />
-
-                      {i}
-
-                    </li>
-                  ))}
-
-                </ul>
-
-                {/* VIEW FEATURES */}
-
-                <Dialog>
-
-                  <DialogTrigger asChild>
-
-                    <Button
-                      variant="ghost"
-                      className="mt-6 px-0 text-blue-700 hover:bg-transparent hover:text-blue-500"
-                    >
-
-                      View Features
-
-                      <ArrowRight className="ml-2 h-4 w-4" />
-
-                    </Button>
-
-                  </DialogTrigger>
-
-                  {/* POPUP */}
-
-                  <DialogContent className="max-w-2xl overflow-hidden rounded-[32px] border-0 p-0 shadow-2xl">
-
-                    {/* TOP */}
-
-                    <div className="bg-gradient-to-r from-[#17357e] to-blue-600 p-8 text-white">
-
-                      <h2 className="text-3xl font-bold">
-                        {title}
-                      </h2>
-
-                      <p className="mt-3 text-white/80">
-                        {desc}
-                      </p>
-
-                    </div>
-
-                    {/* CONTENT */}
-
-                    <div className="bg-white p-8">
-
-                      <h3 className="mb-5 text-2xl font-bold text-[#17357e]">
-
-                        Features Included
-
-                      </h3>
-
-                      <ul className="space-y-4">
-
-                        {items.map((feature) => (
-
-                          <li
-                            key={feature}
-                            className="flex items-start gap-3 rounded-2xl border border-gray-100 bg-gray-50 p-4"
-                          >
-
-                            <CheckCircle2 className="mt-0.5 h-5 w-5 text-green-600" />
-
-                            <span className="text-gray-700">
-                              {feature}
-                            </span>
-
-                          </li>
-                        ))}
-
-                      </ul>
-
-                      {/* BOTTOM INFO */}
-
-                      <div className="mt-8 rounded-2xl bg-gradient-to-r from-[#17357e]/5 to-blue-50 p-5">
-
-                        <div className="flex items-start gap-3">
-
-                          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#17357e] text-white">
-
-                            <CheckCircle2 className="h-5 w-5" />
-
-                          </div>
-
-                          <div>
-
-                            <h4 className="text-lg font-semibold text-[#17357e]">
-
-                              Trusted Financial Solutions
-
-                            </h4>
-
-                            <p className="mt-1 text-sm leading-6 text-gray-600">
-
-                              Aarthvaahini provides fast approvals,
-                              secure documentation, expert financial
-                              guidance, and trusted partner support
-                              for all your loans, insurance, and
-                              investment needs.
-
-                            </p>
-
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                  </DialogContent>
-
-                </Dialog>
-
+      <div className="mt-10 grid gap-5 sm:mt-14 sm:gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {products.map(({ icon: Icon, name, title, desc, items }) => (
+          <Card
+            key={name}
+            className="glow-border group relative overflow-hidden rounded-[28px] border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-8"
+          >
+            {/* GLOW */}
+            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-blue-500/10 blur-3xl transition-all duration-300 group-hover:bg-blue-500/20" />
+
+            <div className="relative">
+              {/* ICON */}
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-r from-[#17357e] to-blue-600 text-white shadow-lg">
+                <Icon className="h-7 w-7" />
               </div>
 
-            </Card>
-          )
-        )}
+              {/* TITLE */}
+              <h3 className="mt-6 text-2xl font-bold text-gray-900">
+                {title}
+              </h3>
 
+              {/* DESC */}
+              <p className="mt-3 text-sm leading-6 text-gray-500">{desc}</p>
+
+              {/* FEATURES */}
+              <ul className="mt-5 grid grid-cols-1 gap-3 text-sm text-gray-700 sm:grid-cols-2 lg:grid-cols-1">
+                {items.map((item) => (
+                  <li key={item} className="flex items-center gap-2">
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-blue-600" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* VIEW FEATURES */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="mt-6 px-0 text-blue-700 hover:bg-transparent hover:text-blue-500"
+                  >
+                    View Features
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+
+                {/* POPUP */}
+                <DialogContent className="max-w-2xl overflow-hidden rounded-[32px] border-0 p-0 shadow-2xl">
+                  {/* TOP */}
+                  <div className="bg-gradient-to-r from-[#17357e] to-blue-600 p-8 text-white">
+                    <h2 className="text-3xl font-bold">{title}</h2>
+
+                    <p className="mt-3 text-white/80">{desc}</p>
+                  </div>
+
+                  {/* CONTENT */}
+                  <div className="bg-white p-8">
+                    <h3 className="mb-5 text-2xl font-bold text-[#17357e]">
+                      Features Included
+                    </h3>
+
+                    <ul className="space-y-4">
+                      {items.map((feature) => (
+                        <li
+                          key={feature}
+                          className="flex items-start gap-3 rounded-2xl border border-gray-100 bg-gray-50 p-4"
+                        >
+                          <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
+
+                          <span className="text-gray-700">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* BOTTOM INFO */}
+                    <div className="mt-8 rounded-2xl bg-gradient-to-r from-[#17357e]/5 to-blue-50 p-5">
+                      <div className="flex items-start gap-3">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#17357e] text-white">
+                          <CheckCircle2 className="h-5 w-5" />
+                        </div>
+
+                        <div>
+                          <h4 className="text-lg font-semibold text-[#17357e]">
+                            Trusted Financial Solutions
+                          </h4>
+
+                          <p className="mt-1 text-sm leading-6 text-gray-600">
+                            Aarthvaahini provides structured financial
+                            consulting, secure documentation, expert guidance
+                            and trusted partner support for loans, corporate
+                            insurance advisory, wealth solutions, private
+                            equity and alternative investment needs.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </Card>
+        ))}
       </div>
 
+      {/* CSR PLACEHOLDER */}
+      <div className="mt-14 rounded-[28px] border border-blue-100 bg-gradient-to-r from-blue-50 to-sky-50 p-6 text-center sm:p-8">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-white text-blue-600 shadow-sm">
+          <HandHeart className="h-7 w-7" />
+        </div>
+
+        <span className="mt-5 block text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
+          CSR Initiatives
+        </span>
+
+        <h3 className="mt-3 text-2xl font-bold text-gray-900">
+          Community and CSR Activities
+        </h3>
+
+        <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-gray-600">
+          This section is reserved for future CSR activities, community
+          initiatives, financial awareness programs and social impact updates by
+          Aarthvaahini.
+        </p>
+      </div>
     </section>
   );
 }
