@@ -137,7 +137,7 @@ export function CrmLayout() {
               {!collapsed && (
                 <div>
                   <div className="text-sm font-semibold tracking-tight text-sky-900">Aarthvaahini</div>
-                  <div className="text-[10px] uppercase tracking-wider text-sky-600">Enterprise CRM</div>
+                  <div className="text-[10px] uppercase tracking-wider text-sky-600"> CRM</div>
                 </div>
               )}
             </Link>
