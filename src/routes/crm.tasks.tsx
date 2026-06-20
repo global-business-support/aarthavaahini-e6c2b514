@@ -441,22 +441,3 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
       </div>
     </form>
   );
-}
-
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-xs text-slate-500">
-          Save ke baad form clear hoga, popup open rahega.
-        </p>
-
-        <Button
-          type="submit"
-          disabled={saving}
-          className="bg-gradient-to-r from-sky-600 to-blue-600 text-white"
-        >
-          {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Create Task
-        </Button>
-      </div>
-    </form>
-  );
-}
