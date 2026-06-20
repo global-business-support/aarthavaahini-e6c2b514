@@ -184,6 +184,48 @@ export type Database = {
         }
         Relationships: []
       }
+      employees: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          department: string | null
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          role: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          department?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          role?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          department?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          role?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       insurance_cases: {
         Row: {
           created_at: string
@@ -233,6 +275,7 @@ export type Database = {
           bank_name: string | null
           cibil_score: number | null
           city: string | null
+          converted_customer_id: string | null
           created_at: string
           email: string | null
           full_name: string
@@ -248,6 +291,7 @@ export type Database = {
           phone: string
           product_name: string | null
           product_type: string
+          rejection_reason: string | null
           state: string | null
           status: string
         }
@@ -258,6 +302,7 @@ export type Database = {
           bank_name?: string | null
           cibil_score?: number | null
           city?: string | null
+          converted_customer_id?: string | null
           created_at?: string
           email?: string | null
           full_name: string
@@ -273,6 +318,7 @@ export type Database = {
           phone: string
           product_name?: string | null
           product_type: string
+          rejection_reason?: string | null
           state?: string | null
           status?: string
         }
@@ -283,6 +329,7 @@ export type Database = {
           bank_name?: string | null
           cibil_score?: number | null
           city?: string | null
+          converted_customer_id?: string | null
           created_at?: string
           email?: string | null
           full_name?: string
@@ -298,10 +345,18 @@ export type Database = {
           phone?: string
           product_name?: string | null
           product_type?: string
+          rejection_reason?: string | null
           state?: string | null
           status?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "leads_converted_customer_id_fkey"
+            columns: ["converted_customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "leads_partner_id_fkey"
             columns: ["partner_id"]
@@ -316,34 +371,52 @@ export type Database = {
           created_at: string
           customer_id: string | null
           disbursement_amount: number | null
+          documents_checklist: Json | null
           id: string
+          interest_rate: number | null
+          lead_id: string | null
           lender_name: string | null
           loan_amount: number | null
           loan_type: string
+          notes: string | null
+          requested_amount: number | null
           sanction_amount: number | null
           stage: string
+          tenure_months: number | null
         }
         Insert: {
           created_at?: string
           customer_id?: string | null
           disbursement_amount?: number | null
+          documents_checklist?: Json | null
           id?: string
+          interest_rate?: number | null
+          lead_id?: string | null
           lender_name?: string | null
           loan_amount?: number | null
           loan_type: string
+          notes?: string | null
+          requested_amount?: number | null
           sanction_amount?: number | null
           stage?: string
+          tenure_months?: number | null
         }
         Update: {
           created_at?: string
           customer_id?: string | null
           disbursement_amount?: number | null
+          documents_checklist?: Json | null
           id?: string
+          interest_rate?: number | null
+          lead_id?: string | null
           lender_name?: string | null
           loan_amount?: number | null
           loan_type?: string
+          notes?: string | null
+          requested_amount?: number | null
           sanction_amount?: number | null
           stage?: string
+          tenure_months?: number | null
         }
         Relationships: [
           {
@@ -351,6 +424,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_cases_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
             referencedColumns: ["id"]
           },
         ]
@@ -392,6 +472,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          audience: string
+          created_at: string
+          id: string
+          is_read: boolean
+          link: string | null
+          message: string | null
+          metadata: Json | null
+          title: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          audience?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message?: string | null
+          metadata?: Json | null
+          title: string
+          type?: string
+          user_id?: string | null
+        }
+        Update: {
+          audience?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message?: string | null
+          metadata?: Json | null
+          title?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       partners: {
         Row: {
@@ -467,6 +586,8 @@ export type Database = {
       }
       tasks: {
         Row: {
+          assigned_employee_id: string | null
+          assigned_partner_id: string | null
           assigned_to: string | null
           created_at: string
           description: string | null
@@ -480,6 +601,8 @@ export type Database = {
           title: string
         }
         Insert: {
+          assigned_employee_id?: string | null
+          assigned_partner_id?: string | null
           assigned_to?: string | null
           created_at?: string
           description?: string | null
@@ -493,6 +616,8 @@ export type Database = {
           title: string
         }
         Update: {
+          assigned_employee_id?: string | null
+          assigned_partner_id?: string | null
           assigned_to?: string | null
           created_at?: string
           description?: string | null
@@ -505,7 +630,15 @@ export type Database = {
           task_type?: string | null
           title?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tasks_assigned_partner_id_fkey"
+            columns: ["assigned_partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
