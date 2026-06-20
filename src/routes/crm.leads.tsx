@@ -1254,3 +1254,213 @@ function Field({
     </div>
   );
 }
+const DOC_LIST = [
+  "PAN Card",
+  "Aadhaar Card",
+  "Income Proof / Salary Slips",
+  "Bank Statement (6 months)",
+  "Photograph",
+  "Address Proof",
+  "ITR / Form 16",
+  "Business Proof",
+  "Property Documents",
+];
+
+function ApproveLeadDialog({
+  lead,
+  onClose,
+  onConfirm,
+}: {
+  lead: Lead | null;
+  onClose: () => void;
+  onConfirm: (lead: Lead, p: {
+    loan_type: string;
+    requested_amount: number | null;
+    sanction_amount: number | null;
+    tenure_months: number | null;
+    interest_rate: number | null;
+    bank_name: string;
+    notes: string;
+    docs: Record<string, boolean>;
+  }) => Promise<void>;
+}) {
+  const [saving, setSaving] = useState(false);
+  const [f, setF] = useState({
+    loan_type: "",
+    requested_amount: "",
+    sanction_amount: "",
+    tenure_months: "",
+    interest_rate: "",
+    bank_name: "",
+    notes: "",
+    docs: {} as Record<string, boolean>,
+  });
+
+  useEffect(() => {
+    if (lead) {
+      setF({
+        loan_type: lead.loan_type ?? "Home Loan",
+        requested_amount: lead.loan_amount ? String(lead.loan_amount) : "",
+        sanction_amount: "",
+        tenure_months: "240",
+        interest_rate: "8.5",
+        bank_name: lead.bank_name ?? "",
+        notes: "",
+        docs: {},
+      });
+    }
+  }, [lead]);
+
+  if (!lead) return null;
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    await onConfirm(lead, {
+      loan_type: f.loan_type,
+      requested_amount: f.requested_amount ? Number(f.requested_amount) : null,
+      sanction_amount: f.sanction_amount ? Number(f.sanction_amount) : null,
+      tenure_months: f.tenure_months ? Number(f.tenure_months) : null,
+      interest_rate: f.interest_rate ? Number(f.interest_rate) : null,
+      bank_name: f.bank_name,
+      notes: f.notes,
+      docs: f.docs,
+    });
+    setSaving(false);
+  };
+
+  const inputCls = "h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100";
+
+  return (
+    <Dialog open={!!lead} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
+        <DialogHeader>
+          <DialogTitle className="text-emerald-700">
+            Approve Lead — {lead.lead_name ?? lead.full_name}
+          </DialogTitle>
+        </DialogHeader>
+        <form onSubmit={submit} className="space-y-4">
+          <div className="rounded-lg bg-emerald-50 p-3 text-xs text-emerald-800">
+            Customer + Loan Case auto-create honge approve karte hi.
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Loan Type *</Label>
+              <select required className={`${inputCls} mt-1`} value={f.loan_type}
+                onChange={(e) => setF({ ...f, loan_type: e.target.value })}>
+                {LOAN_TYPES.map((t) => <option key={t}>{t}</option>)}
+              </select>
+            </div>
+            <div>
+              <Label>Bank / Lender</Label>
+              <select className={`${inputCls} mt-1`} value={f.bank_name}
+                onChange={(e) => setF({ ...f, bank_name: e.target.value })}>
+                <option value="">— Select —</option>
+                {BANK_OPTIONS.map((b) => <option key={b}>{b}</option>)}
+              </select>
+            </div>
+            <div>
+              <Label>Requested Amount (₹)</Label>
+              <Input type="number" className="mt-1" value={f.requested_amount}
+                onChange={(e) => setF({ ...f, requested_amount: e.target.value })} />
+            </div>
+            <div>
+              <Label>Sanctioned Amount (₹)</Label>
+              <Input type="number" className="mt-1" value={f.sanction_amount}
+                onChange={(e) => setF({ ...f, sanction_amount: e.target.value })}
+                placeholder="If sanctioned" />
+            </div>
+            <div>
+              <Label>Tenure (months)</Label>
+              <Input type="number" className="mt-1" value={f.tenure_months}
+                onChange={(e) => setF({ ...f, tenure_months: e.target.value })} />
+            </div>
+            <div>
+              <Label>Interest Rate (%)</Label>
+              <Input type="number" step="0.01" className="mt-1" value={f.interest_rate}
+                onChange={(e) => setF({ ...f, interest_rate: e.target.value })} />
+            </div>
+          </div>
+          <div>
+            <Label>Notes</Label>
+            <Textarea rows={2} className="mt-1" value={f.notes}
+              onChange={(e) => setF({ ...f, notes: e.target.value })}
+              placeholder="Any remarks for this approval…" />
+          </div>
+          <div>
+            <Label className="mb-2 block">Documents Received Checklist</Label>
+            <div className="grid grid-cols-2 gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
+              {DOC_LIST.map((d) => (
+                <label key={d} className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" className="h-4 w-4 accent-emerald-600"
+                    checked={!!f.docs[d]}
+                    onChange={(e) => setF({ ...f, docs: { ...f.docs, [d]: e.target.checked } })} />
+                  {d}
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+            <Button type="submit" disabled={saving} className="bg-emerald-600 text-white hover:bg-emerald-700">
+              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Approve & Create Customer
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function RejectLeadDialog({
+  lead,
+  onClose,
+  onConfirm,
+}: {
+  lead: Lead | null;
+  onClose: () => void;
+  onConfirm: (lead: Lead, reason: string) => Promise<void>;
+}) {
+  const [reason, setReason] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => { if (lead) setReason(""); }, [lead]);
+
+  if (!lead) return null;
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reason.trim()) return toast.error("Reason required");
+    setSaving(true);
+    await onConfirm(lead, reason.trim());
+    setSaving(false);
+  };
+
+  return (
+    <Dialog open={!!lead} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-w-md bg-white">
+        <DialogHeader>
+          <DialogTitle className="text-rose-700">
+            Reject Lead — {lead.lead_name ?? lead.full_name}
+          </DialogTitle>
+        </DialogHeader>
+        <form onSubmit={submit} className="space-y-4">
+          <div>
+            <Label>Rejection Reason *</Label>
+            <Textarea required rows={4} className="mt-1" value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="E.g. Low CIBIL score, insufficient income, document mismatch…" />
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+            <Button type="submit" disabled={saving} className="bg-rose-600 text-white hover:bg-rose-700">
+              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Reject Lead
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
