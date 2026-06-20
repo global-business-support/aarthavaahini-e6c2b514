@@ -25,7 +25,10 @@ import {
   FolderOpen,
   Activity,
   MessageCircle,
+  UserPlus,
+  XCircle,
 } from "lucide-react";
+import { NotificationBell } from "@/components/crm/NotificationBell";
 import { useCrmAuth } from "@/hooks/useCrmAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -58,6 +61,8 @@ const NAV: NavItem[] = [
   { to: "/crm", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/crm/leads", label: "Leads", icon: Users },
   { to: "/crm/customers", label: "Customers", icon: UserCircle2 },
+  { to: "/crm/rejected", label: "Rejected Leads", icon: XCircle },
+  { to: "/crm/employees", label: "Employees", icon: UserPlus },
   { to: "/crm/partners", label: "Partners", icon: Handshake },
   { to: "/crm/loans", label: "Loans", icon: Banknote },
   { to: "/crm/insurance", label: "Insurance", icon: ShieldCheck },
@@ -228,10 +233,7 @@ export function CrmLayout() {
                 className="h-9 border-sky-200 bg-sky-50/50 pl-9 text-sm focus-visible:bg-white"
               />
             </div>
-            <Button variant="ghost" size="icon" className="relative h-9 w-9 text-sky-700 hover:bg-sky-50">
-              <Bell className="h-4 w-4" />
-              <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
-            </Button>
+            <NotificationBell />
             <Link to="/" className="hidden text-xs text-sky-600 hover:text-sky-800 md:inline">
               ← Website
             </Link>
