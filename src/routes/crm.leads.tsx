@@ -260,6 +260,8 @@ function LeadsPage() {
   const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
   const [open, setOpen] = useState(false);
   const [noteLead, setNoteLead] = useState<Lead | null>(null);
+  const [approveLead, setApproveLead] = useState<Lead | null>(null);
+  const [rejectLead, setRejectLead] = useState<Lead | null>(null);
 
   const rowSelectClass =
     "h-10 w-[190px] rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100";
@@ -440,8 +442,97 @@ function LeadsPage() {
     }
   };
 
-  const approve = (lead: Lead) => updateStage(lead, "Approved");
-  const reject = (lead: Lead) => updateStage(lead, "Rejected");
+  const approve = (lead: Lead) => setApproveLead(lead);
+  const reject = (lead: Lead) => setRejectLead(lead);
+
+  const confirmApprove = async (
+    lead: Lead,
+    payload: {
+      loan_type: string;
+      requested_amount: number | null;
+      sanction_amount: number | null;
+      tenure_months: number | null;
+      interest_rate: number | null;
+      bank_name: string;
+      notes: string;
+      docs: Record<string, boolean>;
+    },
+  ) => {
+    // 1. Update lead status
+    const { error: leadErr } = await supabase
+      .from("leads")
+      .update({ status: "Approved" })
+      .eq("id", lead.id);
+    if (leadErr) return toast.error(leadErr.message);
+
+    // 2. Create or fetch customer
+    let customerId: string | null = null;
+    const { data: existing } = await supabase
+      .from("customers").select("id").eq("lead_id", lead.id).maybeSingle();
+    if (existing) {
+      customerId = existing.id;
+    } else {
+      const { data: ins, error: cErr } = await supabase
+        .from("customers")
+        .insert({
+          customer_name: lead.lead_name ?? lead.full_name ?? "Unnamed",
+          mobile: lead.phone,
+          email: lead.email,
+          pan: lead.pan,
+          address: [lead.city, lead.state].filter(Boolean).join(", ") || null,
+          lead_id: lead.id,
+          loan_type: payload.loan_type,
+          loan_amount: payload.sanction_amount ?? payload.requested_amount,
+          cibil_score: lead.cibil_score,
+          bank_name: payload.bank_name,
+          stage: "Approved",
+          note: payload.notes || null,
+        })
+        .select("id")
+        .single();
+      if (cErr) return toast.error(cErr.message);
+      customerId = ins.id;
+    }
+
+    // 3. Link to lead
+    if (customerId) {
+      await supabase.from("leads")
+        .update({ converted_customer_id: customerId })
+        .eq("id", lead.id);
+    }
+
+    // 4. Create loan_case
+    const { error: lcErr } = await supabase.from("loan_cases").insert({
+      customer_id: customerId,
+      lead_id: lead.id,
+      loan_type: payload.loan_type,
+      loan_amount: payload.sanction_amount ?? payload.requested_amount,
+      requested_amount: payload.requested_amount,
+      sanction_amount: payload.sanction_amount,
+      tenure_months: payload.tenure_months,
+      interest_rate: payload.interest_rate,
+      lender_name: payload.bank_name || null,
+      stage: payload.sanction_amount ? "Sanction" : "Under Process",
+      notes: payload.notes || null,
+      documents_checklist: payload.docs,
+    });
+    if (lcErr) return toast.error(lcErr.message);
+
+    setLeads((prev) => prev.map((l) => (l.id === lead.id ? { ...l, status: "Approved" } : l)));
+    toast.success("Approved → Customer & Loan Case created");
+    setApproveLead(null);
+  };
+
+  const confirmReject = async (lead: Lead, reason: string) => {
+    const { error } = await supabase
+      .from("leads")
+      .update({ status: "Rejected", rejection_reason: reason })
+      .eq("id", lead.id);
+    if (error) return toast.error(error.message);
+    setLeads((prev) => prev.map((l) => (l.id === lead.id ? { ...l, status: "Rejected" } : l)));
+    toast.success("Lead rejected");
+    setRejectLead(null);
+  };
 
   return (
     <div className="space-y-4">
@@ -765,6 +856,17 @@ function LeadsPage() {
           {noteLead && <LeadNotes lead={noteLead} />}
         </DialogContent>
       </Dialog>
+
+      <ApproveLeadDialog
+        lead={approveLead}
+        onClose={() => setApproveLead(null)}
+        onConfirm={confirmApprove}
+      />
+      <RejectLeadDialog
+        lead={rejectLead}
+        onClose={() => setRejectLead(null)}
+        onConfirm={confirmReject}
+      />
     </div>
   );
 }
