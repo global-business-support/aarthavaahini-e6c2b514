@@ -31,12 +31,14 @@ import { Route as CrmTasksRouteImport } from './routes/crm.tasks'
 import { Route as CrmSettingsRouteImport } from './routes/crm.settings'
 import { Route as CrmScheduleRouteImport } from './routes/crm.schedule'
 import { Route as CrmReportsRouteImport } from './routes/crm.reports'
+import { Route as CrmRejectedRouteImport } from './routes/crm.rejected'
 import { Route as CrmPartnersRouteImport } from './routes/crm.partners'
 import { Route as CrmMutualFundsRouteImport } from './routes/crm.mutual-funds'
 import { Route as CrmLoginRouteImport } from './routes/crm.login'
 import { Route as CrmLoansRouteImport } from './routes/crm.loans'
 import { Route as CrmLeadsRouteImport } from './routes/crm.leads'
 import { Route as CrmInsuranceRouteImport } from './routes/crm.insurance'
+import { Route as CrmEmployeesRouteImport } from './routes/crm.employees'
 import { Route as CrmDocumentsRouteImport } from './routes/crm.documents'
 import { Route as CrmCustomersRouteImport } from './routes/crm.customers'
 import { Route as CrmActivityRouteImport } from './routes/crm.activity'
@@ -156,6 +158,11 @@ const CrmReportsRoute = CrmReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => CrmRoute,
 } as any)
+const CrmRejectedRoute = CrmRejectedRouteImport.update({
+  id: '/rejected',
+  path: '/rejected',
+  getParentRoute: () => CrmRoute,
+} as any)
 const CrmPartnersRoute = CrmPartnersRouteImport.update({
   id: '/partners',
   path: '/partners',
@@ -184,6 +191,11 @@ const CrmLeadsRoute = CrmLeadsRouteImport.update({
 const CrmInsuranceRoute = CrmInsuranceRouteImport.update({
   id: '/insurance',
   path: '/insurance',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmEmployeesRoute = CrmEmployeesRouteImport.update({
+  id: '/employees',
+  path: '/employees',
   getParentRoute: () => CrmRoute,
 } as any)
 const CrmDocumentsRoute = CrmDocumentsRouteImport.update({
@@ -249,12 +261,14 @@ export interface FileRoutesByFullPath {
   '/crm/activity': typeof CrmActivityRoute
   '/crm/customers': typeof CrmCustomersRoute
   '/crm/documents': typeof CrmDocumentsRoute
+  '/crm/employees': typeof CrmEmployeesRoute
   '/crm/insurance': typeof CrmInsuranceRoute
   '/crm/leads': typeof CrmLeadsRoute
   '/crm/loans': typeof CrmLoansRoute
   '/crm/login': typeof CrmLoginRoute
   '/crm/mutual-funds': typeof CrmMutualFundsRoute
   '/crm/partners': typeof CrmPartnersRoute
+  '/crm/rejected': typeof CrmRejectedRoute
   '/crm/reports': typeof CrmReportsRoute
   '/crm/schedule': typeof CrmScheduleRoute
   '/crm/settings': typeof CrmSettingsRoute
@@ -285,12 +299,14 @@ export interface FileRoutesByTo {
   '/crm/activity': typeof CrmActivityRoute
   '/crm/customers': typeof CrmCustomersRoute
   '/crm/documents': typeof CrmDocumentsRoute
+  '/crm/employees': typeof CrmEmployeesRoute
   '/crm/insurance': typeof CrmInsuranceRoute
   '/crm/leads': typeof CrmLeadsRoute
   '/crm/loans': typeof CrmLoansRoute
   '/crm/login': typeof CrmLoginRoute
   '/crm/mutual-funds': typeof CrmMutualFundsRoute
   '/crm/partners': typeof CrmPartnersRoute
+  '/crm/rejected': typeof CrmRejectedRoute
   '/crm/reports': typeof CrmReportsRoute
   '/crm/schedule': typeof CrmScheduleRoute
   '/crm/settings': typeof CrmSettingsRoute
@@ -324,12 +340,14 @@ export interface FileRoutesById {
   '/crm/activity': typeof CrmActivityRoute
   '/crm/customers': typeof CrmCustomersRoute
   '/crm/documents': typeof CrmDocumentsRoute
+  '/crm/employees': typeof CrmEmployeesRoute
   '/crm/insurance': typeof CrmInsuranceRoute
   '/crm/leads': typeof CrmLeadsRoute
   '/crm/loans': typeof CrmLoansRoute
   '/crm/login': typeof CrmLoginRoute
   '/crm/mutual-funds': typeof CrmMutualFundsRoute
   '/crm/partners': typeof CrmPartnersRoute
+  '/crm/rejected': typeof CrmRejectedRoute
   '/crm/reports': typeof CrmReportsRoute
   '/crm/schedule': typeof CrmScheduleRoute
   '/crm/settings': typeof CrmSettingsRoute
@@ -364,12 +382,14 @@ export interface FileRouteTypes {
     | '/crm/activity'
     | '/crm/customers'
     | '/crm/documents'
+    | '/crm/employees'
     | '/crm/insurance'
     | '/crm/leads'
     | '/crm/loans'
     | '/crm/login'
     | '/crm/mutual-funds'
     | '/crm/partners'
+    | '/crm/rejected'
     | '/crm/reports'
     | '/crm/schedule'
     | '/crm/settings'
@@ -400,12 +420,14 @@ export interface FileRouteTypes {
     | '/crm/activity'
     | '/crm/customers'
     | '/crm/documents'
+    | '/crm/employees'
     | '/crm/insurance'
     | '/crm/leads'
     | '/crm/loans'
     | '/crm/login'
     | '/crm/mutual-funds'
     | '/crm/partners'
+    | '/crm/rejected'
     | '/crm/reports'
     | '/crm/schedule'
     | '/crm/settings'
@@ -438,12 +460,14 @@ export interface FileRouteTypes {
     | '/crm/activity'
     | '/crm/customers'
     | '/crm/documents'
+    | '/crm/employees'
     | '/crm/insurance'
     | '/crm/leads'
     | '/crm/loans'
     | '/crm/login'
     | '/crm/mutual-funds'
     | '/crm/partners'
+    | '/crm/rejected'
     | '/crm/reports'
     | '/crm/schedule'
     | '/crm/settings'
@@ -627,6 +651,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmReportsRouteImport
       parentRoute: typeof CrmRoute
     }
+    '/crm/rejected': {
+      id: '/crm/rejected'
+      path: '/rejected'
+      fullPath: '/crm/rejected'
+      preLoaderRoute: typeof CrmRejectedRouteImport
+      parentRoute: typeof CrmRoute
+    }
     '/crm/partners': {
       id: '/crm/partners'
       path: '/partners'
@@ -667,6 +698,13 @@ declare module '@tanstack/react-router' {
       path: '/insurance'
       fullPath: '/crm/insurance'
       preLoaderRoute: typeof CrmInsuranceRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/employees': {
+      id: '/crm/employees'
+      path: '/employees'
+      fullPath: '/crm/employees'
+      preLoaderRoute: typeof CrmEmployeesRouteImport
       parentRoute: typeof CrmRoute
     }
     '/crm/documents': {
@@ -758,12 +796,14 @@ interface CrmRouteChildren {
   CrmActivityRoute: typeof CrmActivityRoute
   CrmCustomersRoute: typeof CrmCustomersRoute
   CrmDocumentsRoute: typeof CrmDocumentsRoute
+  CrmEmployeesRoute: typeof CrmEmployeesRoute
   CrmInsuranceRoute: typeof CrmInsuranceRoute
   CrmLeadsRoute: typeof CrmLeadsRoute
   CrmLoansRoute: typeof CrmLoansRoute
   CrmLoginRoute: typeof CrmLoginRoute
   CrmMutualFundsRoute: typeof CrmMutualFundsRoute
   CrmPartnersRoute: typeof CrmPartnersRoute
+  CrmRejectedRoute: typeof CrmRejectedRoute
   CrmReportsRoute: typeof CrmReportsRoute
   CrmScheduleRoute: typeof CrmScheduleRoute
   CrmSettingsRoute: typeof CrmSettingsRoute
@@ -776,12 +816,14 @@ const CrmRouteChildren: CrmRouteChildren = {
   CrmActivityRoute: CrmActivityRoute,
   CrmCustomersRoute: CrmCustomersRoute,
   CrmDocumentsRoute: CrmDocumentsRoute,
+  CrmEmployeesRoute: CrmEmployeesRoute,
   CrmInsuranceRoute: CrmInsuranceRoute,
   CrmLeadsRoute: CrmLeadsRoute,
   CrmLoansRoute: CrmLoansRoute,
   CrmLoginRoute: CrmLoginRoute,
   CrmMutualFundsRoute: CrmMutualFundsRoute,
   CrmPartnersRoute: CrmPartnersRoute,
+  CrmRejectedRoute: CrmRejectedRoute,
   CrmReportsRoute: CrmReportsRoute,
   CrmScheduleRoute: CrmScheduleRoute,
   CrmSettingsRoute: CrmSettingsRoute,
@@ -825,13 +867,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
