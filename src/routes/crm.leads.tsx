@@ -1420,7 +1420,7 @@ function RejectLeadDialog({
 }: {
   lead: Lead | null;
   onClose: () => void;
-  onConfirm: (lead: Lead, reason: string) => Promise<void>;
+  onConfirm: (lead: Lead, reason: string) => Promise<unknown>;
 }) {
   const [reason, setReason] = useState("");
   const [saving, setSaving] = useState(false);
