@@ -1282,7 +1282,7 @@ function ApproveLeadDialog({
     bank_name: string;
     notes: string;
     docs: Record<string, boolean>;
-  }) => Promise<void>;
+  }) => Promise<unknown>;
 }) {
   const [saving, setSaving] = useState(false);
   const [f, setF] = useState({
