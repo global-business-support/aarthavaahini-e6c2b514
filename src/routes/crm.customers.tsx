@@ -32,6 +32,8 @@ import {
   Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CustomerProfileDialog } from "@/components/crm/CustomerProfileDialog";
+
 
 export const Route = createFileRoute("/crm/customers")({
   component: CustomersPage,
