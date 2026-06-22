@@ -181,9 +181,16 @@ function LoansPage() {
         onClose={() => setEditing(null)}
         onSaved={() => { setEditing(null); load(); }}
       />
+
+      <CustomerProfileDialog
+        open={!!profileId}
+        onOpenChange={(v) => !v && setProfileId(null)}
+        customerId={profileId}
+      />
     </div>
   );
 }
+
 
 function LoanEditDialog({
   row, onClose, onSaved,
