@@ -305,7 +305,8 @@ function DashboardPage() {
 
 
         {/* Loans — Composed bar+line */}
-        <Card className="p-5 lg:col-span-1">
+        <Link to="/crm/loans" className="block">
+        <Card className="p-5 lg:col-span-1 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-2 hover:ring-emerald-200">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-sm font-semibold text-slate-900">Loans · ₹ Lakh by Stage</h2>
@@ -332,6 +333,7 @@ function DashboardPage() {
             )}
           </div>
         </Card>
+        </Link>
       </div>
 
       {/* Recent leads */}
@@ -339,19 +341,19 @@ function DashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-sm font-semibold text-slate-900">Recent Leads</h2>
-            <p className="text-xs text-slate-500">Latest leads captured from website and team.</p>
+            <p className="text-xs text-slate-500">Click a name to open the unified profile.</p>
           </div>
-          <a href="/crm/leads" className="inline-flex items-center gap-1 text-xs font-medium text-sky-600 hover:text-sky-700">
+          <Link to="/crm/leads" className="inline-flex items-center gap-1 text-xs font-medium text-sky-600 hover:text-sky-700">
             View all <ArrowUpRight className="h-3 w-3" />
-          </a>
+          </Link>
         </div>
         <div className="mt-3 divide-y divide-sky-50">
           {recentLeads.length === 0 && <div className="py-6 text-center text-xs text-slate-400">No leads yet.</div>}
           {recentLeads.map((l) => (
             <div key={l.id} className="flex items-center justify-between py-3">
-              <a
-                href={`/crm/customers?q=${encodeURIComponent(l.full_name ?? "")}`}
-                className="flex items-center gap-3 group"
+              <button
+                onClick={() => setProfileLead(l.id)}
+                className="flex items-center gap-3 group text-left"
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-blue-600 text-[11px] font-semibold text-white">
                   {(l.full_name ?? "?").slice(0, 2).toUpperCase()}
@@ -360,7 +362,7 @@ function DashboardPage() {
                   <div className="text-sm font-medium text-sky-700 group-hover:underline">{l.full_name}</div>
                   <div className="text-xs capitalize text-slate-500">{l.product_type?.replace(/_/g, " ")}</div>
                 </div>
-              </a>
+              </button>
 
               <div className="flex items-center gap-3">
                 <Badge variant="outline" className="capitalize">{l.status}</Badge>
@@ -370,9 +372,16 @@ function DashboardPage() {
           ))}
         </div>
       </Card>
+
+      <CustomerProfileDialog
+        open={!!profileLead}
+        onOpenChange={(v) => !v && setProfileLead(null)}
+        leadId={profileLead}
+      />
     </div>
   );
 }
+
 
 function formatINR(v: number) {
   if (v >= 1e7) return `₹${(v / 1e7).toFixed(2)} Cr`;
