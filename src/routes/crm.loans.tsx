@@ -15,6 +15,8 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Banknote, Pencil, FileCheck2 } from "lucide-react";
 import { toast } from "sonner";
+import { CustomerProfileDialog } from "@/components/crm/CustomerProfileDialog";
+
 
 export const Route = createFileRoute("/crm/loans")({ component: LoansPage });
 
@@ -55,6 +57,8 @@ function LoansPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Row | null>(null);
+  const [profileId, setProfileId] = useState<string | null>(null);
+
 
   const load = async () => {
     setLoading(true);
@@ -135,7 +139,14 @@ function LoansPage() {
                     ? Object.values(r.documents_checklist).filter(Boolean).length : 0;
                   return (
                     <TableRow key={r.id} className="hover:bg-emerald-50/40">
-                      <TableCell className="font-medium">{r.customer?.customer_name ?? "—"}</TableCell>
+                      <TableCell className="font-medium">
+                        {r.customer_id ? (
+                          <button onClick={() => setProfileId(r.customer_id)} className="text-sky-700 hover:underline">
+                            {r.customer?.customer_name ?? "—"}
+                          </button>
+                        ) : (r.customer?.customer_name ?? "—")}
+                      </TableCell>
+
                       <TableCell>{r.customer?.mobile ?? "—"}</TableCell>
                       <TableCell>{r.loan_type}</TableCell>
                       <TableCell>{r.requested_amount ? `₹${Number(r.requested_amount).toLocaleString("en-IN")}` : "—"}</TableCell>
@@ -170,9 +181,16 @@ function LoansPage() {
         onClose={() => setEditing(null)}
         onSaved={() => { setEditing(null); load(); }}
       />
+
+      <CustomerProfileDialog
+        open={!!profileId}
+        onOpenChange={(v) => !v && setProfileId(null)}
+        customerId={profileId}
+      />
     </div>
   );
 }
+
 
 function LoanEditDialog({
   row, onClose, onSaved,

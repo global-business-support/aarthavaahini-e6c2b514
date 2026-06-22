@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,8 @@ import {
   UserCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CustomerProfileDialog } from "@/components/crm/CustomerProfileDialog";
+
 import {
   ResponsiveContainer,
   AreaChart,
@@ -61,6 +63,8 @@ function DashboardPage() {
   const [loanByStage, setLoanByStage] = useState<
     { stage: string; requested: number; sanctioned: number; disbursed: number }[]
   >([]);
+  const [profileLead, setProfileLead] = useState<string | null>(null);
+
 
   const loadDashboard = useCallback(async () => {
     const now = new Date().toISOString();
@@ -163,15 +167,16 @@ function DashboardPage() {
   }, [loadDashboard]);
 
   const cards = [
-    { label: "Total Leads", value: stats?.totalLeads, icon: Users, tone: "sky", trend: "All time" },
-    { label: "Customers", value: stats?.totalCustomers, icon: UserCircle2, tone: "violet", trend: "Active" },
-    { label: "Followups Due", value: stats?.followupsDue, icon: Clock, tone: "amber", trend: "Today" },
-    { label: "Loan Pipeline", value: stats && formatINR(stats.loanPipeline), icon: Banknote, tone: "emerald", trend: "Open" },
-    { label: "Insurance", value: stats && formatINR(stats.insurancePipeline), icon: ShieldCheck, tone: "indigo", trend: "Open" },
-    { label: "MF Annual SIP", value: stats && formatINR(stats.mfPipeline), icon: TrendingUp, tone: "cyan", trend: "Y/Y" },
-    { label: "Disbursed", value: stats && formatINR(stats.revenue), icon: IndianRupee, tone: "blue", trend: "Revenue" },
-    { label: "SLA Alerts", value: stats?.slaAlerts, icon: AlertTriangle, tone: "rose", trend: "Action" },
+    { label: "Total Leads", value: stats?.totalLeads, icon: Users, tone: "sky", trend: "All time", to: "/crm/leads" },
+    { label: "Customers", value: stats?.totalCustomers, icon: UserCircle2, tone: "violet", trend: "Active", to: "/crm/customers" },
+    { label: "Followups Due", value: stats?.followupsDue, icon: Clock, tone: "amber", trend: "Today", to: "/crm/tasks" },
+    { label: "Loan Pipeline", value: stats && formatINR(stats.loanPipeline), icon: Banknote, tone: "emerald", trend: "Open", to: "/crm/loans" },
+    { label: "Insurance", value: stats && formatINR(stats.insurancePipeline), icon: ShieldCheck, tone: "indigo", trend: "Open", to: "/crm/insurance" },
+    { label: "MF Annual SIP", value: stats && formatINR(stats.mfPipeline), icon: TrendingUp, tone: "cyan", trend: "Y/Y", to: "/crm/mutual-funds" },
+    { label: "Disbursed", value: stats && formatINR(stats.revenue), icon: IndianRupee, tone: "blue", trend: "Revenue", to: "/crm/loans" },
+    { label: "SLA Alerts", value: stats?.slaAlerts, icon: AlertTriangle, tone: "rose", trend: "Action", to: "/crm/tasks" },
   ] as const;
+
 
   return (
     <div className="space-y-5">
@@ -201,30 +206,36 @@ function DashboardPage() {
         {cards.map((c) => {
           const Icon = c.icon;
           return (
-            <Card
+            <Link
               key={c.label}
-              className="group relative overflow-hidden border-sky-100 bg-white/85 p-4 shadow-sm backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+              to={c.to as never}
+              className="group block focus:outline-none"
             >
-              <div className={cn("absolute -right-6 -top-6 h-20 w-20 rounded-full opacity-50 blur-2xl", toneBlur(c.tone))} />
-              <div className="relative flex items-start justify-between">
-                <div className={cn("rounded-xl p-2 shadow-sm", toneBg(c.tone))}>
-                  <Icon className={cn("h-4 w-4", toneFg(c.tone))} />
+              <Card className="relative overflow-hidden border-sky-100 bg-white/85 p-4 shadow-sm backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:ring-2 hover:ring-sky-200">
+                <div className={cn("absolute -right-6 -top-6 h-20 w-20 rounded-full opacity-50 blur-2xl", toneBlur(c.tone))} />
+                <div className="relative flex items-start justify-between">
+                  <div className={cn("rounded-xl p-2 shadow-sm", toneBg(c.tone))}>
+                    <Icon className={cn("h-4 w-4", toneFg(c.tone))} />
+                  </div>
+                  <Badge variant="secondary" className="text-[10px] font-medium bg-sky-50 text-sky-700">{c.trend}</Badge>
                 </div>
-                <Badge variant="secondary" className="text-[10px] font-medium bg-sky-50 text-sky-700">{c.trend}</Badge>
-              </div>
-              <div className="relative mt-3">
-                <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">{c.label}</div>
-                <div className="mt-0.5 text-xl font-bold tracking-tight text-slate-900">{c.value ?? "—"}</div>
-              </div>
-            </Card>
+                <div className="relative mt-3">
+                  <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">{c.label}</div>
+                  <div className="mt-0.5 text-xl font-bold tracking-tight text-slate-900">{c.value ?? "—"}</div>
+                </div>
+                <ArrowUpRight className="absolute right-3 bottom-3 h-3.5 w-3.5 text-slate-300 transition group-hover:text-sky-500"/>
+              </Card>
+            </Link>
           );
         })}
+
       </div>
 
       {/* 3 charts: Leads (Area) · Customers (Donut) · Loans (Composed Bar) */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Leads — Area trend */}
-        <Card className="p-5 lg:col-span-1">
+        <Link to="/crm/leads" className="block">
+        <Card className="p-5 lg:col-span-1 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-2 hover:ring-sky-200">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-sm font-semibold text-slate-900">Leads · 30 days</h2>
@@ -250,9 +261,12 @@ function DashboardPage() {
             </ResponsiveContainer>
           </div>
         </Card>
+        </Link>
+
 
         {/* Customers — Donut */}
-        <Card className="p-5 lg:col-span-1">
+        <Link to="/crm/customers" className="block">
+        <Card className="p-5 lg:col-span-1 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-2 hover:ring-violet-200">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-sm font-semibold text-slate-900">Customers · By Stage</h2>
@@ -287,9 +301,12 @@ function DashboardPage() {
             )}
           </div>
         </Card>
+        </Link>
+
 
         {/* Loans — Composed bar+line */}
-        <Card className="p-5 lg:col-span-1">
+        <Link to="/crm/loans" className="block">
+        <Card className="p-5 lg:col-span-1 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-2 hover:ring-emerald-200">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-sm font-semibold text-slate-900">Loans · ₹ Lakh by Stage</h2>
@@ -316,6 +333,7 @@ function DashboardPage() {
             )}
           </div>
         </Card>
+        </Link>
       </div>
 
       {/* Recent leads */}
@@ -323,19 +341,19 @@ function DashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-sm font-semibold text-slate-900">Recent Leads</h2>
-            <p className="text-xs text-slate-500">Latest leads captured from website and team.</p>
+            <p className="text-xs text-slate-500">Click a name to open the unified profile.</p>
           </div>
-          <a href="/crm/leads" className="inline-flex items-center gap-1 text-xs font-medium text-sky-600 hover:text-sky-700">
+          <Link to="/crm/leads" className="inline-flex items-center gap-1 text-xs font-medium text-sky-600 hover:text-sky-700">
             View all <ArrowUpRight className="h-3 w-3" />
-          </a>
+          </Link>
         </div>
         <div className="mt-3 divide-y divide-sky-50">
           {recentLeads.length === 0 && <div className="py-6 text-center text-xs text-slate-400">No leads yet.</div>}
           {recentLeads.map((l) => (
             <div key={l.id} className="flex items-center justify-between py-3">
-              <a
-                href={`/crm/customers?q=${encodeURIComponent(l.full_name ?? "")}`}
-                className="flex items-center gap-3 group"
+              <button
+                onClick={() => setProfileLead(l.id)}
+                className="flex items-center gap-3 group text-left"
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-blue-600 text-[11px] font-semibold text-white">
                   {(l.full_name ?? "?").slice(0, 2).toUpperCase()}
@@ -344,7 +362,7 @@ function DashboardPage() {
                   <div className="text-sm font-medium text-sky-700 group-hover:underline">{l.full_name}</div>
                   <div className="text-xs capitalize text-slate-500">{l.product_type?.replace(/_/g, " ")}</div>
                 </div>
-              </a>
+              </button>
 
               <div className="flex items-center gap-3">
                 <Badge variant="outline" className="capitalize">{l.status}</Badge>
@@ -354,9 +372,16 @@ function DashboardPage() {
           ))}
         </div>
       </Card>
+
+      <CustomerProfileDialog
+        open={!!profileLead}
+        onOpenChange={(v) => !v && setProfileLead(null)}
+        leadId={profileLead}
+      />
     </div>
   );
 }
+
 
 function formatINR(v: number) {
   if (v >= 1e7) return `₹${(v / 1e7).toFixed(2)} Cr`;
