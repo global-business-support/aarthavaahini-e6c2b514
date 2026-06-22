@@ -206,24 +206,29 @@ function DashboardPage() {
         {cards.map((c) => {
           const Icon = c.icon;
           return (
-            <Card
+            <Link
               key={c.label}
-              className="group relative overflow-hidden border-sky-100 bg-white/85 p-4 shadow-sm backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+              to={c.to as never}
+              className="group block focus:outline-none"
             >
-              <div className={cn("absolute -right-6 -top-6 h-20 w-20 rounded-full opacity-50 blur-2xl", toneBlur(c.tone))} />
-              <div className="relative flex items-start justify-between">
-                <div className={cn("rounded-xl p-2 shadow-sm", toneBg(c.tone))}>
-                  <Icon className={cn("h-4 w-4", toneFg(c.tone))} />
+              <Card className="relative overflow-hidden border-sky-100 bg-white/85 p-4 shadow-sm backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:ring-2 hover:ring-sky-200">
+                <div className={cn("absolute -right-6 -top-6 h-20 w-20 rounded-full opacity-50 blur-2xl", toneBlur(c.tone))} />
+                <div className="relative flex items-start justify-between">
+                  <div className={cn("rounded-xl p-2 shadow-sm", toneBg(c.tone))}>
+                    <Icon className={cn("h-4 w-4", toneFg(c.tone))} />
+                  </div>
+                  <Badge variant="secondary" className="text-[10px] font-medium bg-sky-50 text-sky-700">{c.trend}</Badge>
                 </div>
-                <Badge variant="secondary" className="text-[10px] font-medium bg-sky-50 text-sky-700">{c.trend}</Badge>
-              </div>
-              <div className="relative mt-3">
-                <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">{c.label}</div>
-                <div className="mt-0.5 text-xl font-bold tracking-tight text-slate-900">{c.value ?? "—"}</div>
-              </div>
-            </Card>
+                <div className="relative mt-3">
+                  <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">{c.label}</div>
+                  <div className="mt-0.5 text-xl font-bold tracking-tight text-slate-900">{c.value ?? "—"}</div>
+                </div>
+                <ArrowUpRight className="absolute right-3 bottom-3 h-3.5 w-3.5 text-slate-300 transition group-hover:text-sky-500"/>
+              </Card>
+            </Link>
           );
         })}
+
       </div>
 
       {/* 3 charts: Leads (Area) · Customers (Donut) · Loans (Composed Bar) */}
