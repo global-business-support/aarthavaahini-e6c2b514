@@ -14,6 +14,7 @@ import {
   AlertTriangle,
   ArrowUpRight,
   Activity,
+  UserCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -27,12 +28,18 @@ import {
   BarChart,
   Bar,
   Legend,
+  PieChart,
+  Pie,
+  Cell,
+  ComposedChart,
+  Line,
 } from "recharts";
 
 export const Route = createFileRoute("/crm/")({ component: DashboardPage });
 
 type Stats = {
   totalLeads: number;
+  totalCustomers: number;
   followupsDue: number;
   loanPipeline: number;
   insurancePipeline: number;
@@ -42,34 +49,45 @@ type Stats = {
   slaAlerts: number;
 };
 
+const STAGE_COLORS = ["#0ea5e9", "#8b5cf6", "#6366f1", "#f59e0b", "#10b981", "#64748b"];
+
 function DashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentLeads, setRecentLeads] = useState<
     { id: string; full_name: string; product_type: string; status: string; created_at: string }[]
   >([]);
-  const [trend, setTrend] = useState<{ day: string; leads: number }[]>([]);
+  const [leadTrend, setLeadTrend] = useState<{ day: string; leads: number }[]>([]);
+  const [customerStages, setCustomerStages] = useState<{ name: string; value: number }[]>([]);
+  const [loanByStage, setLoanByStage] = useState<
+    { stage: string; requested: number; sanctioned: number; disbursed: number }[]
+  >([]);
 
   const loadDashboard = useCallback(async () => {
     const now = new Date().toISOString();
-    const since = new Date(Date.now() - 13 * 24 * 60 * 60 * 1000).toISOString();
-    const [leads, followups, loans, insurance, funds, tasks, sla, recent, last14, disb] = await Promise.all([
-      supabase.from("leads").select("id", { count: "exact", head: true }),
-      supabase.from("tasks").select("id", { count: "exact", head: true }).lte("due_date", now).neq("status", "done"),
-      supabase.from("loan_cases").select("loan_amount, stage").not("stage", "in", '("Completed","Closed")'),
-      supabase.from("insurance_cases").select("premium, policy_status").not("policy_status", "in", '("Issued","Closed")'),
-      supabase.from("mutual_funds").select("sip_amount, status").not("status", "in", '("Portfolio Review","Closed")'),
-      supabase.from("tasks").select("id", { count: "exact", head: true }).neq("status", "done"),
-      supabase.from("tasks").select("id", { count: "exact", head: true }).lt("due_date", now).neq("status", "done"),
-      supabase.from("leads").select("id, full_name, product_type, status, created_at").order("created_at", { ascending: false }).limit(6),
-      supabase.from("leads").select("created_at").gte("created_at", since),
-      supabase.from("loan_cases").select("disbursement_amount"),
-    ]);
+    const since = new Date(Date.now() - 29 * 24 * 60 * 60 * 1000).toISOString();
+    const [leads, customers, followups, loans, insurance, funds, tasks, sla, recent, last30, disb, custStage, loanRows] =
+      await Promise.all([
+        supabase.from("leads").select("id", { count: "exact", head: true }),
+        supabase.from("customers").select("id", { count: "exact", head: true }),
+        supabase.from("tasks").select("id", { count: "exact", head: true }).lte("due_date", now).neq("status", "done"),
+        supabase.from("loan_cases").select("loan_amount, stage").not("stage", "in", '("Completed","Closed")'),
+        supabase.from("insurance_cases").select("premium, policy_status").not("policy_status", "in", '("Issued","Closed")'),
+        supabase.from("mutual_funds").select("sip_amount, status").not("status", "in", '("Portfolio Review","Closed")'),
+        supabase.from("tasks").select("id", { count: "exact", head: true }).neq("status", "done"),
+        supabase.from("tasks").select("id", { count: "exact", head: true }).lt("due_date", now).neq("status", "done"),
+        supabase.from("leads").select("id, full_name, product_type, status, created_at").order("created_at", { ascending: false }).limit(6),
+        supabase.from("leads").select("created_at").gte("created_at", since),
+        supabase.from("loan_cases").select("disbursement_amount"),
+        supabase.from("customers").select("stage"),
+        supabase.from("loan_cases").select("stage, requested_amount, sanction_amount, disbursement_amount"),
+      ]);
 
     const sum = <T extends Record<string, unknown>>(rows: T[] | null, key: string) =>
       (rows ?? []).reduce((acc, r) => acc + (Number(r[key]) || 0), 0);
 
     setStats({
       totalLeads: leads.count ?? 0,
+      totalCustomers: customers.count ?? 0,
       followupsDue: followups.count ?? 0,
       loanPipeline: sum(loans.data, "loan_amount"),
       insurancePipeline: sum(insurance.data, "premium"),
@@ -80,21 +98,48 @@ function DashboardPage() {
     });
     setRecentLeads(recent.data ?? []);
 
-    // 14-day lead trend
+    // 30-day lead trend
     const buckets: Record<string, number> = {};
-    for (let i = 13; i >= 0; i--) {
+    for (let i = 29; i >= 0; i--) {
       const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
-      const key = d.toISOString().slice(0, 10);
-      buckets[key] = 0;
+      buckets[d.toISOString().slice(0, 10)] = 0;
     }
-    (last14.data ?? []).forEach((r: { created_at: string }) => {
+    (last30.data ?? []).forEach((r: { created_at: string }) => {
       const key = r.created_at.slice(0, 10);
       if (buckets[key] !== undefined) buckets[key] += 1;
     });
-    setTrend(
+    setLeadTrend(
       Object.entries(buckets).map(([k, v]) => ({
         day: new Date(k).toLocaleDateString("en-IN", { day: "numeric", month: "short" }),
         leads: v,
+      })),
+    );
+
+    // Customer stage donut
+    const stageMap: Record<string, number> = {};
+    (custStage.data ?? []).forEach((c: { stage: string | null }) => {
+      const s = c.stage || "New";
+      stageMap[s] = (stageMap[s] || 0) + 1;
+    });
+    setCustomerStages(Object.entries(stageMap).map(([name, value]) => ({ name, value })));
+
+    // Loan by stage composed bar
+    const loanMap: Record<string, { requested: number; sanctioned: number; disbursed: number }> = {};
+    (loanRows.data ?? []).forEach(
+      (r: { stage: string | null; requested_amount: number | null; sanction_amount: number | null; disbursement_amount: number | null }) => {
+        const s = r.stage || "Lead";
+        if (!loanMap[s]) loanMap[s] = { requested: 0, sanctioned: 0, disbursed: 0 };
+        loanMap[s].requested += Number(r.requested_amount) || 0;
+        loanMap[s].sanctioned += Number(r.sanction_amount) || 0;
+        loanMap[s].disbursed += Number(r.disbursement_amount) || 0;
+      },
+    );
+    setLoanByStage(
+      Object.entries(loanMap).map(([stage, v]) => ({
+        stage,
+        requested: Math.round(v.requested / 1e5),
+        sanctioned: Math.round(v.sanctioned / 1e5),
+        disbursed: Math.round(v.disbursed / 1e5),
       })),
     );
   }, []);
@@ -105,6 +150,7 @@ function DashboardPage() {
     const channel = supabase
       .channel("crm-dashboard")
       .on("postgres_changes", { event: "*", schema: "public", table: "leads" }, () => loadDashboard())
+      .on("postgres_changes", { event: "*", schema: "public", table: "customers" }, () => loadDashboard())
       .on("postgres_changes", { event: "*", schema: "public", table: "tasks" }, () => loadDashboard())
       .on("postgres_changes", { event: "*", schema: "public", table: "loan_cases" }, () => loadDashboard())
       .on("postgres_changes", { event: "*", schema: "public", table: "insurance_cases" }, () => loadDashboard())
@@ -117,45 +163,41 @@ function DashboardPage() {
   }, [loadDashboard]);
 
   const cards = [
-    { label: "Total Leads", value: stats?.totalLeads, icon: Users, tone: "sky", trend: "+12%" },
+    { label: "Total Leads", value: stats?.totalLeads, icon: Users, tone: "sky", trend: "All time" },
+    { label: "Customers", value: stats?.totalCustomers, icon: UserCircle2, tone: "violet", trend: "Active" },
     { label: "Followups Due", value: stats?.followupsDue, icon: Clock, tone: "amber", trend: "Today" },
-    { label: "Loan Pipeline", value: stats && formatINR(stats.loanPipeline), icon: Banknote, tone: "emerald", trend: "+8%" },
-    { label: "Insurance", value: stats && formatINR(stats.insurancePipeline), icon: ShieldCheck, tone: "violet", trend: "+4%" },
-    { label: "MF Annual SIP", value: stats && formatINR(stats.mfPipeline), icon: TrendingUp, tone: "cyan", trend: "+15%" },
-    { label: "Disbursed", value: stats && formatINR(stats.revenue), icon: IndianRupee, tone: "blue", trend: "+22%" },
-    { label: "Open Tasks", value: stats?.pendingTasks, icon: CheckSquare, tone: "slate", trend: "Active" },
+    { label: "Loan Pipeline", value: stats && formatINR(stats.loanPipeline), icon: Banknote, tone: "emerald", trend: "Open" },
+    { label: "Insurance", value: stats && formatINR(stats.insurancePipeline), icon: ShieldCheck, tone: "indigo", trend: "Open" },
+    { label: "MF Annual SIP", value: stats && formatINR(stats.mfPipeline), icon: TrendingUp, tone: "cyan", trend: "Y/Y" },
+    { label: "Disbursed", value: stats && formatINR(stats.revenue), icon: IndianRupee, tone: "blue", trend: "Revenue" },
     { label: "SLA Alerts", value: stats?.slaAlerts, icon: AlertTriangle, tone: "rose", trend: "Action" },
   ] as const;
 
-  const pipelineData = stats
-    ? [
-        { name: "Loans", value: Math.round(stats.loanPipeline / 1e5) },
-        { name: "Insurance", value: Math.round(stats.insurancePipeline / 1e5) },
-        { name: "Mutual Funds", value: Math.round(stats.mfPipeline / 1e5) },
-      ]
-    : [];
-
   return (
     <div className="space-y-5">
-      {/* Compact welcome strip */}
-      <div className="relative flex flex-wrap items-center justify-between gap-3 overflow-hidden rounded-xl bg-gradient-to-r from-sky-500 via-blue-500 to-cyan-500 px-4 py-3 text-white shadow-md shadow-sky-500/20">
-        <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/15 blur-2xl" />
+      {/* Welcome strip */}
+      <div className="relative flex flex-wrap items-center justify-between gap-3 overflow-hidden rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-cyan-500 px-5 py-4 text-white shadow-lg shadow-sky-500/25">
+        <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/15 blur-3xl" />
+        <div className="absolute -left-10 -bottom-10 h-24 w-24 rounded-full bg-cyan-300/30 blur-2xl" />
         <div className="relative flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm">
-            <Activity className="h-4 w-4" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm ring-1 ring-white/30">
+            <Activity className="h-5 w-5" />
           </div>
           <div>
-            <div className="text-sm font-semibold leading-tight">Welcome back 👋</div>
-            <div className="text-[11px] text-white/80">Live overview · leads, pipeline & team</div>
+            <div className="text-base font-semibold leading-tight">Welcome back 👋</div>
+            <div className="text-xs text-white/85">Realtime overview — leads, customers, loans synced live</div>
           </div>
         </div>
-        <Badge className="border-white/30 bg-white/20 text-white">
-          {new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "short" })}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <span className="flex h-2 w-2 animate-pulse rounded-full bg-emerald-300 shadow-[0_0_8px] shadow-emerald-300" />
+          <Badge className="border-white/30 bg-white/20 text-white">
+            {new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "short" })}
+          </Badge>
+        </div>
       </div>
 
       {/* Stat cards */}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => {
           const Icon = c.icon;
           return (
@@ -179,52 +221,99 @@ function DashboardPage() {
         })}
       </div>
 
-      {/* Charts row */}
+      {/* 3 charts: Leads (Area) · Customers (Donut) · Loans (Composed Bar) */}
       <div className="grid gap-4 lg:grid-cols-3">
-        <Card className="lg:col-span-2 p-5">
+        {/* Leads — Area trend */}
+        <Card className="p-5 lg:col-span-1">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-sm font-semibold text-slate-900">Leads — Last 14 days</h2>
+              <h2 className="text-sm font-semibold text-slate-900">Leads · 30 days</h2>
               <p className="text-xs text-slate-500">Daily new leads captured.</p>
             </div>
-            <div className="flex items-center gap-2">
-            <Badge variant="outline" className="border-sky-200 bg-sky-50 text-sky-700">Live</Badge>
             <Badge variant="outline" className="border-sky-200 bg-sky-50 text-sky-700">Trend</Badge>
           </div>
-          </div>
-          <div className="mt-4 h-64 w-full">
+          <div className="mt-4 h-60 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={trend} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart data={leadTrend} margin={{ top: 5, right: 8, left: -22, bottom: 0 }}>
                 <defs>
                   <linearGradient id="leadFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#0ea5e9" stopOpacity={0.5} />
+                    <stop offset="0%" stopColor="#0ea5e9" stopOpacity={0.55} />
                     <stop offset="100%" stopColor="#0ea5e9" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#64748b" }} tickLine={false} axisLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: "#64748b" }} tickLine={false} axisLine={false} allowDecimals={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 10, fill: "#64748b" }} tickLine={false} axisLine={false} interval={4} />
+                <YAxis tick={{ fontSize: 10, fill: "#64748b" }} tickLine={false} axisLine={false} allowDecimals={false} />
                 <RTooltip contentStyle={{ borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 12 }} />
-                <Area type="monotone" dataKey="leads" stroke="#0284c7" strokeWidth={2} fill="url(#leadFill)" />
+                <Area type="monotone" dataKey="leads" stroke="#0284c7" strokeWidth={2.5} fill="url(#leadFill)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </Card>
 
-        <Card className="p-5">
-          <h2 className="text-sm font-semibold text-slate-900">Pipeline (₹ Lakh)</h2>
-          <p className="text-xs text-slate-500">Open value across products.</p>
-          <div className="mt-4 h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={pipelineData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#64748b" }} tickLine={false} axisLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: "#64748b" }} tickLine={false} axisLine={false} />
-                <RTooltip contentStyle={{ borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 12 }} />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
-                <Bar dataKey="value" name="₹ Lakh" fill="#0ea5e9" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+        {/* Customers — Donut */}
+        <Card className="p-5 lg:col-span-1">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-sm font-semibold text-slate-900">Customers · By Stage</h2>
+              <p className="text-xs text-slate-500">Distribution across pipeline.</p>
+            </div>
+            <Badge variant="outline" className="border-violet-200 bg-violet-50 text-violet-700">Live</Badge>
+          </div>
+          <div className="mt-4 h-60 w-full">
+            {customerStages.length === 0 ? (
+              <div className="flex h-full items-center justify-center text-xs text-slate-400">No customers yet</div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <RTooltip contentStyle={{ borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 12 }} />
+                  <Pie
+                    data={customerStages}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={50}
+                    outerRadius={85}
+                    paddingAngle={3}
+                    dataKey="value"
+                    nameKey="name"
+                  >
+                    {customerStages.map((_, i) => (
+                      <Cell key={i} fill={STAGE_COLORS[i % STAGE_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Legend wrapperStyle={{ fontSize: 10 }} iconSize={8} />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </Card>
+
+        {/* Loans — Composed bar+line */}
+        <Card className="p-5 lg:col-span-1">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-sm font-semibold text-slate-900">Loans · ₹ Lakh by Stage</h2>
+              <p className="text-xs text-slate-500">Requested · Sanctioned · Disbursed.</p>
+            </div>
+            <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-700">₹L</Badge>
+          </div>
+          <div className="mt-4 h-60 w-full">
+            {loanByStage.length === 0 ? (
+              <div className="flex h-full items-center justify-center text-xs text-slate-400">No loan cases</div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <ComposedChart data={loanByStage} margin={{ top: 5, right: 8, left: -22, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                  <XAxis dataKey="stage" tick={{ fontSize: 10, fill: "#64748b" }} tickLine={false} axisLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: "#64748b" }} tickLine={false} axisLine={false} />
+                  <RTooltip contentStyle={{ borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 12 }} />
+                  <Legend wrapperStyle={{ fontSize: 10 }} iconSize={8} />
+                  <Bar dataKey="requested" name="Requested" fill="#cbd5e1" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="sanctioned" name="Sanctioned" fill="#10b981" radius={[4, 4, 0, 0]} />
+                  <Line type="monotone" dataKey="disbursed" name="Disbursed" stroke="#0284c7" strokeWidth={2.5} dot={{ r: 3 }} />
+                </ComposedChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </Card>
       </div>
@@ -263,7 +352,6 @@ function DashboardPage() {
               </div>
             </div>
           ))}
-
         </div>
       </Card>
     </div>
@@ -278,18 +366,18 @@ function formatINR(v: number) {
 function toneBg(t: string) {
   return ({
     sky: "bg-sky-100", blue: "bg-blue-100", amber: "bg-amber-100", emerald: "bg-emerald-100",
-    violet: "bg-violet-100", cyan: "bg-cyan-100", slate: "bg-slate-200", rose: "bg-rose-100",
+    violet: "bg-violet-100", cyan: "bg-cyan-100", slate: "bg-slate-200", rose: "bg-rose-100", indigo: "bg-indigo-100",
   } as Record<string, string>)[t];
 }
 function toneFg(t: string) {
   return ({
     sky: "text-sky-600", blue: "text-blue-600", amber: "text-amber-600", emerald: "text-emerald-600",
-    violet: "text-violet-600", cyan: "text-cyan-600", slate: "text-slate-600", rose: "text-rose-600",
+    violet: "text-violet-600", cyan: "text-cyan-600", slate: "text-slate-600", rose: "text-rose-600", indigo: "text-indigo-600",
   } as Record<string, string>)[t];
 }
 function toneBlur(t: string) {
   return ({
     sky: "bg-sky-300/40", blue: "bg-blue-300/40", amber: "bg-amber-300/40", emerald: "bg-emerald-300/40",
-    violet: "bg-violet-300/40", cyan: "bg-cyan-300/40", slate: "bg-slate-300/40", rose: "bg-rose-300/40",
+    violet: "bg-violet-300/40", cyan: "bg-cyan-300/40", slate: "bg-slate-300/40", rose: "bg-rose-300/40", indigo: "bg-indigo-300/40",
   } as Record<string, string>)[t];
 }
