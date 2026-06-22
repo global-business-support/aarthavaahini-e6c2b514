@@ -234,7 +234,8 @@ function DashboardPage() {
       {/* 3 charts: Leads (Area) · Customers (Donut) · Loans (Composed Bar) */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Leads — Area trend */}
-        <Card className="p-5 lg:col-span-1">
+        <Link to="/crm/leads" className="block">
+        <Card className="p-5 lg:col-span-1 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-2 hover:ring-sky-200">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-sm font-semibold text-slate-900">Leads · 30 days</h2>
@@ -260,6 +261,8 @@ function DashboardPage() {
             </ResponsiveContainer>
           </div>
         </Card>
+        </Link>
+
 
         {/* Customers — Donut */}
         <Card className="p-5 lg:col-span-1">
