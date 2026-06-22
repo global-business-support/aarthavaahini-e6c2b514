@@ -65,9 +65,9 @@ export function Header() {
             : "-translate-y-full opacity-0"
         }`}
       >
-        <div className="container mx-auto flex h-16 items-center justify-between px-4 lg:px-6">
+        <div className="container mx-auto flex h-16 items-center justify-between gap-3 px-4 lg:px-6">
           {/* LOGO */}
-          <Link
+          {/* <Link
             to="/"
             className="flex items-center gap-0"
             onClick={() => setMobileMenu(false)}
@@ -85,8 +85,30 @@ export function Header() {
               alt="Aarthvaahini"
               className="mt-3 hidden h-10 w-auto object-contain sm:block"
             />
-          </Link>
+          </Link> */}
+          <Link
+  to="/"
+  className="flex min-w-0 items-center gap-2"
+  onClick={() => setMobileMenu(false)}
+>
+  {/* Icon Logo */}
+  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white sm:h-14 sm:w-14 sm:rounded-2xl">
+    <img
+      src={logo}
+      alt="Aarthvaahini Logo"
+      className="block h-full w-full object-contain"
+      draggable={false}
+    />
+  </div>
 
+  {/* Title Logo - Safari safe */}
+  <img
+    src={headingLogo}
+    alt="Aarthvaahini"
+    className="block h-8 w-[150px] shrink-0 object-contain sm:h-10 sm:w-[220px]"
+    draggable={false}
+  />
+</Link>
           {/* DESKTOP NAV */}
           <nav className="hidden items-center gap-2 lg:flex xl:gap-3">
             <Link
