@@ -63,6 +63,8 @@ function DashboardPage() {
   const [loanByStage, setLoanByStage] = useState<
     { stage: string; requested: number; sanctioned: number; disbursed: number }[]
   >([]);
+  const [profileLead, setProfileLead] = useState<string | null>(null);
+
 
   const loadDashboard = useCallback(async () => {
     const now = new Date().toISOString();
