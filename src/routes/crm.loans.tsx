@@ -15,6 +15,8 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Banknote, Pencil, FileCheck2 } from "lucide-react";
 import { toast } from "sonner";
+import { CustomerProfileDialog } from "@/components/crm/CustomerProfileDialog";
+
 
 export const Route = createFileRoute("/crm/loans")({ component: LoansPage });
 
