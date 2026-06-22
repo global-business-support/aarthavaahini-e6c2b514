@@ -260,6 +260,8 @@ function LeadsPage() {
   const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
   const [open, setOpen] = useState(false);
   const [noteLead, setNoteLead] = useState<Lead | null>(null);
+  const [approveLead, setApproveLead] = useState<Lead | null>(null);
+  const [rejectLead, setRejectLead] = useState<Lead | null>(null);
 
   const rowSelectClass =
     "h-10 w-[190px] rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100";
@@ -440,8 +442,97 @@ function LeadsPage() {
     }
   };
 
-  const approve = (lead: Lead) => updateStage(lead, "Approved");
-  const reject = (lead: Lead) => updateStage(lead, "Rejected");
+  const approve = (lead: Lead) => setApproveLead(lead);
+  const reject = (lead: Lead) => setRejectLead(lead);
+
+  const confirmApprove = async (
+    lead: Lead,
+    payload: {
+      loan_type: string;
+      requested_amount: number | null;
+      sanction_amount: number | null;
+      tenure_months: number | null;
+      interest_rate: number | null;
+      bank_name: string;
+      notes: string;
+      docs: Record<string, boolean>;
+    },
+  ) => {
+    // 1. Update lead status
+    const { error: leadErr } = await supabase
+      .from("leads")
+      .update({ status: "Approved" })
+      .eq("id", lead.id);
+    if (leadErr) return toast.error(leadErr.message);
+
+    // 2. Create or fetch customer
+    let customerId: string | null = null;
+    const { data: existing } = await supabase
+      .from("customers").select("id").eq("lead_id", lead.id).maybeSingle();
+    if (existing) {
+      customerId = existing.id;
+    } else {
+      const { data: ins, error: cErr } = await supabase
+        .from("customers")
+        .insert({
+          customer_name: lead.lead_name ?? lead.full_name ?? "Unnamed",
+          mobile: lead.phone,
+          email: lead.email,
+          pan: lead.pan,
+          address: [lead.city, lead.state].filter(Boolean).join(", ") || null,
+          lead_id: lead.id,
+          loan_type: payload.loan_type,
+          loan_amount: payload.sanction_amount ?? payload.requested_amount,
+          cibil_score: lead.cibil_score,
+          bank_name: payload.bank_name,
+          stage: "Approved",
+          note: payload.notes || null,
+        })
+        .select("id")
+        .single();
+      if (cErr) return toast.error(cErr.message);
+      customerId = ins.id;
+    }
+
+    // 3. Link to lead
+    if (customerId) {
+      await supabase.from("leads")
+        .update({ converted_customer_id: customerId })
+        .eq("id", lead.id);
+    }
+
+    // 4. Create loan_case
+    const { error: lcErr } = await supabase.from("loan_cases").insert({
+      customer_id: customerId,
+      lead_id: lead.id,
+      loan_type: payload.loan_type,
+      loan_amount: payload.sanction_amount ?? payload.requested_amount,
+      requested_amount: payload.requested_amount,
+      sanction_amount: payload.sanction_amount,
+      tenure_months: payload.tenure_months,
+      interest_rate: payload.interest_rate,
+      lender_name: payload.bank_name || null,
+      stage: payload.sanction_amount ? "Sanction" : "Under Process",
+      notes: payload.notes || null,
+      documents_checklist: payload.docs,
+    });
+    if (lcErr) return toast.error(lcErr.message);
+
+    setLeads((prev) => prev.map((l) => (l.id === lead.id ? { ...l, status: "Approved" } : l)));
+    toast.success("Approved → Customer & Loan Case created");
+    setApproveLead(null);
+  };
+
+  const confirmReject = async (lead: Lead, reason: string) => {
+    const { error } = await supabase
+      .from("leads")
+      .update({ status: "Rejected", rejection_reason: reason })
+      .eq("id", lead.id);
+    if (error) return toast.error(error.message);
+    setLeads((prev) => prev.map((l) => (l.id === lead.id ? { ...l, status: "Rejected" } : l)));
+    toast.success("Lead rejected");
+    setRejectLead(null);
+  };
 
   return (
     <div className="space-y-4">
@@ -765,6 +856,17 @@ function LeadsPage() {
           {noteLead && <LeadNotes lead={noteLead} />}
         </DialogContent>
       </Dialog>
+
+      <ApproveLeadDialog
+        lead={approveLead}
+        onClose={() => setApproveLead(null)}
+        onConfirm={confirmApprove}
+      />
+      <RejectLeadDialog
+        lead={rejectLead}
+        onClose={() => setRejectLead(null)}
+        onConfirm={confirmReject}
+      />
     </div>
   );
 }
@@ -1150,5 +1252,215 @@ function Field({
       <Label className="text-xs">{label}</Label>
       <div className="mt-1">{children}</div>
     </div>
+  );
+}
+const DOC_LIST = [
+  "PAN Card",
+  "Aadhaar Card",
+  "Income Proof / Salary Slips",
+  "Bank Statement (6 months)",
+  "Photograph",
+  "Address Proof",
+  "ITR / Form 16",
+  "Business Proof",
+  "Property Documents",
+];
+
+function ApproveLeadDialog({
+  lead,
+  onClose,
+  onConfirm,
+}: {
+  lead: Lead | null;
+  onClose: () => void;
+  onConfirm: (lead: Lead, p: {
+    loan_type: string;
+    requested_amount: number | null;
+    sanction_amount: number | null;
+    tenure_months: number | null;
+    interest_rate: number | null;
+    bank_name: string;
+    notes: string;
+    docs: Record<string, boolean>;
+  }) => Promise<unknown>;
+}) {
+  const [saving, setSaving] = useState(false);
+  const [f, setF] = useState({
+    loan_type: "",
+    requested_amount: "",
+    sanction_amount: "",
+    tenure_months: "",
+    interest_rate: "",
+    bank_name: "",
+    notes: "",
+    docs: {} as Record<string, boolean>,
+  });
+
+  useEffect(() => {
+    if (lead) {
+      setF({
+        loan_type: lead.loan_type ?? "Home Loan",
+        requested_amount: lead.loan_amount ? String(lead.loan_amount) : "",
+        sanction_amount: "",
+        tenure_months: "240",
+        interest_rate: "8.5",
+        bank_name: lead.bank_name ?? "",
+        notes: "",
+        docs: {},
+      });
+    }
+  }, [lead]);
+
+  if (!lead) return null;
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    await onConfirm(lead, {
+      loan_type: f.loan_type,
+      requested_amount: f.requested_amount ? Number(f.requested_amount) : null,
+      sanction_amount: f.sanction_amount ? Number(f.sanction_amount) : null,
+      tenure_months: f.tenure_months ? Number(f.tenure_months) : null,
+      interest_rate: f.interest_rate ? Number(f.interest_rate) : null,
+      bank_name: f.bank_name,
+      notes: f.notes,
+      docs: f.docs,
+    });
+    setSaving(false);
+  };
+
+  const inputCls = "h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100";
+
+  return (
+    <Dialog open={!!lead} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
+        <DialogHeader>
+          <DialogTitle className="text-emerald-700">
+            Approve Lead — {lead.lead_name ?? lead.full_name}
+          </DialogTitle>
+        </DialogHeader>
+        <form onSubmit={submit} className="space-y-4">
+          <div className="rounded-lg bg-emerald-50 p-3 text-xs text-emerald-800">
+            Customer + Loan Case auto-create honge approve karte hi.
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Loan Type *</Label>
+              <select required className={`${inputCls} mt-1`} value={f.loan_type}
+                onChange={(e) => setF({ ...f, loan_type: e.target.value })}>
+                {LOAN_TYPES.map((t) => <option key={t}>{t}</option>)}
+              </select>
+            </div>
+            <div>
+              <Label>Bank / Lender</Label>
+              <select className={`${inputCls} mt-1`} value={f.bank_name}
+                onChange={(e) => setF({ ...f, bank_name: e.target.value })}>
+                <option value="">— Select —</option>
+                {BANK_OPTIONS.map((b) => <option key={b}>{b}</option>)}
+              </select>
+            </div>
+            <div>
+              <Label>Requested Amount (₹)</Label>
+              <Input type="number" className="mt-1" value={f.requested_amount}
+                onChange={(e) => setF({ ...f, requested_amount: e.target.value })} />
+            </div>
+            <div>
+              <Label>Sanctioned Amount (₹)</Label>
+              <Input type="number" className="mt-1" value={f.sanction_amount}
+                onChange={(e) => setF({ ...f, sanction_amount: e.target.value })}
+                placeholder="If sanctioned" />
+            </div>
+            <div>
+              <Label>Tenure (months)</Label>
+              <Input type="number" className="mt-1" value={f.tenure_months}
+                onChange={(e) => setF({ ...f, tenure_months: e.target.value })} />
+            </div>
+            <div>
+              <Label>Interest Rate (%)</Label>
+              <Input type="number" step="0.01" className="mt-1" value={f.interest_rate}
+                onChange={(e) => setF({ ...f, interest_rate: e.target.value })} />
+            </div>
+          </div>
+          <div>
+            <Label>Notes</Label>
+            <Textarea rows={2} className="mt-1" value={f.notes}
+              onChange={(e) => setF({ ...f, notes: e.target.value })}
+              placeholder="Any remarks for this approval…" />
+          </div>
+          <div>
+            <Label className="mb-2 block">Documents Received Checklist</Label>
+            <div className="grid grid-cols-2 gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
+              {DOC_LIST.map((d) => (
+                <label key={d} className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" className="h-4 w-4 accent-emerald-600"
+                    checked={!!f.docs[d]}
+                    onChange={(e) => setF({ ...f, docs: { ...f.docs, [d]: e.target.checked } })} />
+                  {d}
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+            <Button type="submit" disabled={saving} className="bg-emerald-600 text-white hover:bg-emerald-700">
+              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Approve & Create Customer
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function RejectLeadDialog({
+  lead,
+  onClose,
+  onConfirm,
+}: {
+  lead: Lead | null;
+  onClose: () => void;
+  onConfirm: (lead: Lead, reason: string) => Promise<unknown>;
+}) {
+  const [reason, setReason] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => { if (lead) setReason(""); }, [lead]);
+
+  if (!lead) return null;
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reason.trim()) return toast.error("Reason required");
+    setSaving(true);
+    await onConfirm(lead, reason.trim());
+    setSaving(false);
+  };
+
+  return (
+    <Dialog open={!!lead} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-w-md bg-white">
+        <DialogHeader>
+          <DialogTitle className="text-rose-700">
+            Reject Lead — {lead.lead_name ?? lead.full_name}
+          </DialogTitle>
+        </DialogHeader>
+        <form onSubmit={submit} className="space-y-4">
+          <div>
+            <Label>Rejection Reason *</Label>
+            <Textarea required rows={4} className="mt-1" value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="E.g. Low CIBIL score, insufficient income, document mismatch…" />
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+            <Button type="submit" disabled={saving} className="bg-rose-600 text-white hover:bg-rose-700">
+              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Reject Lead
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

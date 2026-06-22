@@ -247,6 +247,8 @@ function TasksPage() {
   );
 }
 
+type AssigneeOpt = { id: string; name: string; kind: "employee" | "partner" };
+
 function NewTaskForm({ onSaved }: { onSaved: () => void }) {
   const initialTask = {
     title: "",
@@ -255,23 +257,42 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
     priority: "medium",
     status: "pending",
     due_date: "",
+    assignee: "" as string, // "kind:id"
   };
 
   const [f, setF] = useState(initialTask);
   const [saving, setSaving] = useState(false);
+  const [assignees, setAssignees] = useState<AssigneeOpt[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const [emps, parts] = await Promise.all([
+        supabase.from("employees").select("id,name").eq("status", "active").order("name"),
+        supabase.from("partners").select("id,name").eq("status", "active").order("name"),
+      ]);
+      const opts: AssigneeOpt[] = [
+        ...(emps.data ?? []).map((e) => ({ id: e.id, name: e.name, kind: "employee" as const })),
+        ...(parts.data ?? []).map((p) => ({ id: p.id, name: p.name, kind: "partner" as const })),
+      ];
+      setAssignees(opts);
+    })();
+  }, []);
 
   const inputClass =
     "h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100";
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!f.title.trim()) {
-      toast.error("Task title is required");
-      return;
-    }
-
+    if (!f.title.trim()) { toast.error("Task title is required"); return; }
     setSaving(true);
+
+    let assigned_employee_id: string | null = null;
+    let assigned_partner_id: string | null = null;
+    if (f.assignee) {
+      const [kind, id] = f.assignee.split(":");
+      if (kind === "employee") assigned_employee_id = id;
+      else if (kind === "partner") assigned_partner_id = id;
+    }
 
     const { error } = await supabase.from("tasks").insert({
       title: f.title.trim(),
@@ -280,17 +301,13 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
       priority: f.priority,
       status: f.status,
       due_date: f.due_date || null,
+      assigned_employee_id,
+      assigned_partner_id,
     });
 
     setSaving(false);
-
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-
+    if (error) { toast.error(error.message); return; }
     toast.success("Task created");
-
     setF(initialTask);
     onSaved();
   };
@@ -380,19 +397,39 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
           <Input
             type="datetime-local"
             value={f.due_date}
-            onChange={(e) =>
-              setF((prev) => ({ ...prev, due_date: e.target.value }))
-            }
+            onChange={(e) => setF((prev) => ({ ...prev, due_date: e.target.value }))}
             className="mt-1 border-sky-200 focus-visible:ring-sky-400"
           />
+        </div>
+
+        <div className="sm:col-span-2">
+          <Label>Assign To (Employee / Partner)</Label>
+          <select
+            value={f.assignee}
+            onChange={(e) => setF((prev) => ({ ...prev, assignee: e.target.value }))}
+            className={inputClass}
+          >
+            <option value="">— Unassigned —</option>
+            {assignees.filter(a => a.kind === "employee").length > 0 && (
+              <optgroup label="Employees">
+                {assignees.filter(a => a.kind === "employee").map((a) => (
+                  <option key={`e-${a.id}`} value={`employee:${a.id}`}>{a.name}</option>
+                ))}
+              </optgroup>
+            )}
+            {assignees.filter(a => a.kind === "partner").length > 0 && (
+              <optgroup label="Partners">
+                {assignees.filter(a => a.kind === "partner").map((a) => (
+                  <option key={`p-${a.id}`} value={`partner:${a.id}`}>{a.name}</option>
+                ))}
+              </optgroup>
+            )}
+          </select>
         </div>
       </div>
 
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs text-slate-500">
-          Save ke baad form clear hoga, popup open rahega.
-        </p>
-
+        <p className="text-xs text-slate-500">Save ke baad form clear hoga, popup open rahega.</p>
         <Button
           type="submit"
           disabled={saving}
