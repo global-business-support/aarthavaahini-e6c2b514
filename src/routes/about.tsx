@@ -246,7 +246,7 @@ function AboutPage() {
             </div>
             <div>
               <p className="font-semibold">Founded</p>
-              <p className="text-muted-foreground">2024 • India</p>
+              <p className="text-muted-foreground">2026 • India</p>
             </div>
             <div>
               <p className="font-semibold">Registered Office</p>
