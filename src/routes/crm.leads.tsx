@@ -311,6 +311,12 @@ function LeadsPage() {
 
   useEffect(() => {
     load();
+    const channel = supabase
+      .channel("crm-leads-sync")
+      .on("postgres_changes", { event: "*", schema: "public", table: "leads" }, () => load())
+      .on("postgres_changes", { event: "*", schema: "public", table: "customers" }, () => load())
+      .subscribe();
+    return () => { channel.unsubscribe(); };
   }, []);
 
   const filtered = leads.filter((l) => {

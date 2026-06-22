@@ -162,6 +162,17 @@ function CustomersPage() {
         if (initial) setQ(initial);
       }
     })();
+
+    const channel = supabase
+      .channel("crm-customers-sync")
+      .on("postgres_changes", { event: "*", schema: "public", table: "customers" }, () => load())
+      .on("postgres_changes", { event: "*", schema: "public", table: "leads" }, () => load())
+      .on("postgres_changes", { event: "*", schema: "public", table: "loan_cases" }, () => load())
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
   }, []);
 
   const filtered = useMemo(() => {

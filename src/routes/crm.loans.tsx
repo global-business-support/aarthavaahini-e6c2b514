@@ -66,7 +66,15 @@ function LoansPage() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+    const channel = supabase
+      .channel("crm-loans-sync")
+      .on("postgres_changes", { event: "*", schema: "public", table: "loan_cases" }, () => load())
+      .on("postgres_changes", { event: "*", schema: "public", table: "customers" }, () => load())
+      .subscribe();
+    return () => { channel.unsubscribe(); };
+  }, []);
 
   const stats = useMemo(() => {
     const total = rows.length;
