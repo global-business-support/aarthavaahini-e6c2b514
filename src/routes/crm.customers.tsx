@@ -32,6 +32,8 @@ import {
   Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CustomerProfileDialog } from "@/components/crm/CustomerProfileDialog";
+
 
 export const Route = createFileRoute("/crm/customers")({
   component: CustomersPage,
@@ -412,20 +414,15 @@ function CustomersPage() {
         )}
       </Card>
 
-      <Dialog open={!!active} onOpenChange={(v) => !v && setActive(null)}>
-        <DialogContent className="max-w-2xl bg-white">
-          <DialogHeader>
-            <DialogTitle className="text-sky-700">
-              {active?.customer_name}
-            </DialogTitle>
-          </DialogHeader>
-
-          {active && <CustomerDetails customer={active} />}
-        </DialogContent>
-      </Dialog>
+      <CustomerProfileDialog
+        open={!!active}
+        onOpenChange={(v) => !v && setActive(null)}
+        customerId={active?.id ?? null}
+      />
     </div>
   );
 }
+
 
 function CustomerDetails({ customer }: { customer: Row }) {
   const [notes, setNotes] = useState<Note[]>([]);

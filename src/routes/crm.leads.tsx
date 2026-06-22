@@ -43,6 +43,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import { CustomerProfileDialog } from "@/components/crm/CustomerProfileDialog";
+
 
 export const Route = createFileRoute("/crm/leads")({
   component: LeadsPage,
@@ -262,6 +264,8 @@ function LeadsPage() {
   const [noteLead, setNoteLead] = useState<Lead | null>(null);
   const [approveLead, setApproveLead] = useState<Lead | null>(null);
   const [rejectLead, setRejectLead] = useState<Lead | null>(null);
+  const [profileLead, setProfileLead] = useState<string | null>(null);
+
 
   const rowSelectClass =
     "h-10 w-[190px] rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100";
@@ -701,11 +705,17 @@ function LeadsPage() {
                 return (
                   <TableRow key={l.id}>
                     <TableCell className="font-medium">
-                      {l.lead_name ?? l.full_name ?? "—"}
+                      <button
+                        onClick={() => setProfileLead(l.id)}
+                        className="text-sky-700 hover:underline"
+                      >
+                        {l.lead_name ?? l.full_name ?? "—"}
+                      </button>
                       {l.email && (
                         <div className="text-xs text-slate-500">{l.email}</div>
                       )}
                     </TableCell>
+
 
                     <TableCell className="text-sm">{l.phone}</TableCell>
 
@@ -851,7 +861,14 @@ function LeadsPage() {
         )}
       </Card>
 
+      <CustomerProfileDialog
+        open={!!profileLead}
+        onOpenChange={(v) => !v && setProfileLead(null)}
+        leadId={profileLead}
+      />
+
       <Dialog open={!!noteLead} onOpenChange={(v) => !v && setNoteLead(null)}>
+
         <DialogContent className="max-w-lg bg-white">
           <DialogHeader>
             <DialogTitle>
