@@ -701,11 +701,17 @@ function LeadsPage() {
                 return (
                   <TableRow key={l.id}>
                     <TableCell className="font-medium">
-                      {l.lead_name ?? l.full_name ?? "—"}
+                      <button
+                        onClick={() => setProfileLead(l.id)}
+                        className="text-sky-700 hover:underline"
+                      >
+                        {l.lead_name ?? l.full_name ?? "—"}
+                      </button>
                       {l.email && (
                         <div className="text-xs text-slate-500">{l.email}</div>
                       )}
                     </TableCell>
+
 
                     <TableCell className="text-sm">{l.phone}</TableCell>
 
