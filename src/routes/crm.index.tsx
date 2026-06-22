@@ -265,7 +265,8 @@ function DashboardPage() {
 
 
         {/* Customers — Donut */}
-        <Card className="p-5 lg:col-span-1">
+        <Link to="/crm/customers" className="block">
+        <Card className="p-5 lg:col-span-1 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-2 hover:ring-violet-200">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-sm font-semibold text-slate-900">Customers · By Stage</h2>
@@ -300,6 +301,8 @@ function DashboardPage() {
             )}
           </div>
         </Card>
+        </Link>
+
 
         {/* Loans — Composed bar+line */}
         <Card className="p-5 lg:col-span-1">
