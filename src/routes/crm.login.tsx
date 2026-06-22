@@ -1,12 +1,22 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Loader2, Lock, Mail, ArrowLeft, ShieldCheck, TrendingUp, Users } from "lucide-react";
+import {
+  Loader2,
+  Lock,
+  Mail,
+  ArrowLeft,
+  ShieldCheck,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import aarthvaahiniLogo from "@/assets/aarthvaahini.png";
+
 export const Route = createFileRoute("/crm/login")({
   validateSearch: (s: Record<string, unknown>) => ({
     unauthorized: s.unauthorized === "1" ? "1" : undefined,
@@ -16,95 +26,162 @@ export const Route = createFileRoute("/crm/login")({
 
 function CrmLoginPage() {
   const nav = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const check = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (!session?.user) return;
+
       const { data: roles, error } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", session.user.id);
+
       if (error) return;
+
       const list = (roles ?? []).map((r) => r.role as string);
+
       const staff = list.some((r) =>
-        ["admin", "manager", "sales_executive", "operations", "insurance_executive", "mf_executive"].includes(r),
+        [
+          "admin",
+          "manager",
+          "sales_executive",
+          "operations",
+          "insurance_executive",
+          "mf_executive",
+        ].includes(r),
       );
+
       if (staff) nav({ to: "/crm" });
       else if (list.includes("partner")) nav({ to: "/partner" });
     };
+
     check();
   }, [nav]);
 
   const signIn = async (e: React.FormEvent) => {
     e.preventDefault();
+
     setLoading(true);
-    const { error, data } = await supabase.auth.signInWithPassword({ email, password });
+
+    const { error, data } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
     if (error) {
       setLoading(false);
       return toast.error(error.message);
     }
+
     const userId = data.user?.id;
-    if (userId) {
-      const { data: roles, error: roleError } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId);
-      if (roleError) {
-        setLoading(false);
-        return toast.error("Access check failed. Please try again.");
-      }
-      const list = (roles ?? []).map((r) => r.role as string);
-      const staff = list.some((r) =>
-        ["admin", "manager", "sales_executive", "operations", "insurance_executive", "mf_executive"].includes(r),
-      );
-      const partner = list.includes("partner");
+
+    if (!userId) {
       setLoading(false);
-      if (staff) { toast.success("Welcome back!"); return nav({ to: "/crm" }); }
-      if (partner) { toast.success("Welcome, Partner!"); return nav({ to: "/partner" }); }
-      await supabase.auth.signOut();
-      return toast.error("This account does not have CRM or Partner access.");
-    } else {
-      setLoading(false);
+      return toast.error("Login failed. Please try again.");
     }
+
+    const { data: roles, error: roleError } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId);
+
+    if (roleError) {
+      setLoading(false);
+      return toast.error("Access check failed. Please try again.");
+    }
+
+    const list = (roles ?? []).map((r) => r.role as string);
+
+    const staff = list.some((r) =>
+      [
+        "admin",
+        "manager",
+        "sales_executive",
+        "operations",
+        "insurance_executive",
+        "mf_executive",
+      ].includes(r),
+    );
+
+    const partner = list.includes("partner");
+
+    setLoading(false);
+
+    if (staff) {
+      toast.success("Welcome back!");
+      return nav({ to: "/crm" });
+    }
+
+    if (partner) {
+      toast.success("Welcome, Partner!");
+      return nav({ to: "/partner" });
+    }
+
+    await supabase.auth.signOut();
+
+    return toast.error("This account does not have CRM or Partner access.");
   };
 
   return (
     <div className="relative flex min-h-screen w-full overflow-hidden bg-[#0b1437]">
       {/* Animated background blobs */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-32 -left-24 h-96 w-96 rounded-full bg-blue-500/30 blur-3xl" />
-        <div className="absolute top-1/2 -right-24 h-[28rem] w-[28rem] rounded-full bg-indigo-500/30 blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <div className="absolute -left-24 -top-32 h-96 w-96 rounded-full bg-blue-500/30 blur-3xl" />
+        <div className="absolute -right-24 top-1/2 h-[28rem] w-[28rem] rounded-full bg-indigo-500/30 blur-3xl" />
         <div className="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-violet-500/20 blur-3xl" />
       </div>
 
       {/* Left brand panel */}
-      <div className="relative z-10 hidden w-1/2 flex-col justify-between p-12 text-white lg:flex">
+      <div className="relative z-20 hidden w-1/2 flex-col justify-between p-12 text-white lg:flex">
         <div>
-          <Link to="/" className="inline-flex items-center gap-2 text-sm text-blue-200/80 hover:text-white">
-            <ArrowLeft className="h-4 w-4" /> Back to website
-          </Link>
+          {/* FIXED BACK LINK */}
+          <a
+            href="/"
+            className="relative z-50 inline-flex pointer-events-auto items-center gap-2 rounded-lg px-1 py-1 text-sm font-medium text-blue-200/80 transition hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to website
+          </a>
+
           <div className="mt-12 flex items-center gap-3">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2 shadow-lg shadow-blue-500/40">
-  <img
-    src={aarthvaahiniLogo}
-    alt="Aarthvaahini Logo"
-    className="h-full w-full object-contain"
-  />
-</div>
+              <img
+                src={aarthvaahiniLogo}
+                alt="Aarthvaahini Logo"
+                className="h-full w-full object-contain"
+              />
+            </div>
+
             <div>
-              <div className="text-xl font-bold tracking-tight">Aarthvaahini</div>
-              <div className="text-xs uppercase tracking-[0.2em] text-blue-300/80"> CRM</div>
+              <div className="text-xl font-bold tracking-tight">
+                Aarthvaahini
+              </div>
+
+              <div className="text-xs uppercase tracking-[0.2em] text-blue-300/80">
+                CRM
+              </div>
             </div>
           </div>
+
           <h1 className="mt-12 text-4xl font-bold leading-tight">
-            Manage leads, loans &amp; <span className="bg-gradient-to-r from-blue-300 to-indigo-200 bg-clip-text text-transparent">grow faster</span>
+            Manage leads, loans &{" "}
+            <span className="bg-gradient-to-r from-blue-300 to-indigo-200 bg-clip-text text-transparent">
+              grow faster
+            </span>
           </h1>
+
           <p className="mt-4 max-w-md text-sm leading-relaxed text-blue-100/70">
-            Sign in to your staff workspace to manage customers, track loan cases, insurance policies and mutual fund SIPs from one elegant dashboard.
+            Sign in to your staff workspace to manage customers, track loan
+            cases, insurance policies and mutual fund SIPs from one elegant
+            dashboard.
           </p>
 
           <div className="mt-10 space-y-4">
@@ -113,43 +190,63 @@ function CrmLoginPage() {
               { Icon: ShieldCheck, label: "Secure, role-based access" },
               { Icon: TrendingUp, label: "Live reports & TAT tracking" },
             ].map(({ Icon, label }) => (
-              <div key={label} className="flex items-center gap-3 text-sm text-blue-100/80">
+              <div
+                key={label}
+                className="flex items-center gap-3 text-sm text-blue-100/80"
+              >
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 backdrop-blur">
                   <Icon className="h-4 w-4 text-blue-300" />
                 </div>
+
                 {label}
               </div>
             ))}
           </div>
         </div>
 
-        <div className="text-xs text-blue-200/60">© {new Date().getFullYear()} Aarthvaahini. All rights reserved.</div>
+        <div className="text-xs text-blue-200/60">
+          © {new Date().getFullYear()} Aarthvaahini. All rights reserved.
+        </div>
       </div>
 
       {/* Right login card */}
-      <div className="relative z-10 flex w-full items-center justify-center p-6 lg:w-1/2">
+      <div className="relative z-20 flex w-full items-center justify-center p-6 lg:w-1/2">
         <div className="w-full max-w-md">
-          <Link to="/" className="mb-6 inline-flex items-center gap-2 text-sm text-blue-200/80 hover:text-white lg:hidden">
-            <ArrowLeft className="h-4 w-4" /> Back
-          </Link>
+          {/* MOBILE BACK LINK */}
+          <a
+            href="/"
+            className="relative z-50 mb-6 inline-flex pointer-events-auto items-center gap-2 rounded-lg px-1 py-1 text-sm font-medium text-blue-200/80 transition hover:text-white lg:hidden"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </a>
+
           <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-8 shadow-2xl backdrop-blur-xl">
             <div className="mb-6 text-center">
-             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2 shadow-lg shadow-blue-500/30 lg:hidden">
-  <img
-    src={aarthvaahiniLogo}
-    alt="Aarthvaahini Logo"
-    className="h-full w-full object-contain"
-  />
-</div>
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2 shadow-lg shadow-blue-500/30 lg:hidden">
+                <img
+                  src={aarthvaahiniLogo}
+                  alt="Aarthvaahini Logo"
+                  className="h-full w-full object-contain"
+                />
+              </div>
+
               <h2 className="text-2xl font-bold text-white">Welcome back</h2>
-              <p className="mt-1 text-sm text-blue-100/60">Sign in to your CRM workspace</p>
+
+              <p className="mt-1 text-sm text-blue-100/60">
+                Sign in to your CRM workspace
+              </p>
             </div>
 
             <form onSubmit={signIn} className="space-y-4">
               <div>
-                <Label className="text-xs font-medium text-blue-100/80">Email address</Label>
+                <Label className="text-xs font-medium text-blue-100/80">
+                  Email address
+                </Label>
+
                 <div className="relative mt-1.5">
                   <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-200/50" />
+
                   <Input
                     type="email"
                     required
@@ -160,10 +257,15 @@ function CrmLoginPage() {
                   />
                 </div>
               </div>
+
               <div>
-                <Label className="text-xs font-medium text-blue-100/80">Password</Label>
+                <Label className="text-xs font-medium text-blue-100/80">
+                  Password
+                </Label>
+
                 <div className="relative mt-1.5">
                   <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-200/50" />
+
                   <Input
                     type="password"
                     required
@@ -174,6 +276,7 @@ function CrmLoginPage() {
                   />
                 </div>
               </div>
+
               <Button
                 type="submit"
                 disabled={loading}
@@ -185,7 +288,8 @@ function CrmLoginPage() {
             </form>
 
             <div className="mt-6 text-center text-xs text-blue-100/50">
-              Need an account? Contact your administrator to be assigned a staff role.
+              Need an account? Contact your administrator to be assigned a staff
+              role.
             </div>
           </div>
         </div>
