@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,8 @@ import {
   UserCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CustomerProfileDialog } from "@/components/crm/CustomerProfileDialog";
+
 import {
   ResponsiveContainer,
   AreaChart,
