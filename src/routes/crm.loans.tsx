@@ -139,7 +139,14 @@ function LoansPage() {
                     ? Object.values(r.documents_checklist).filter(Boolean).length : 0;
                   return (
                     <TableRow key={r.id} className="hover:bg-emerald-50/40">
-                      <TableCell className="font-medium">{r.customer?.customer_name ?? "—"}</TableCell>
+                      <TableCell className="font-medium">
+                        {r.customer_id ? (
+                          <button onClick={() => setProfileId(r.customer_id)} className="text-sky-700 hover:underline">
+                            {r.customer?.customer_name ?? "—"}
+                          </button>
+                        ) : (r.customer?.customer_name ?? "—")}
+                      </TableCell>
+
                       <TableCell>{r.customer?.mobile ?? "—"}</TableCell>
                       <TableCell>{r.loan_type}</TableCell>
                       <TableCell>{r.requested_amount ? `₹${Number(r.requested_amount).toLocaleString("en-IN")}` : "—"}</TableCell>
