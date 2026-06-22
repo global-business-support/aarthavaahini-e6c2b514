@@ -861,7 +861,14 @@ function LeadsPage() {
         )}
       </Card>
 
+      <CustomerProfileDialog
+        open={!!profileLead}
+        onOpenChange={(v) => !v && setProfileLead(null)}
+        leadId={profileLead}
+      />
+
       <Dialog open={!!noteLead} onOpenChange={(v) => !v && setNoteLead(null)}>
+
         <DialogContent className="max-w-lg bg-white">
           <DialogHeader>
             <DialogTitle>
