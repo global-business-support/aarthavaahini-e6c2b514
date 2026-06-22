@@ -57,6 +57,8 @@ function LoansPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Row | null>(null);
+  const [profileId, setProfileId] = useState<string | null>(null);
+
 
   const load = async () => {
     setLoading(true);
