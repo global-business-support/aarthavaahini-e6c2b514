@@ -43,6 +43,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import { CustomerProfileDialog } from "@/components/crm/CustomerProfileDialog";
+
 
 export const Route = createFileRoute("/crm/leads")({
   component: LeadsPage,
