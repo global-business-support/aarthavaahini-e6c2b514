@@ -13,6 +13,7 @@ type Bank = {
 function buildLogoSources(bank: Bank): string[] {
   const sources: string[] = [];
   if (bank.logo) sources.push(bank.logo);
+  sources.push(`https://img.logo.dev/${bank.domain}?token=pk_X-1ZO13GSgeOoUrIuJ6GMQ&size=200&format=png`);
   sources.push(`https://logo.clearbit.com/${bank.domain}`);
   sources.push(`https://icons.duckduckgo.com/ip3/${bank.domain}.ico`);
   sources.push(`https://www.google.com/s2/favicons?domain=${bank.domain}&sz=128`);
@@ -22,7 +23,7 @@ function buildLogoSources(bank: Bank): string[] {
 const BANKS: Bank[] = [
   { name: "HDFC Bank", domain: "hdfcbank.com" },
   { name: "ICICI Bank", domain: "icicibank.com" },
-  { name: "State Bank of India", domain: "onlinesbi.sbi" },
+  { name: "State Bank of India", domain: "sbi.co.in" },
   { name: "Axis Bank", domain: "axisbank.com" },
   { name: "Kotak Mahindra Bank", domain: "kotak.com" },
   { name: "IDFC First Bank", domain: "idfcfirstbank.com" },
@@ -37,7 +38,7 @@ const BANKS: Bank[] = [
   { name: "Bajaj Finserv", domain: "bajajfinserv.in" },
   { name: "Tata Capital", domain: "tatacapital.com" },
   { name: "Aditya Birla Capital", domain: "adityabirlacapital.com" },
-  { name: "L&T Finance", domain: "ltfs.com" },
+  { name: "L&T Finance", domain: "ltfinance.com" },
   { name: "Mahindra Finance", domain: "mahindrafinance.com" },
   { name: "IDBI Bank", domain: "idbibank.in" },
   { name: "Piramal Finance", domain: "piramalfinance.com" },
