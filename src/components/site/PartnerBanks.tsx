@@ -46,23 +46,43 @@ const BANKS: Bank[] = [
   { name: "South Indian Bank", domain: "southindianbank.com" },
 ];
 
+function getInitials(name: string) {
+  return name
+    .replace(/Bank|of|Finance|Capital|Finserv/gi, "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase())
+    .join("");
+}
+
 function BankLogo({ bank }: { bank: Bank }) {
   const sources = buildLogoSources(bank);
   const [idx, setIdx] = useState(0);
-  const src = sources[Math.min(idx, sources.length - 1)];
+  const [failed, setFailed] = useState(false);
+
+  if (failed) {
+    return (
+      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#17357e] to-blue-500 text-sm font-bold text-white shadow-md sm:h-14 sm:w-14 sm:text-base">
+        {getInitials(bank.name) || bank.name[0]}
+      </div>
+    );
+  }
 
   return (
     <img
-      src={src}
+      src={sources[idx]}
       alt={`${bank.name} logo`}
       loading="lazy"
       className="max-h-12 w-auto max-w-[110px] object-contain sm:max-h-14 sm:max-w-[120px]"
       onError={() => {
         if (idx < sources.length - 1) setIdx(idx + 1);
+        else setFailed(true);
       }}
     />
   );
 }
+
 
 export function PartnerBanks() {
   return (
