@@ -12,7 +12,7 @@ export function SipPlanner() {
   const [monthly, setMonthly] = useState(5000);
   const [years, setYears] = useState(10);
   const [rate, setRate] = useState(12);
-  const [stepUp, setStepUp] = useState(10); // % annual step-up
+  const [stepUp, setStepUp] = useState(10);
   const [inflation, setInflation] = useState(6);
 
   const { fv, invested, gains, realValue } = useMemo(() => {
@@ -32,30 +32,30 @@ export function SipPlanner() {
   }, [monthly, years, rate, stepUp, inflation]);
 
   return (
-    <section id="sip" className="container mx-auto scroll-mt-24 px-6 py-24">
-      <div className="mx-auto max-w-6xl rounded-3xl bg-[#f7f9ff] p-8 shadow-xl lg:p-10">
+    <section id="sip" className="container mx-auto scroll-mt-24 px-4 py-16 sm:px-6 sm:py-24">
+      <div className="mx-auto max-w-6xl rounded-3xl bg-[#f7f9ff] p-5 shadow-xl sm:p-8 lg:p-10">
         <div className="text-center">
-          <h2 className="text-4xl font-bold text-[#07142f] md:text-5xl">
+          <h2 className="text-3xl font-bold text-[#07142f] sm:text-4xl md:text-5xl">
             Advanced SIP Planner
           </h2>
           <p className="mt-3 text-gray-500">
-            Step-up your SIP every year and see inflation-adjusted real wealth.
+            Step-up your SIP every year and see inflation-adjusted real wealth. Use the sliders or type values manually.
           </p>
         </div>
 
         <div className="mt-10 grid gap-8 lg:grid-cols-5">
           <div className="space-y-6 lg:col-span-3">
-            <Slider label="Monthly Investment" value={`₹ ${formatINR(monthly)}`} v={monthly} min={500} max={200000} step={500} onChange={setMonthly} />
-            <Slider label="Investment Period" value={`${years} Years`} v={years} min={1} max={40} step={1} onChange={setYears} />
-            <Slider label="Expected Return (p.a.)" value={`${rate}%`} v={rate} min={4} max={25} step={0.5} onChange={setRate} />
-            <Slider label="Annual Step-Up" value={`${stepUp}%`} v={stepUp} min={0} max={25} step={1} onChange={setStepUp} />
-            <Slider label="Inflation" value={`${inflation}%`} v={inflation} min={0} max={12} step={0.5} onChange={setInflation} />
+            <Field label="Monthly Investment" suffix="₹" v={monthly} min={500} max={200000} step={500} onChange={setMonthly} />
+            <Field label="Investment Period" suffix="Yrs" v={years} min={1} max={40} step={1} onChange={setYears} />
+            <Field label="Expected Return (p.a.)" suffix="%" v={rate} min={4} max={25} step={0.5} onChange={setRate} />
+            <Field label="Annual Step-Up" suffix="%" v={stepUp} min={0} max={25} step={1} onChange={setStepUp} />
+            <Field label="Inflation" suffix="%" v={inflation} min={0} max={12} step={0.5} onChange={setInflation} />
           </div>
 
           <div className="space-y-4 lg:col-span-2">
             <div className="rounded-2xl bg-gradient-to-r from-[#17357e] to-blue-600 p-6 text-center text-white">
               <p className="text-sm uppercase tracking-widest text-white/80">Future Value</p>
-              <h3 className="mt-2 text-4xl font-bold">₹ {formatINR(fv)}</h3>
+              <h3 className="mt-2 text-3xl font-bold sm:text-4xl">₹ {formatINR(fv)}</h3>
             </div>
             <Stat label="Total Invested" value={`₹ ${formatINR(invested)}`} />
             <Stat label="Estimated Gains" value={`₹ ${formatINR(gains)}`} />
@@ -67,17 +67,42 @@ export function SipPlanner() {
   );
 }
 
-function Slider({ label, value, v, min, max, step, onChange }: {
-  label: string; value: string; v: number; min: number; max: number; step: number; onChange: (n: number) => void;
+function Field({ label, suffix, v, min, max, step, onChange }: {
+  label: string; suffix: string; v: number; min: number; max: number; step: number; onChange: (n: number) => void;
 }) {
+  const clamp = (n: number) => Math.min(max, Math.max(min, isNaN(n) ? min : n));
   return (
     <div>
-      <div className="mb-2 flex justify-between">
-        <span className="font-medium">{label}</span>
-        <span className="font-semibold text-blue-700">{value}</span>
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+        <span className="font-medium text-[#07142f]">{label}</span>
+        <div className="flex items-center gap-1 rounded-lg border border-blue-200 bg-white px-2 py-1 shadow-sm">
+          {suffix === "₹" && <span className="text-sm text-blue-700">₹</span>}
+          <input
+            type="number"
+            inputMode="decimal"
+            value={v}
+            min={min}
+            max={max}
+            step={step}
+            onChange={(e) => onChange(clamp(Number(e.target.value)))}
+            className="w-24 bg-transparent text-right font-semibold text-blue-700 outline-none sm:w-28"
+          />
+          {suffix !== "₹" && <span className="text-sm text-blue-700">{suffix}</span>}
+        </div>
       </div>
-      <input type="range" min={min} max={max} step={step} value={v}
-        onChange={(e) => onChange(Number(e.target.value))} className="w-full accent-blue-600" />
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={v}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="w-full accent-blue-600"
+      />
+      <div className="mt-1 flex justify-between text-[11px] text-gray-400">
+        <span>{formatINR(min)}</span>
+        <span>{formatINR(max)}</span>
+      </div>
     </div>
   );
 }
