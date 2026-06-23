@@ -142,6 +142,7 @@ html {
   * {
     box-sizing: border-box;
     border-color: var(--color-border);
+    -webkit-tap-highlight-color: transparent;
   }
 
   html,
@@ -150,21 +151,26 @@ html {
     width: 100%;
     min-height: 100%;
     overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
     min-height: 100vh;
+    min-height: 100dvh;
+    background-color: #f5f8ff;
     background-color: var(--color-background);
+    color: #0b1b3f;
     color: var(--color-foreground);
-    font-family: "Inter", sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1,
   h2,
   h3,
   h4 {
-    font-family: "Sora", sans-serif;
+    font-family: "Sora", -apple-system, BlinkMacSystemFont, sans-serif;
     letter-spacing: -0.02em;
   }
 
@@ -199,6 +205,7 @@ html {
   th,
   label {
     overflow-wrap: break-word;
+    word-wrap: break-word;
   }
 
   input,
@@ -206,6 +213,52 @@ html {
   textarea,
   button {
     font: inherit;
+  }
+
+  /* Safari: prevent iOS auto-zoom on focus */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  /* Safari: ensure backdrop-filter actually applies */
+  [class*="backdrop-blur"] {
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+/* Safari fallback when oklch() isn't supported (older Safari < 15.4) */
+@supports not (color: oklch(0 0 0)) {
+  :root {
+    --background: #f5f8ff;
+    --foreground: #0b1b3f;
+    --card: #ffffff;
+    --card-foreground: #0b1b3f;
+    --popover: #ffffff;
+    --popover-foreground: #0b1b3f;
+    --primary: #17357e;
+    --primary-foreground: #ffffff;
+    --primary-glow: #5b8def;
+    --secondary: #eaf0fb;
+    --secondary-foreground: #1d3a8a;
+    --muted: #eef2fa;
+    --muted-foreground: #5b6b8a;
+    --accent: #e6f4f7;
+    --accent-foreground: #1d3a8a;
+    --destructive: #e23d3d;
+    --destructive-foreground: #ffffff;
+    --success: #1aa86b;
+    --success-foreground: #ffffff;
+    --border: #e3e8f2;
+    --input: #eef2fa;
+    --ring: #5b8def;
+    --gradient-primary: linear-gradient(135deg, #17357e, #5b8def);
+    --gradient-hero: linear-gradient(135deg, #f0f7ff 0%, #f3fbff 38%, #fff0f5 100%);
+    --gradient-card: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(238,242,250,0.92) 100%);
+    --shadow-elegant: 0 20px 60px -20px rgba(15, 23, 42, 0.35);
+    --shadow-glow: 0 0 40px rgba(91, 141, 239, 0.4);
+    --shadow-soft: 0 10px 30px -12px rgba(15, 23, 42, 0.18);
   }
 }
 
