@@ -135,11 +135,7 @@ function buildLogoSources(bank: Bank): string[] {
   const sources: string[] = [];
 
   if (bank.logo) sources.push(bank.logo);
-<<<<<<< HEAD
 
-=======
-  sources.push(`https://img.logo.dev/${bank.domain}?token=pk_X-1ZO13GSgeOoUrIuJ6GMQ&size=200&format=png`);
->>>>>>> f37987404a3de3b4977ab685c01f970a0c0c71b4
   sources.push(`https://logo.clearbit.com/${bank.domain}`);
   sources.push(`https://icons.duckduckgo.com/ip3/${bank.domain}.ico`);
   sources.push(
@@ -149,7 +145,6 @@ function buildLogoSources(bank: Bank): string[] {
   return sources;
 }
 
-<<<<<<< HEAD
 const PARTNER_CATEGORIES: PartnerCategory[] = [
   {
     title: "Top 5 Private Banks",
@@ -309,79 +304,27 @@ const PARTNER_CATEGORIES: PartnerCategory[] = [
 ];
 
 const BANKS: Bank[] = PARTNER_CATEGORIES.flatMap((category) => category.banks);
-=======
-const BANKS: Bank[] = [
-  { name: "HDFC Bank", domain: "hdfcbank.com" },
-  { name: "ICICI Bank", domain: "icicibank.com" },
-  { name: "State Bank of India", domain: "sbi.co.in" },
-  { name: "Axis Bank", domain: "axisbank.com" },
-  { name: "Kotak Mahindra Bank", domain: "kotak.com" },
-  { name: "IDFC First Bank", domain: "idfcfirstbank.com" },
-  { name: "Yes Bank", domain: "yesbank.in" },
-  { name: "IndusInd Bank", domain: "indusind.com" },
-  { name: "Punjab National Bank", domain: "pnbindia.in" },
-  { name: "Bank of Baroda", domain: "bankofbaroda.in" },
-  { name: "Canara Bank", domain: "canarabank.com" },
-  { name: "Union Bank of India", domain: "unionbankofindia.co.in" },
-  { name: "Federal Bank", domain: "federalbank.co.in" },
-  { name: "RBL Bank", domain: "rblbank.com" },
-  { name: "Bajaj Finserv", domain: "bajajfinserv.in" },
-  { name: "Tata Capital", domain: "tatacapital.com" },
-  { name: "Aditya Birla Capital", domain: "adityabirlacapital.com" },
-  { name: "L&T Finance", domain: "ltfinance.com" },
-  { name: "Mahindra Finance", domain: "mahindrafinance.com" },
-  { name: "IDBI Bank", domain: "idbibank.in" },
-  { name: "Piramal Finance", domain: "piramalfinance.com" },
-  { name: "DCB Bank", domain: "dcbbank.com" },
-  { name: "Karnataka Bank", domain: "karnatakabank.com" },
-  { name: "South Indian Bank", domain: "southindianbank.com" },
-];
-
-function getInitials(name: string) {
-  return name
-    .replace(/Bank|of|Finance|Capital|Finserv/gi, "")
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase())
-    .join("");
-}
->>>>>>> f37987404a3de3b4977ab685c01f970a0c0c71b4
 
 function BankLogo({ bank }: { bank: Bank }) {
   const sources = buildLogoSources(bank);
   const [idx, setIdx] = useState(0);
-  const [failed, setFailed] = useState(false);
-
-  if (failed) {
-    return (
-      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#17357e] to-blue-500 text-sm font-bold text-white shadow-md sm:h-14 sm:w-14 sm:text-base">
-        {getInitials(bank.name) || bank.name[0]}
-      </div>
-    );
-  }
+  const src = sources[Math.min(idx, sources.length - 1)];
 
   return (
     <img
-      src={sources[idx]}
+      src={src}
       alt={`${bank.name} logo`}
       loading="lazy"
       className="max-h-11 w-auto max-w-[105px] object-contain sm:max-h-12 sm:max-w-[120px]"
       onError={() => {
-<<<<<<< HEAD
         if (idx < sources.length - 1) {
           setIdx(idx + 1);
         }
-=======
-        if (idx < sources.length - 1) setIdx(idx + 1);
-        else setFailed(true);
->>>>>>> f37987404a3de3b4977ab685c01f970a0c0c71b4
       }}
     />
   );
 }
 
-<<<<<<< HEAD
 function PartnerCard({ bank }: { bank: Bank }) {
   return (
     <div className="group relative flex min-h-[150px] flex-col items-center justify-center overflow-hidden rounded-2xl border border-blue-100 bg-white p-4 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#17357e]/30 hover:shadow-xl">
@@ -401,8 +344,6 @@ function PartnerCard({ bank }: { bank: Bank }) {
     </div>
   );
 }
-=======
->>>>>>> f37987404a3de3b4977ab685c01f970a0c0c71b4
 
 export function PartnerBanks() {
   return (
