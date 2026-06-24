@@ -650,7 +650,7 @@ export function Header() {
         )}
       </header>
 
-      {/* BOTTOM NAV */}
+      {/* BOTTOM NAV
       {showBottomNav && (
         <div className="fixed bottom-6 left-1/2 z-[9999] hidden -translate-x-1/2 lg:flex">
           <div className="flex items-center gap-8 rounded-full border border-white/20 bg-white/90 px-8 py-4 shadow-2xl backdrop-blur-xl">
@@ -687,7 +687,45 @@ export function Header() {
             </Link>
           </div>
         </div>
-      )}
+      )} */}
+      {/* BOTTOM NAV */}
+{showBottomNav && (
+  <div className="fixed bottom-4 left-1/2 z-[9999] flex w-[94vw] max-w-[620px] -translate-x-1/2 justify-center sm:bottom-6">
+    <div className="flex w-full items-center justify-between gap-2 rounded-full border border-white/20 bg-white/95 px-3 py-3 shadow-2xl backdrop-blur-xl sm:gap-6 sm:px-8 sm:py-4">
+      <a
+        href="/#hero"
+        className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#17357e] transition hover:text-blue-600 sm:flex-row sm:gap-2 sm:text-base"
+      >
+        <Home className="h-5 w-5" />
+        <span>Home</span>
+      </a>
+
+      <a
+        href="/#testimonials"
+        className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#17357e] transition hover:text-blue-600 sm:flex-row sm:gap-2 sm:text-base"
+      >
+        <Star className="h-5 w-5" />
+        <span>Testimonials</span>
+      </a>
+
+      <a
+        href="/#products"
+        className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#17357e] transition hover:text-blue-600 sm:flex-row sm:gap-2 sm:text-base"
+      >
+        <MessageSquare className="h-5 w-5" />
+        <span>Products</span>
+      </a>
+
+      <Link
+        to="/contact"
+        className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#17357e] transition hover:text-blue-600 sm:flex-row sm:gap-2 sm:text-base"
+      >
+        <Phone className="h-5 w-5" />
+        <span>Contact</span>
+      </Link>
+    </div>
+  </div>
+)}
     </>
   );
 }
