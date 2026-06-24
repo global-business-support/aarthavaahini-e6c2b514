@@ -284,6 +284,9 @@ export function Footer() {
             >
               Contact
             </Link>
+            <Link to="/directors" className="transition hover:text-[#17357e]">
+  Directors
+</Link>
             <Link
   to="/blogs"
   className="hover:text-primary"

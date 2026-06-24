@@ -14,6 +14,7 @@ import { Route as MutualFundsRouteImport } from './routes/mutual-funds'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LoansRouteImport } from './routes/loans'
 import { Route as InsuranceRouteImport } from './routes/insurance'
+import { Route as DirectorsRouteImport } from './routes/directors'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CrmRouteImport } from './routes/crm'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -71,6 +72,11 @@ const LoansRoute = LoansRouteImport.update({
 const InsuranceRoute = InsuranceRouteImport.update({
   id: '/insurance',
   path: '/insurance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DirectorsRoute = DirectorsRouteImport.update({
+  id: '/directors',
+  path: '/directors',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -248,6 +254,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/crm': typeof CrmRouteWithChildren
   '/dashboard': typeof DashboardRoute
+  '/directors': typeof DirectorsRoute
   '/insurance': typeof InsuranceRoute
   '/loans': typeof LoansRoute
   '/login': typeof LoginRoute
@@ -287,6 +294,7 @@ export interface FileRoutesByTo {
   '/cibil': typeof CibilRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/directors': typeof DirectorsRoute
   '/insurance': typeof InsuranceRoute
   '/loans': typeof LoansRoute
   '/login': typeof LoginRoute
@@ -327,6 +335,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/crm': typeof CrmRouteWithChildren
   '/dashboard': typeof DashboardRoute
+  '/directors': typeof DirectorsRoute
   '/insurance': typeof InsuranceRoute
   '/loans': typeof LoansRoute
   '/login': typeof LoginRoute
@@ -369,6 +378,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/crm'
     | '/dashboard'
+    | '/directors'
     | '/insurance'
     | '/loans'
     | '/login'
@@ -408,6 +418,7 @@ export interface FileRouteTypes {
     | '/cibil'
     | '/contact'
     | '/dashboard'
+    | '/directors'
     | '/insurance'
     | '/loans'
     | '/login'
@@ -447,6 +458,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/crm'
     | '/dashboard'
+    | '/directors'
     | '/insurance'
     | '/loans'
     | '/login'
@@ -488,6 +500,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   CrmRoute: typeof CrmRouteWithChildren
   DashboardRoute: typeof DashboardRoute
+  DirectorsRoute: typeof DirectorsRoute
   InsuranceRoute: typeof InsuranceRoute
   LoansRoute: typeof LoansRoute
   LoginRoute: typeof LoginRoute
@@ -530,6 +543,13 @@ declare module '@tanstack/react-router' {
       path: '/insurance'
       fullPath: '/insurance'
       preLoaderRoute: typeof InsuranceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/directors': {
+      id: '/directors'
+      path: '/directors'
+      fullPath: '/directors'
+      preLoaderRoute: typeof DirectorsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -858,6 +878,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   CrmRoute: CrmRouteWithChildren,
   DashboardRoute: DashboardRoute,
+  DirectorsRoute: DirectorsRoute,
   InsuranceRoute: InsuranceRoute,
   LoansRoute: LoansRoute,
   LoginRoute: LoginRoute,

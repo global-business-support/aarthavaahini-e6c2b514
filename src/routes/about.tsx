@@ -269,7 +269,7 @@ function AboutPage() {
         {/* Stats */}
         <div className="mt-10 grid gap-6 sm:grid-cols-3">
           {[
-            { icon: Users, n: "50,000+", l: "Happy Customers" },
+            { icon: Users, n: "1,000+", l: "Happy Customers" },
             { icon: Building2, n: "50+", l: "Institutional Partners" },
             { icon: Award, n: "₹500 Cr+", l: "Disbursed" },
           ].map(({ icon: Icon, n, l }) => (

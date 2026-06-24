@@ -40,22 +40,20 @@ export const Route = createFileRoute("/crm/customers")({
 });
 
 const CUSTOMER_STAGES = [
-  "New",
-  "Docs Pending",
-  "Login",
-  "Sanction",
-  "Disbursement",
+  "Pre-Login Follow-Up",
+  "Logged In",
+  "Sanctioned",
+  "Disburement",
   "Closed",
 ] as const;
 
 type Stage = (typeof CUSTOMER_STAGES)[number];
 
 const STAGE_COLOR: Record<Stage, string> = {
-  New: "border-sky-300 bg-sky-50 text-sky-700",
-  "Docs Pending": "border-violet-300 bg-violet-50 text-violet-700",
-  Login: "border-indigo-300 bg-indigo-50 text-indigo-700",
-  Sanction: "border-amber-300 bg-amber-50 text-amber-700",
-  Disbursement: "border-emerald-300 bg-emerald-50 text-emerald-700",
+  "Pre-Login Follow-Up": "border-sky-300 bg-sky-50 text-sky-700",
+  "Logged In": "border-indigo-300 bg-indigo-50 text-indigo-700",
+  Sanctioned: "border-violet-300 bg-violet-50 text-violet-700",
+  Disburement: "border-emerald-300 bg-emerald-50 text-emerald-700",
   Closed: "border-slate-300 bg-slate-100 text-slate-700",
 };
 
