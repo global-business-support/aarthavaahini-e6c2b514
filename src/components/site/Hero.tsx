@@ -2153,6 +2153,7 @@ export function Hero() {
                         </button>
                       </Link>
 
+<<<<<<< HEAD
                       {card.button2 && card.button2Link && (
                         <Link to={card.button2Link}>
                           <button
@@ -2163,6 +2164,53 @@ export function Hero() {
                           </button>
                         </Link>
                       )}
+=======
+                  if (isActive) {
+                    cardClass = "block scale-100 opacity-100 z-20";
+                  } else if (isPrev || isNext) {
+                    cardClass = "hidden lg:block scale-90 opacity-45 z-10";
+                  }
+
+                  return (
+                    <div
+                      key={card.title}
+                      className={`relative h-[230px] w-full max-w-[760px] shrink-0 overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 sm:h-[280px] lg:h-[320px] lg:w-[760px] ${card.bg} ${cardClass}`}
+                    >
+                      <div className="relative z-10 flex h-full flex-col justify-center p-5 sm:p-8">
+                        <h3 className="max-w-[60%] text-xl font-bold text-[#08224a] sm:text-2xl lg:text-3xl">
+                          {card.title}
+                        </h3>
+
+                        <p className="mt-3 max-w-[58%] text-sm leading-6 text-slate-700 sm:text-base">
+                          {card.subtitle}
+                        </p>
+
+                        <div className="mt-5 flex flex-wrap gap-3">
+                          <Link
+                            to={card.button1Link}
+                            className="inline-flex items-center justify-center rounded-lg bg-[#00539b] px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-[#17357e]"
+                          >
+                            {card.button1}
+                          </Link>
+
+                          {card.button2 && card.button2Link && (
+                            <Link
+                              to={card.button2Link}
+                              className="inline-flex items-center justify-center rounded-lg border border-[#00539b] bg-white px-4 py-2.5 text-sm font-semibold text-[#00539b] transition hover:bg-blue-50"
+                            >
+                              {card.button2}
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+
+                      <img
+                        src={card.image}
+                        alt={card.title}
+                        className="absolute bottom-0 right-0 h-full w-[52%] object-cover object-center sm:object-contain sm:object-bottom"
+                        draggable={false}
+                      />
+>>>>>>> e1c026f2aab251f9c3702280487060c62fce03b2
                     </div>
                   </div>
 

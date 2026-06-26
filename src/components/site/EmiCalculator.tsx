@@ -57,8 +57,13 @@ export function EmiCalculator() {
 
   const result = useMemo(() => {
     if (mode === "EMI") return PMT(monthlyRate, months, amount);
-    if (mode === "ROI") return RATE(months, -emiInput, amount) * 12 * 100;
-    if (mode === "Loan Amount") return PV(monthlyRate, months, -emiInput);
+    if (mode === "ROI") {
+      // Both pmt and pv positive — solver expects f = pv*(1+r)^n - pmt*((1+r)^n-1)/r = 0
+      const monthly = RATE(months, emiInput, amount);
+      const annual = monthly * 12 * 100;
+      return isFinite(annual) && annual > 0 ? annual : 0;
+    }
+    if (mode === "Loan Amount") return PV(monthlyRate, months, emiInput);
     return 0;
   }, [mode, monthlyRate, months, amount, emiInput]);
 
@@ -80,11 +85,12 @@ export function EmiCalculator() {
   const [eligYears, setEligYears] = useState(20);
 
   const eligibility = useMemo(() => {
-    const eligEmi = (income * foir) / 100 - existingEmi;
+    const eligEmi = Math.max(0, (income * foir) / 100 - existingEmi);
     const r = eligRate / 12 / 100;
     const n = eligYears * 12;
-    const eligLoan = eligEmi > 0 ? PV(r, n, -eligEmi) : 0;
-    const reqIncome = (eligEmi + existingEmi) / (foir / 100);
+    // PV with positive pmt → positive loan amount
+    const eligLoan = eligEmi > 0 && r > 0 ? PV(r, n, eligEmi) : 0;
+    const reqIncome = foir > 0 ? (eligEmi + existingEmi) / (foir / 100) : 0;
     return { eligEmi, eligLoan, reqIncome };
   }, [income, existingEmi, foir, eligRate, eligYears]);
 
