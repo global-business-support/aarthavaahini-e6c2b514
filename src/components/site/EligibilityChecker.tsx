@@ -111,8 +111,10 @@ function compute(product: ProductDef, base: BaseInputs, ex: ProductExtras): Elig
 
   if (base.monthlyIncome <= 0) reasons.push("Monthly income is required");
 
+  // FOIR fixed at 55% (industry standard backend rule)
+  const FOIR_CAP = 0.55;
   const foir = base.monthlyIncome > 0 ? (base.monthlyEmi / base.monthlyIncome) * 100 : 100;
-  if (foir > 50) reasons.push(`Existing EMI burden too high (FOIR ${foir.toFixed(0)}%)`);
+  if (foir > FOIR_CAP * 100) reasons.push(`Existing EMI burden too high (FOIR ${foir.toFixed(0)}%)`);
   else if (foir < 30) { positives.push("Healthy FOIR"); score += 5; }
 
   if (product.category === "loan") {
@@ -126,23 +128,30 @@ function compute(product: ProductDef, base: BaseInputs, ex: ProductExtras): Elig
 
   // product specific
   const rate = product.key === "home_loan" ? 8.5 : product.key === "car_loan" ? 9.5 : product.key === "education_loan" ? 10.5 : product.key === "business_loan" ? 14 : 12;
-  const tenure = ex.loanTenure ?? 5;
+  const tenure = ex.loanTenure && ex.loanTenure > 0 ? ex.loanTenure : 5;
 
   let maxAmount: number | undefined;
   let estimatedEmi: number | undefined;
   let premium: number | undefined;
 
   if (product.category === "loan") {
-    // Max EMI = 50% of income - existing EMI
-    const maxEmi = Math.max(0, base.monthlyIncome * 0.5 - base.monthlyEmi);
+    // Max EMI = 55% of income - existing EMI
+    const maxEmi = Math.max(0, base.monthlyIncome * FOIR_CAP - base.monthlyEmi);
     const r = rate / 1200;
     const n = tenure * 12;
     maxAmount = r > 0 ? (maxEmi * (Math.pow(1 + r, n) - 1)) / (r * Math.pow(1 + r, n)) : maxEmi * n;
 
-    if (product.key === "home_loan") maxAmount = Math.min(maxAmount, (ex.propertyValue ?? 0) * 0.8);
-    if (product.key === "car_loan") maxAmount = Math.min(maxAmount, (ex.vehicleValue ?? 0) * 0.85);
-    if (product.key === "education_loan") maxAmount = Math.min(maxAmount, (ex.collegeFees ?? maxAmount) || maxAmount);
-    if (product.key === "business_loan" && ex.businessTurnover) {
+    // Only cap by collateral/turnover when user has actually entered a value (> 0)
+    if (product.key === "home_loan" && ex.propertyValue && ex.propertyValue > 0) {
+      maxAmount = Math.min(maxAmount, ex.propertyValue * 0.8);
+    }
+    if (product.key === "car_loan" && ex.vehicleValue && ex.vehicleValue > 0) {
+      maxAmount = Math.min(maxAmount, ex.vehicleValue * 0.85);
+    }
+    if (product.key === "education_loan" && ex.collegeFees && ex.collegeFees > 0) {
+      maxAmount = Math.min(maxAmount, ex.collegeFees);
+    }
+    if (product.key === "business_loan" && ex.businessTurnover && ex.businessTurnover > 0) {
       maxAmount = Math.min(maxAmount, ex.businessTurnover * 0.3);
     }
 
