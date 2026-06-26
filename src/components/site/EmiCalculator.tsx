@@ -85,11 +85,12 @@ export function EmiCalculator() {
   const [eligYears, setEligYears] = useState(20);
 
   const eligibility = useMemo(() => {
-    const eligEmi = (income * foir) / 100 - existingEmi;
+    const eligEmi = Math.max(0, (income * foir) / 100 - existingEmi);
     const r = eligRate / 12 / 100;
     const n = eligYears * 12;
-    const eligLoan = eligEmi > 0 ? PV(r, n, -eligEmi) : 0;
-    const reqIncome = (eligEmi + existingEmi) / (foir / 100);
+    // PV with positive pmt → positive loan amount
+    const eligLoan = eligEmi > 0 && r > 0 ? PV(r, n, eligEmi) : 0;
+    const reqIncome = foir > 0 ? (eligEmi + existingEmi) / (foir / 100) : 0;
     return { eligEmi, eligLoan, reqIncome };
   }, [income, existingEmi, foir, eligRate, eligYears]);
 
