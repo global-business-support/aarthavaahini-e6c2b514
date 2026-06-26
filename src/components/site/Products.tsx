@@ -857,7 +857,7 @@ export function Products() {
 
         <h2 className="mt-3 text-2xl font-bold text-gray-900 sm:text-4xl md:text-5xl">
           Loans, Insurance, Wealth Solutions and
-          <span className="text-blue-600"> Alternative Investments</span>
+          <span className="text-blue-600"> Alternative assets</span>
         </h2>
 
         <p className="mt-4 text-gray-500">

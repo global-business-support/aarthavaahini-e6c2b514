@@ -11,7 +11,7 @@ export const Route = createFileRoute("/loans")({
   head: () => ({
     meta: [
       { title: "Loans — Home, Personal, Business, LAP | Aarthvaahini" },
-      { name: "description", content: "Apply for home, personal, business, car, education and gold loans from 40+ banks at lowest rates." },
+      { name: "description", content: "Apply for home, personal, business, car, education and gold loans from 50+ banks at lowest rates." },
     ],
   }),
   component: () => (
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/loans")({
         />
         <ProductPage
           title="Loans"
-          subtitle="Best loan offers from 40+ banks with approval within 24 hours."
+          subtitle="Best loan offers from 50+ banks and financial institutions with approval within 24 hours."
           items={loans}
           productType="loan"
           accentClass="text-[#183c93]"

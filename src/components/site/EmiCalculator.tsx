@@ -199,7 +199,7 @@ export function EmiCalculator() {
     <section id="calculator" className="bg-white py-14 sm:py-24">
       <div className="container mx-auto px-4 sm:px-6">
         <h2 className="text-center text-2xl font-bold text-[#07142f] sm:text-4xl md:text-5xl">
-          Professional Loan Calculator
+          Advance Loan Calculator
         </h2>
         <p className="mt-3 text-center text-sm text-gray-500 sm:text-base">
           EMI engine, eligibility calculator and full amortization schedule.
