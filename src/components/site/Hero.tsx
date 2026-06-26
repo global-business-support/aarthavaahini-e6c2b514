@@ -1416,23 +1416,19 @@ export function Hero() {
                         </p>
 
                         <div className="mt-5 flex flex-wrap gap-3">
-                          <Link to={card.button1Link}>
-                            <button
-                              type="button"
-                              className="rounded-lg bg-[#00539b] px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-[#17357e]"
-                            >
-                              {card.button1}
-                            </button>
+                          <Link
+                            to={card.button1Link}
+                            className="inline-flex items-center justify-center rounded-lg bg-[#00539b] px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-[#17357e]"
+                          >
+                            {card.button1}
                           </Link>
 
                           {card.button2 && card.button2Link && (
-                            <Link to={card.button2Link}>
-                              <button
-                                type="button"
-                                className="rounded-lg border border-[#00539b] px-4 py-2.5 text-sm font-semibold text-[#00539b] transition hover:bg-blue-50"
-                              >
-                                {card.button2}
-                              </button>
+                            <Link
+                              to={card.button2Link}
+                              className="inline-flex items-center justify-center rounded-lg border border-[#00539b] bg-white px-4 py-2.5 text-sm font-semibold text-[#00539b] transition hover:bg-blue-50"
+                            >
+                              {card.button2}
                             </Link>
                           )}
                         </div>
