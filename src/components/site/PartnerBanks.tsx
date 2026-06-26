@@ -147,38 +147,7 @@ function buildLogoSources(bank: Bank): string[] {
 
 const PARTNER_CATEGORIES: PartnerCategory[] = [
   {
-    title: "Top 5 Private Banks",
-    subtitle: "Leading private banking partners",
-    banks: [
-      {
-        name: "HDFC Bank",
-        domain: "hdfcbank.com",
-        logo: "https://i.pinimg.com/736x/1e/b4/93/1eb49385575175ab7f541d7000273a1b.jpg",
-      },
-      {
-        name: "ICICI Bank",
-        domain: "icicibank.com",
-        logo: "https://i.pinimg.com/736x/22/96/9c/22969cee81f5338672583e8c524a8dab.jpg",
-      },
-      {
-        name: "Axis Bank",
-        domain: "axisbank.com",
-        logo: "https://i.pinimg.com/1200x/df/70/76/df70767105d12ee9466bcbb1190c85fc.jpg",
-      },
-      {
-        name: "Kotak Mahindra Bank",
-        domain: "kotak.com",
-        logo: "https://i.pinimg.com/736x/05/4e/0b/054e0b16f909715ba8897497c93360f9.jpg",
-      },
-      {
-        name: "IndusInd Bank",
-        domain: "indusind.com",
-        logo: "https://i.pinimg.com/736x/f0/b3/15/f0b31567ad1eeb418e19b0290fee2bae.jpg",
-      },
-    ],
-  },
-  {
-    title: "Top 5 Government Banks",
+    title: "Leading Banks & financial institutions",
     subtitle: "Trusted public sector banking partners",
     banks: [
       {
@@ -209,8 +178,40 @@ const PARTNER_CATEGORIES: PartnerCategory[] = [
     ],
   },
   {
-    title: "Private Banks",
-    subtitle: "Additional private banking partners",
+    title: "",
+    subtitle: "",
+    banks: [
+      {
+        name: "HDFC Bank",
+        domain: "hdfcbank.com",
+        logo: "https://i.pinimg.com/736x/1e/b4/93/1eb49385575175ab7f541d7000273a1b.jpg",
+      },
+      {
+        name: "ICICI Bank",
+        domain: "icicibank.com",
+        logo: "https://i.pinimg.com/736x/22/96/9c/22969cee81f5338672583e8c524a8dab.jpg",
+      },
+      {
+        name: "Axis Bank",
+        domain: "axisbank.com",
+        logo: "https://i.pinimg.com/1200x/df/70/76/df70767105d12ee9466bcbb1190c85fc.jpg",
+      },
+      {
+        name: "Kotak Mahindra Bank",
+        domain: "kotak.com",
+        logo: "https://i.pinimg.com/736x/05/4e/0b/054e0b16f909715ba8897497c93360f9.jpg",
+      },
+      {
+        name: "IndusInd Bank",
+        domain: "indusind.com",
+        logo: "https://i.pinimg.com/736x/f0/b3/15/f0b31567ad1eeb418e19b0290fee2bae.jpg",
+      },
+    ],
+  },
+  
+  {
+    title: "",
+    subtitle: "",
     banks: [
       {
         name: "RBL Bank",
@@ -240,8 +241,8 @@ const PARTNER_CATEGORIES: PartnerCategory[] = [
     ],
   },
   {
-    title: "Housing Finance & NBFCs",
-    subtitle: "Housing and structured finance partners",
+    title: "",
+    subtitle: "",
     banks: [
       {
         name: "Aditya Birla Capital",
@@ -271,8 +272,8 @@ const PARTNER_CATEGORIES: PartnerCategory[] = [
     ],
   },
   {
-    title: "NBFCs & Financial Institutions",
-    subtitle: "Financial institutions for wider product choices",
+    title: "",
+    subtitle: "",
     banks: [
       {
         name: "Bajaj Finserv",
