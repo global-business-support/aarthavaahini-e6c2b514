@@ -57,8 +57,13 @@ export function EmiCalculator() {
 
   const result = useMemo(() => {
     if (mode === "EMI") return PMT(monthlyRate, months, amount);
-    if (mode === "ROI") return RATE(months, -emiInput, amount) * 12 * 100;
-    if (mode === "Loan Amount") return PV(monthlyRate, months, -emiInput);
+    if (mode === "ROI") {
+      // Both pmt and pv positive — solver expects f = pv*(1+r)^n - pmt*((1+r)^n-1)/r = 0
+      const monthly = RATE(months, emiInput, amount);
+      const annual = monthly * 12 * 100;
+      return isFinite(annual) && annual > 0 ? annual : 0;
+    }
+    if (mode === "Loan Amount") return PV(monthlyRate, months, emiInput);
     return 0;
   }, [mode, monthlyRate, months, amount, emiInput]);
 
