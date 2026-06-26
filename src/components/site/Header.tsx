@@ -423,7 +423,7 @@ export function Header() {
   <img
     src={headingLogo}
     alt="Aarthvaahini"
-    className="block h-7 w-[120px] shrink-0 -translate-x-2 translate-y-1 object-contain sm:h-8 sm:w-[155px] sm:-translate-x-2.5 sm:translate-y-1.5 md:w-[175px] lg:h-9 lg:w-[195px] xl:w-[210px]"
+    className="block h-7 w-[120px] shrink-0 -translate-x-2 translate-y-1 object-contain sm:h-8 sm:w-[155px] sm:-translate-x-2.5 sm:translate-y-1.5 md:w-[135px] lg:h-9 lg:w-[195px] xl:w-[210px]"
     draggable={false}
   />
 </Link>

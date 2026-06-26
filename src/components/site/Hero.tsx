@@ -2011,7 +2011,7 @@ export function Hero() {
                   </div>
                 )}
 
-                {/* First slide buttons only - moved down */}
+                {/* First slide buttons only */}
                 {index === 0 && (
                   <div className="absolute bottom-8 left-4 z-20 flex flex-wrap gap-3 sm:left-8 sm:bottom-10 lg:left-12 lg:bottom-12">
                     <Link to="/contact">
@@ -2035,7 +2035,7 @@ export function Hero() {
             ))}
           </div>
 
-          {/* SERVICE CARDS - website color background */}
+          {/* SERVICE CARDS */}
           <div className="absolute bottom-10 right-4 z-20 hidden max-w-[900px] flex-wrap items-center justify-end gap-4 md:flex lg:right-8">
             <Link to="/loans">
               <div className="flex min-w-[210px] items-center gap-4 rounded-2xl border border-blue-200/40 bg-gradient-to-r from-[#17357e] to-[#00539b] px-5 py-4 text-white shadow-xl transition-all hover:scale-105 hover:shadow-2xl lg:min-w-60">
@@ -2101,9 +2101,7 @@ export function Hero() {
                 onClick={() => setCurrent(index)}
                 aria-label={`Go to slide ${index + 1}`}
                 className={`h-2.5 rounded-full transition-all ${
-                  current === index
-                    ? "w-9 bg-white"
-                    : "w-2.5 bg-white/60"
+                  current === index ? "w-9 bg-white" : "w-2.5 bg-white/60"
                 }`}
               />
             ))}
@@ -2123,6 +2121,7 @@ export function Hero() {
               <h2 className="text-2xl font-bold text-[#08224a] sm:text-3xl lg:text-4xl">
                 Our Financial Products
               </h2>
+
               <p className="mt-2 text-sm text-slate-600 sm:text-base">
                 Loans, insurance and wealth solutions tailored for your goals.
               </p>
@@ -2153,7 +2152,6 @@ export function Hero() {
                         </button>
                       </Link>
 
-<<<<<<< HEAD
                       {card.button2 && card.button2Link && (
                         <Link to={card.button2Link}>
                           <button
@@ -2164,53 +2162,6 @@ export function Hero() {
                           </button>
                         </Link>
                       )}
-=======
-                  if (isActive) {
-                    cardClass = "block scale-100 opacity-100 z-20";
-                  } else if (isPrev || isNext) {
-                    cardClass = "hidden lg:block scale-90 opacity-45 z-10";
-                  }
-
-                  return (
-                    <div
-                      key={card.title}
-                      className={`relative h-[230px] w-full max-w-[760px] shrink-0 overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 sm:h-[280px] lg:h-[320px] lg:w-[760px] ${card.bg} ${cardClass}`}
-                    >
-                      <div className="relative z-10 flex h-full flex-col justify-center p-5 sm:p-8">
-                        <h3 className="max-w-[60%] text-xl font-bold text-[#08224a] sm:text-2xl lg:text-3xl">
-                          {card.title}
-                        </h3>
-
-                        <p className="mt-3 max-w-[58%] text-sm leading-6 text-slate-700 sm:text-base">
-                          {card.subtitle}
-                        </p>
-
-                        <div className="mt-5 flex flex-wrap gap-3">
-                          <Link
-                            to={card.button1Link}
-                            className="inline-flex items-center justify-center rounded-lg bg-[#00539b] px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-[#17357e]"
-                          >
-                            {card.button1}
-                          </Link>
-
-                          {card.button2 && card.button2Link && (
-                            <Link
-                              to={card.button2Link}
-                              className="inline-flex items-center justify-center rounded-lg border border-[#00539b] bg-white px-4 py-2.5 text-sm font-semibold text-[#00539b] transition hover:bg-blue-50"
-                            >
-                              {card.button2}
-                            </Link>
-                          )}
-                        </div>
-                      </div>
-
-                      <img
-                        src={card.image}
-                        alt={card.title}
-                        className="absolute bottom-0 right-0 h-full w-[52%] object-cover object-center sm:object-contain sm:object-bottom"
-                        draggable={false}
-                      />
->>>>>>> e1c026f2aab251f9c3702280487060c62fce03b2
                     </div>
                   </div>
 
@@ -2253,9 +2204,7 @@ export function Hero() {
                   type="button"
                   onClick={() => setActiveCard(index)}
                   className={`h-2.5 rounded-full transition-all ${
-                    activeCard === index
-                      ? "w-8 bg-[#00539b]"
-                      : "w-2.5 bg-slate-300"
+                    activeCard === index ? "w-8 bg-[#00539b]" : "w-2.5 bg-slate-300"
                   }`}
                   aria-label={`Go to ${card.title}`}
                 />
