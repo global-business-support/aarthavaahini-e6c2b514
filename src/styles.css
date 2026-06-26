@@ -717,3 +717,200 @@ html {
     animation: none;
   }
 }
+/* =========================
+   HOME PAGE MOBILE RESPONSIVE FIX
+========================= */
+
+/* Full website horizontal scroll fix */
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+}
+
+body {
+  overscroll-behavior-x: none;
+}
+
+/* Common responsive media */
+img,
+video,
+svg,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Container safe padding */
+.container {
+  width: 100%;
+  max-width: 1280px;
+}
+
+/* Prevent long text from breaking layout */
+h1,
+h2,
+h3,
+h4,
+p,
+span,
+a,
+button,
+li {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* Header mobile logo safety */
+@media (max-width: 420px) {
+  header .container {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  header img {
+    max-width: none;
+  }
+}
+
+/* Hero mobile fix */
+@media (max-width: 768px) {
+  #hero {
+    min-height: auto !important;
+  }
+
+  #hero h1 {
+    font-size: clamp(1.75rem, 8vw, 2.6rem) !important;
+    line-height: 1.12 !important;
+  }
+
+  #hero p {
+    font-size: 0.95rem !important;
+    line-height: 1.65 !important;
+  }
+
+  #hero button,
+  #hero a {
+    font-size: 0.9rem;
+  }
+}
+
+/* First page hero height fix for mobile */
+@media (max-width: 640px) {
+  #hero > div {
+    min-height: 520px;
+  }
+
+  #hero .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+/* Cards responsive safety */
+@media (max-width: 768px) {
+  .card-3d,
+  .card-3d:hover {
+    transform: none !important;
+  }
+
+  .card-3d::after {
+    display: none !important;
+  }
+
+  .shadow-2xl,
+  .shadow-xl {
+    box-shadow: 0 12px 28px -18px rgba(15, 23, 42, 0.35) !important;
+  }
+}
+
+/* Product cards mobile fix */
+@media (max-width: 640px) {
+  #products,
+  #partners,
+  #calculator,
+  #testimonials {
+    scroll-margin-top: 80px;
+  }
+
+  section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .grid {
+    min-width: 0;
+  }
+
+  .grid > * {
+    min-width: 0;
+  }
+}
+
+/* Dialog / Lead form mobile fix */
+@media (max-width: 640px) {
+  [role="dialog"] {
+    width: 94vw !important;
+    max-width: 94vw !important;
+    max-height: 88vh !important;
+    overflow-y: auto !important;
+    border-radius: 1.25rem !important;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-height: 44px;
+    font-size: 16px !important;
+  }
+
+  button {
+    min-height: 42px;
+  }
+}
+
+/* Bottom navbar mobile safe */
+@media (max-width: 640px) {
+  .bottom-nav,
+  [data-bottom-nav="true"] {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+}
+
+/* Footer safe spacing for floating bottom nav */
+@media (max-width: 768px) {
+  footer {
+    padding-bottom: 5.5rem;
+  }
+}
+
+/* Avoid animation layout jump on mobile */
+@media (max-width: 768px) {
+  .animate-float,
+  .animate-blob,
+  .animate-bg-zoom,
+  .animate-loan-products-bg,
+  .animate-products-bg {
+    animation: none !important;
+  }
+}
+
+/* Extra small screen fix */
+@media (max-width: 360px) {
+  h1 {
+    font-size: 1.75rem !important;
+  }
+
+  h2 {
+    font-size: 1.45rem !important;
+  }
+
+  .container {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+}
