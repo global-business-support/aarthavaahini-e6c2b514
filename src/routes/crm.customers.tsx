@@ -112,9 +112,9 @@ type Note = {
 };
 
 function normaliseStage(s: string | null | undefined): Stage {
-  if (!s) return "New";
+  if (!s) return "Pre-Login Follow-Up";
   if ((CUSTOMER_STAGES as readonly string[]).includes(s)) return s as Stage;
-  return "New";
+  return "Pre-Login Follow-Up";
 }
 
 function cibilBadge(score: number | null) {
