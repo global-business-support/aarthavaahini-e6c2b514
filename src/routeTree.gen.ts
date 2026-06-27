@@ -42,6 +42,7 @@ import { Route as CrmInsuranceRouteImport } from './routes/crm.insurance'
 import { Route as CrmEmployeesRouteImport } from './routes/crm.employees'
 import { Route as CrmDocumentsRouteImport } from './routes/crm.documents'
 import { Route as CrmCustomersRouteImport } from './routes/crm.customers'
+import { Route as CrmCmsRouteImport } from './routes/crm.cms'
 import { Route as CrmActivityRouteImport } from './routes/crm.activity'
 import { Route as BlogsSipGuideRouteImport } from './routes/blogs/sip-guide'
 import { Route as BlogsHomeLoanGuideRouteImport } from './routes/blogs/home-loan-guide'
@@ -214,6 +215,11 @@ const CrmCustomersRoute = CrmCustomersRouteImport.update({
   path: '/customers',
   getParentRoute: () => CrmRoute,
 } as any)
+const CrmCmsRoute = CrmCmsRouteImport.update({
+  id: '/cms',
+  path: '/cms',
+  getParentRoute: () => CrmRoute,
+} as any)
 const CrmActivityRoute = CrmActivityRouteImport.update({
   id: '/activity',
   path: '/activity',
@@ -266,6 +272,7 @@ export interface FileRoutesByFullPath {
   '/blogs/home-loan-guide': typeof BlogsHomeLoanGuideRoute
   '/blogs/sip-guide': typeof BlogsSipGuideRoute
   '/crm/activity': typeof CrmActivityRoute
+  '/crm/cms': typeof CrmCmsRoute
   '/crm/customers': typeof CrmCustomersRoute
   '/crm/documents': typeof CrmDocumentsRoute
   '/crm/employees': typeof CrmEmployeesRoute
@@ -305,6 +312,7 @@ export interface FileRoutesByTo {
   '/blogs/home-loan-guide': typeof BlogsHomeLoanGuideRoute
   '/blogs/sip-guide': typeof BlogsSipGuideRoute
   '/crm/activity': typeof CrmActivityRoute
+  '/crm/cms': typeof CrmCmsRoute
   '/crm/customers': typeof CrmCustomersRoute
   '/crm/documents': typeof CrmDocumentsRoute
   '/crm/employees': typeof CrmEmployeesRoute
@@ -347,6 +355,7 @@ export interface FileRoutesById {
   '/blogs/home-loan-guide': typeof BlogsHomeLoanGuideRoute
   '/blogs/sip-guide': typeof BlogsSipGuideRoute
   '/crm/activity': typeof CrmActivityRoute
+  '/crm/cms': typeof CrmCmsRoute
   '/crm/customers': typeof CrmCustomersRoute
   '/crm/documents': typeof CrmDocumentsRoute
   '/crm/employees': typeof CrmEmployeesRoute
@@ -390,6 +399,7 @@ export interface FileRouteTypes {
     | '/blogs/home-loan-guide'
     | '/blogs/sip-guide'
     | '/crm/activity'
+    | '/crm/cms'
     | '/crm/customers'
     | '/crm/documents'
     | '/crm/employees'
@@ -429,6 +439,7 @@ export interface FileRouteTypes {
     | '/blogs/home-loan-guide'
     | '/blogs/sip-guide'
     | '/crm/activity'
+    | '/crm/cms'
     | '/crm/customers'
     | '/crm/documents'
     | '/crm/employees'
@@ -470,6 +481,7 @@ export interface FileRouteTypes {
     | '/blogs/home-loan-guide'
     | '/blogs/sip-guide'
     | '/crm/activity'
+    | '/crm/cms'
     | '/crm/customers'
     | '/crm/documents'
     | '/crm/employees'
@@ -741,6 +753,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmCustomersRouteImport
       parentRoute: typeof CrmRoute
     }
+    '/crm/cms': {
+      id: '/crm/cms'
+      path: '/cms'
+      fullPath: '/crm/cms'
+      preLoaderRoute: typeof CrmCmsRouteImport
+      parentRoute: typeof CrmRoute
+    }
     '/crm/activity': {
       id: '/crm/activity'
       path: '/activity'
@@ -814,6 +833,7 @@ const BlogsRouteWithChildren = BlogsRoute._addFileChildren(BlogsRouteChildren)
 
 interface CrmRouteChildren {
   CrmActivityRoute: typeof CrmActivityRoute
+  CrmCmsRoute: typeof CrmCmsRoute
   CrmCustomersRoute: typeof CrmCustomersRoute
   CrmDocumentsRoute: typeof CrmDocumentsRoute
   CrmEmployeesRoute: typeof CrmEmployeesRoute
@@ -834,6 +854,7 @@ interface CrmRouteChildren {
 
 const CrmRouteChildren: CrmRouteChildren = {
   CrmActivityRoute: CrmActivityRoute,
+  CrmCmsRoute: CrmCmsRoute,
   CrmCustomersRoute: CrmCustomersRoute,
   CrmDocumentsRoute: CrmDocumentsRoute,
   CrmEmployeesRoute: CrmEmployeesRoute,
