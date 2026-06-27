@@ -1856,12 +1856,13 @@ const fallbackPromoCards: PromoCard[] = [
   },
 ];
 
+import { supabase } from "@/integrations/supabase/client";
 
-
-function getVisibleCards(activeIndex: number) {
+function getVisibleCards(activeIndex: number, list: PromoCard[]) {
+  if (list.length === 0) return [];
   return [0, 1, 2].map((offset) => {
-    const index = (activeIndex + offset) % promoCards.length;
-    return promoCards[index];
+    const index = (activeIndex + offset) % list.length;
+    return list[index];
   });
 }
 
@@ -1872,12 +1873,57 @@ export function Hero() {
   const [isHeroPaused, setIsHeroPaused] = useState(false);
   const [isPromoPaused, setIsPromoPaused] = useState(false);
 
-  const visiblePromoCards = getVisibleCards(activeCard);
+  const [slides, setSlides] = useState<Slide[]>(fallbackSlides);
+  const [promoCards, setPromoCards] = useState<PromoCard[]>(fallbackPromoCards);
+
+  useEffect(() => {
+    (async () => {
+      const [{ data: heroData }, { data: cardsData }] = await Promise.all([
+        supabase
+          .from("hero_slides")
+          .select("*")
+          .eq("is_active", true)
+          .order("position", { ascending: true }),
+        supabase
+          .from("product_cards")
+          .select("*")
+          .eq("is_active", true)
+          .order("position", { ascending: true }),
+      ]);
+      if (heroData && heroData.length > 0) {
+        setSlides(
+          heroData.map((s) => ({
+            image: s.image_url,
+            title: s.show_text && s.title ? s.title : undefined,
+            subtitle: s.show_text && s.subtitle ? s.subtitle : undefined,
+          })),
+        );
+      }
+      if (cardsData && cardsData.length > 0) {
+        setPromoCards(
+          cardsData.map((c) => ({
+            title: c.title,
+            subtitle: c.subtitle ?? "",
+            button1: c.button1_label ?? "Learn more",
+            button1Link: c.button1_link ?? "/contact",
+            button2: c.button2_label ?? undefined,
+            button2Link: c.button2_link ?? undefined,
+            bg: "",
+            bgColor: c.bg_color ?? "#eaf4ff",
+            image: c.image_url ?? "",
+          })) as PromoCard[],
+        );
+      }
+    })();
+  }, []);
+
+  const visiblePromoCards = getVisibleCards(activeCard, promoCards);
 
   useEffect(() => {
     if (isHeroPaused) return;
 
     const slider = window.setInterval(() => {
+
       setCurrent((prev) => (prev + 1) % slides.length);
     }, 5000);
 
