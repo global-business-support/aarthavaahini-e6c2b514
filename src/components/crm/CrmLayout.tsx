@@ -27,6 +27,8 @@ import {
   MessageCircle,
   UserPlus,
   XCircle,
+  Image as ImageIcon,
+
 } from "lucide-react";
 import { NotificationBell } from "@/components/crm/NotificationBell";
 import { useCrmAuth } from "@/hooks/useCrmAuth";
