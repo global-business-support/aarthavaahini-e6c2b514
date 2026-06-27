@@ -214,7 +214,7 @@ export function Testimonials() {
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {items.map((t) => (
+          {data.map((t) => (
             <Card
               key={t.name}
               className="group relative overflow-hidden rounded-3xl border border-blue-100 bg-white/90 p-7 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
