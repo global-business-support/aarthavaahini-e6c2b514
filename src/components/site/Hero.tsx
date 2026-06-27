@@ -1957,7 +1957,7 @@ export function Hero() {
         <div className="relative w-full overflow-hidden">
           {/* HERO SLIDER */}
           <div
-            className="flex h-[66vh] min-h-[590px] w-full transition-transform duration-700 ease-in-out sm:h-[68vh] sm:min-h-[610px] lg:h-[70vh] lg:min-h-[640px]"
+            className="flex h-[48vh] min-h-[360px] w-full transition-transform duration-700 ease-in-out sm:h-[56vh] sm:min-h-[460px] lg:h-[62vh] lg:min-h-[540px]"
             style={{ transform: `translateX(-${current * 100}%)` }}
           >
             {slides.map((slide, index) => (
@@ -1965,11 +1965,12 @@ export function Hero() {
                 <img
                   src={slide.image}
                   alt="Aarthvaahini financial services"
-                  className={`absolute inset-0 h-full w-full object-cover ${
-                    index === 0 ? "object-[center_18%]" : "object-center"
+                  className={`absolute inset-0 h-full w-full object-cover sm:object-cover ${
+                    index === 0 ? "object-[center_20%]" : "object-top"
                   }`}
                   draggable={false}
                 />
+
 
                 {/* Overlay only on 2nd and 3rd slide */}
                 {index !== 0 && (
