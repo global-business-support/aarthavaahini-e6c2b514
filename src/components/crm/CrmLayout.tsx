@@ -75,8 +75,10 @@ const NAV: NavItem[] = [
   { to: "/crm/activity", label: "Activity", icon: Activity },
   { to: "/crm/reports", label: "Reports & MIS", icon: FileText },
   { to: "/crm/whatsapp", label: "WhatsApp", icon: MessageCircle },
+  { to: "/crm/cms", label: "Site Content", icon: ImageIcon },
   { to: "/crm/settings", label: "Settings", icon: Settings },
 ];
+
 
 export function CrmLayout() {
   const { user, isStaff, isPartner, primaryRole, loading } = useCrmAuth();
