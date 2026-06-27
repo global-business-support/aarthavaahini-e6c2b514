@@ -1794,10 +1794,8 @@ type PromoCard = {
   image: string;
 };
 
-const slides: Slide[] = [
-  {
-    image: advisor33,
-  },
+const fallbackSlides: Slide[] = [
+  { image: advisor33 },
   {
     title: (
       <>
@@ -1822,7 +1820,7 @@ const slides: Slide[] = [
   },
 ];
 
-const promoCards: PromoCard[] = [
+const fallbackPromoCards: PromoCard[] = [
   {
     title: "Personal Loan",
     subtitle: "A loan for everything from dreams to emergencies",
@@ -1856,40 +1854,9 @@ const promoCards: PromoCard[] = [
     image:
       "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80",
   },
-  {
-    title: "Insurance",
-    subtitle: "Secure your family, health, vehicle and assets",
-    button1: "Get quote",
-    button2: "Explore",
-    button1Link: "/contact",
-    button2Link: "/insurance",
-    bg: "bg-[#ffe4f1]",
-    image:
-      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    title: "Mutual Funds",
-    subtitle: "Grow wealth with SIPs and curated investment plans",
-    button1: "Invest Now",
-    button2: "Learn more",
-    button1Link: "/contact",
-    button2Link: "/mutual-funds",
-    bg: "bg-[#dcfce7]",
-    image:
-      "https://images.unsplash.com/photo-1640340434855-6084b1f4901c?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    title: "Fixed Deposit",
-    subtitle: "A growth plan with peace of mind",
-    button1: "Quick apply",
-    button2: "Learn more",
-    button1Link: "/contact",
-    button2Link: "/mutual-funds",
-    bg: "bg-[#f8aeb4]",
-    image:
-      "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=1200&q=80",
-  },
 ];
+
+
 
 function getVisibleCards(activeIndex: number) {
   return [0, 1, 2].map((offset) => {
