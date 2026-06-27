@@ -180,16 +180,27 @@ function DashboardPage() {
     };
   }, [loadDashboard]);
 
-  const cards = [
-    { label: "Total Leads", value: stats?.totalLeads, icon: Users, tone: "sky", trend: "All time", to: "/crm/leads" },
-    { label: "Customers", value: stats?.totalCustomers, icon: UserCircle2, tone: "violet", trend: "Active", to: "/crm/customers" },
-    { label: "Followups Due", value: stats?.followupsDue, icon: Clock, tone: "amber", trend: "Today", to: "/crm/tasks" },
-    { label: "Loan Pipeline", value: stats && formatINR(stats.loanPipeline), icon: Banknote, tone: "emerald", trend: "Open", to: "/crm/loans" },
-    { label: "Insurance", value: stats && formatINR(stats.insurancePipeline), icon: ShieldCheck, tone: "indigo", trend: "Open", to: "/crm/insurance" },
-    { label: "MF Annual SIP", value: stats && formatINR(stats.mfPipeline), icon: TrendingUp, tone: "cyan", trend: "Y/Y", to: "/crm/mutual-funds" },
-    { label: "Disbursed", value: stats && formatINR(stats.revenue), icon: IndianRupee, tone: "blue", trend: "Revenue", to: "/crm/loans" },
-    { label: "SLA Alerts", value: stats?.slaAlerts, icon: AlertTriangle, tone: "rose", trend: "Action", to: "/crm/tasks" },
+  const baseCards = [
+    { key: "totalLeads", label: "Total Leads", value: stats?.totalLeads, icon: Users, tone: "sky", trend: "All time", to: "/crm/leads" },
+    { key: "totalCustomers", label: "Customers", value: stats?.totalCustomers, icon: UserCircle2, tone: "violet", trend: "Active", to: "/crm/customers" },
+    { key: "followupsDue", label: "Followups Due", value: stats?.followupsDue, icon: Clock, tone: "amber", trend: "Today", to: "/crm/tasks" },
+    { key: "loanPipeline", label: "Loan Pipeline", value: stats && formatINR(stats.loanPipeline), icon: Banknote, tone: "emerald", trend: "Open", to: "/crm/loans" },
+    { key: "insurancePipeline", label: "Insurance", value: stats && formatINR(stats.insurancePipeline), icon: ShieldCheck, tone: "indigo", trend: "Open", to: "/crm/insurance" },
+    { key: "mfPipeline", label: "MF Annual SIP", value: stats && formatINR(stats.mfPipeline), icon: TrendingUp, tone: "cyan", trend: "Y/Y", to: "/crm/mutual-funds" },
+    { key: "revenue", label: "Disbursed", value: stats && formatINR(stats.revenue), icon: IndianRupee, tone: "blue", trend: "Revenue", to: "/crm/loans" },
+    { key: "slaAlerts", label: "SLA Alerts", value: stats?.slaAlerts, icon: AlertTriangle, tone: "rose", trend: "Action", to: "/crm/tasks" },
   ] as const;
+  const cards = baseCards.map((c) => {
+    const o = overrides[c.key];
+    return {
+      ...c,
+      label: o?.label ?? c.label,
+      value: o?.value != null && o.value !== "" ? o.value : c.value,
+      trend: o?.trend ?? c.trend,
+    };
+  });
+
+
 
 
   return (
