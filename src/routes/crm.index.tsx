@@ -153,6 +153,17 @@ function DashboardPage() {
 
   useEffect(() => {
     loadDashboard();
+    // Load card overrides (label / value_override) configured in the CMS
+    supabase.from("dashboard_cards").select("key,label,value_override,trend").then(({ data }) => {
+      if (!data) return;
+      const map: Record<string, { label?: string; value?: string | null; trend?: string | null }> = {};
+      data.forEach((d) => {
+        map[d.key] = { label: d.label, value: d.value_override, trend: d.trend };
+      });
+      setOverrides(map);
+    });
+
+
 
     const channel = supabase
       .channel("crm-dashboard")
