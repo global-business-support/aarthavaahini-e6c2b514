@@ -64,6 +64,9 @@ function DashboardPage() {
     { stage: string; requested: number; sanctioned: number; disbursed: number }[]
   >([]);
   const [profileLead, setProfileLead] = useState<string | null>(null);
+  const [overrides, setOverrides] = useState<Record<string, { label?: string; value?: string | null; trend?: string | null }>>({});
+
+
 
 
   const loadDashboard = useCallback(async () => {
