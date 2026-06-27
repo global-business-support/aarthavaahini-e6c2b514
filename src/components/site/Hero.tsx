@@ -2127,7 +2127,7 @@ export function Hero() {
       </section>
 
       {/* PRODUCT / PROMO CARDS */}
-      <section className="relative z-10 -mt-2 bg-white py-4 sm:py-6">
+      <section className="relative z-10 -mt-6 bg-white py-3 sm:-mt-8 sm:py-5">
         <div className="mx-auto max-w-[1450px] px-4 sm:px-6">
           <div
             className="relative"
