@@ -2149,7 +2149,9 @@ export function Hero() {
                 <div
                   key={card.title}
                   className={`relative h-[330px] overflow-hidden rounded-3xl shadow-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl ${card.bg}`}
+                  style={card.bgColor ? { backgroundColor: card.bgColor } : undefined}
                 >
+
                   <div className="relative z-10 flex h-full flex-col justify-center p-7">
                     <h3 className="max-w-[62%] text-2xl font-bold text-[#08224a] lg:text-3xl">
                       {card.title}
