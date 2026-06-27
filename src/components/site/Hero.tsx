@@ -1957,7 +1957,7 @@ export function Hero() {
         <div className="relative w-full overflow-hidden">
           {/* HERO SLIDER */}
           <div
-            className="flex h-[66vh] min-h-[590px] w-full transition-transform duration-700 ease-in-out sm:h-[68vh] sm:min-h-[610px] lg:h-[70vh] lg:min-h-[640px]"
+            className="flex h-[48vh] min-h-[360px] w-full transition-transform duration-700 ease-in-out sm:h-[56vh] sm:min-h-[460px] lg:h-[62vh] lg:min-h-[540px]"
             style={{ transform: `translateX(-${current * 100}%)` }}
           >
             {slides.map((slide, index) => (
@@ -1965,11 +1965,12 @@ export function Hero() {
                 <img
                   src={slide.image}
                   alt="Aarthvaahini financial services"
-                  className={`absolute inset-0 h-full w-full object-cover ${
-                    index === 0 ? "object-[center_18%]" : "object-center"
+                  className={`absolute inset-0 h-full w-full object-cover sm:object-cover ${
+                    index === 0 ? "object-[center_20%]" : "object-top"
                   }`}
                   draggable={false}
                 />
+
 
                 {/* Overlay only on 2nd and 3rd slide */}
                 {index !== 0 && (
@@ -2110,22 +2111,23 @@ export function Hero() {
       </section>
 
       {/* PRODUCT / PROMO CARDS */}
-      <section className="relative z-10 bg-white py-8 sm:py-10">
+      <section className="relative z-10 -mt-2 bg-white py-4 sm:py-6">
         <div className="mx-auto max-w-[1450px] px-4 sm:px-6">
           <div
             className="relative"
             onMouseEnter={() => setIsPromoPaused(true)}
             onMouseLeave={() => setIsPromoPaused(false)}
           >
-            <div className="mb-6 text-center">
+            <div className="mb-3 text-center sm:mb-4">
               <h2 className="text-2xl font-bold text-[#08224a] sm:text-3xl lg:text-4xl">
                 Our Financial Products
               </h2>
 
-              <p className="mt-2 text-sm text-slate-600 sm:text-base">
+              <p className="mt-1 text-sm text-slate-600 sm:text-base">
                 Loans, insurance and wealth solutions tailored for your goals.
               </p>
             </div>
+
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               {visiblePromoCards.map((card) => (
