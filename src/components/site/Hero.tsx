@@ -1791,13 +1791,13 @@ type PromoCard = {
   button1Link: string;
   button2Link?: string;
   bg: string;
+  bgColor?: string;
   image: string;
 };
 
-const slides: Slide[] = [
-  {
-    image: advisor33,
-  },
+
+const fallbackSlides: Slide[] = [
+  { image: advisor33 },
   {
     title: (
       <>
@@ -1822,7 +1822,7 @@ const slides: Slide[] = [
   },
 ];
 
-const promoCards: PromoCard[] = [
+const fallbackPromoCards: PromoCard[] = [
   {
     title: "Personal Loan",
     subtitle: "A loan for everything from dreams to emergencies",
@@ -1856,45 +1856,15 @@ const promoCards: PromoCard[] = [
     image:
       "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80",
   },
-  {
-    title: "Insurance",
-    subtitle: "Secure your family, health, vehicle and assets",
-    button1: "Get quote",
-    button2: "Explore",
-    button1Link: "/contact",
-    button2Link: "/insurance",
-    bg: "bg-[#ffe4f1]",
-    image:
-      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    title: "Mutual Funds",
-    subtitle: "Grow wealth with SIPs and curated investment plans",
-    button1: "Invest Now",
-    button2: "Learn more",
-    button1Link: "/contact",
-    button2Link: "/mutual-funds",
-    bg: "bg-[#dcfce7]",
-    image:
-      "https://images.unsplash.com/photo-1640340434855-6084b1f4901c?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    title: "Fixed Deposit",
-    subtitle: "A growth plan with peace of mind",
-    button1: "Quick apply",
-    button2: "Learn more",
-    button1Link: "/contact",
-    button2Link: "/mutual-funds",
-    bg: "bg-[#f8aeb4]",
-    image:
-      "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=1200&q=80",
-  },
 ];
 
-function getVisibleCards(activeIndex: number) {
+import { supabase } from "@/integrations/supabase/client";
+
+function getVisibleCards(activeIndex: number, list: PromoCard[]) {
+  if (list.length === 0) return [];
   return [0, 1, 2].map((offset) => {
-    const index = (activeIndex + offset) % promoCards.length;
-    return promoCards[index];
+    const index = (activeIndex + offset) % list.length;
+    return list[index];
   });
 }
 
@@ -1905,12 +1875,57 @@ export function Hero() {
   const [isHeroPaused, setIsHeroPaused] = useState(false);
   const [isPromoPaused, setIsPromoPaused] = useState(false);
 
-  const visiblePromoCards = getVisibleCards(activeCard);
+  const [slides, setSlides] = useState<Slide[]>(fallbackSlides);
+  const [promoCards, setPromoCards] = useState<PromoCard[]>(fallbackPromoCards);
+
+  useEffect(() => {
+    (async () => {
+      const [{ data: heroData }, { data: cardsData }] = await Promise.all([
+        supabase
+          .from("hero_slides")
+          .select("*")
+          .eq("is_active", true)
+          .order("position", { ascending: true }),
+        supabase
+          .from("product_cards")
+          .select("*")
+          .eq("is_active", true)
+          .order("position", { ascending: true }),
+      ]);
+      if (heroData && heroData.length > 0) {
+        setSlides(
+          heroData.map((s) => ({
+            image: s.image_url,
+            title: s.show_text && s.title ? s.title : undefined,
+            subtitle: s.show_text && s.subtitle ? s.subtitle : undefined,
+          })),
+        );
+      }
+      if (cardsData && cardsData.length > 0) {
+        setPromoCards(
+          cardsData.map((c) => ({
+            title: c.title,
+            subtitle: c.subtitle ?? "",
+            button1: c.button1_label ?? "Learn more",
+            button1Link: c.button1_link ?? "/contact",
+            button2: c.button2_label ?? undefined,
+            button2Link: c.button2_link ?? undefined,
+            bg: "",
+            bgColor: c.bg_color ?? "#eaf4ff",
+            image: c.image_url ?? "",
+          })) as PromoCard[],
+        );
+      }
+    })();
+  }, []);
+
+  const visiblePromoCards = getVisibleCards(activeCard, promoCards);
 
   useEffect(() => {
     if (isHeroPaused) return;
 
     const slider = window.setInterval(() => {
+
       setCurrent((prev) => (prev + 1) % slides.length);
     }, 5000);
 
@@ -1957,7 +1972,7 @@ export function Hero() {
         <div className="relative w-full overflow-hidden">
           {/* HERO SLIDER */}
           <div
-            className="flex h-[48vh] min-h-[360px] w-full transition-transform duration-700 ease-in-out sm:h-[56vh] sm:min-h-[460px] lg:h-[62vh] lg:min-h-[540px]"
+            className="flex h-[38vh] min-h-[260px] w-full transition-transform duration-700 ease-in-out sm:h-[46vh] sm:min-h-[360px] lg:h-[52vh] lg:min-h-[440px]"
             style={{ transform: `translateX(-${current * 100}%)` }}
           >
             {slides.map((slide, index) => (
@@ -1965,11 +1980,12 @@ export function Hero() {
                 <img
                   src={slide.image}
                   alt="Aarthvaahini financial services"
-                  className={`absolute inset-0 h-full w-full object-cover sm:object-cover ${
-                    index === 0 ? "object-[center_20%]" : "object-top"
+                  className={`absolute inset-0 h-full w-full object-cover object-center sm:object-cover ${
+                    index === 0 ? "sm:object-[center_25%]" : "sm:object-top"
                   }`}
                   draggable={false}
                 />
+
 
 
                 {/* Overlay only on 2nd and 3rd slide */}
@@ -2111,7 +2127,7 @@ export function Hero() {
       </section>
 
       {/* PRODUCT / PROMO CARDS */}
-      <section className="relative z-10 -mt-2 bg-white py-4 sm:py-6">
+      <section className="relative z-10 -mt-6 bg-white py-3 sm:-mt-8 sm:py-5">
         <div className="mx-auto max-w-[1450px] px-4 sm:px-6">
           <div
             className="relative"
@@ -2134,7 +2150,9 @@ export function Hero() {
                 <div
                   key={card.title}
                   className={`relative h-[330px] overflow-hidden rounded-3xl shadow-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl ${card.bg}`}
+                  style={card.bgColor ? { backgroundColor: card.bgColor } : undefined}
                 >
+
                   <div className="relative z-10 flex h-full flex-col justify-center p-7">
                     <h3 className="max-w-[62%] text-2xl font-bold text-[#08224a] lg:text-3xl">
                       {card.title}
