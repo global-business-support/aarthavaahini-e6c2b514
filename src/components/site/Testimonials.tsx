@@ -155,8 +155,37 @@ const items = [
   },
 ];
 
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+
 export function Testimonials() {
+  const [data, setData] = useState(items);
+
+  useEffect(() => {
+    (async () => {
+      const { data: rows } = await supabase
+        .from("testimonials")
+        .select("*")
+        .eq("is_active", true)
+        .order("position", { ascending: true });
+      if (rows && rows.length > 0) {
+        setData(
+          rows.map((r) => ({
+            name: r.name,
+            role: r.role ?? "",
+            text: r.text,
+            rating: r.rating,
+            image:
+              r.image_url ??
+              "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80",
+          })),
+        );
+      }
+    })();
+  }, []);
+
   return (
+
     <section
   id="testimonials"
   className="relative overflow-hidden bg-gradient-to-br from-sky-50 via-white to-blue-50 py-24 scroll-mt-24"
