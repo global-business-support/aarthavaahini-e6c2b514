@@ -115,6 +115,45 @@ export type Database = {
           },
         ]
       }
+      dashboard_cards: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          is_active: boolean
+          key: string
+          label: string
+          position: number
+          trend: string | null
+          updated_at: string
+          value_override: string | null
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          key: string
+          label: string
+          position?: number
+          trend?: string | null
+          updated_at?: string
+          value_override?: string | null
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          key?: string
+          label?: string
+          position?: number
+          trend?: string | null
+          updated_at?: string
+          value_override?: string | null
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           customer_id: string | null
@@ -222,6 +261,48 @@ export type Database = {
           phone?: string | null
           role?: string | null
           status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      hero_slides: {
+        Row: {
+          created_at: string
+          cta_label: string | null
+          cta_link: string | null
+          id: string
+          image_url: string
+          is_active: boolean
+          position: number
+          show_text: boolean
+          subtitle: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta_label?: string | null
+          cta_link?: string | null
+          id?: string
+          image_url: string
+          is_active?: boolean
+          position?: number
+          show_text?: boolean
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta_label?: string | null
+          cta_link?: string | null
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          position?: number
+          show_text?: boolean
+          subtitle?: string | null
+          title?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -560,6 +641,54 @@ export type Database = {
         }
         Relationships: []
       }
+      product_cards: {
+        Row: {
+          bg_color: string | null
+          button1_label: string | null
+          button1_link: string | null
+          button2_label: string | null
+          button2_link: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          position: number
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          bg_color?: string | null
+          button1_label?: string | null
+          button1_link?: string | null
+          button2_label?: string | null
+          button2_link?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          position?: number
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          bg_color?: string | null
+          button1_label?: string | null
+          button1_link?: string | null
+          button2_label?: string | null
+          button2_link?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          position?: number
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -639,6 +768,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      testimonials: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          is_verified: boolean
+          name: string
+          position: number
+          rating: number
+          role: string | null
+          text: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_verified?: boolean
+          name: string
+          position?: number
+          rating?: number
+          role?: string | null
+          text: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_verified?: boolean
+          name?: string
+          position?: number
+          rating?: number
+          role?: string | null
+          text?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
