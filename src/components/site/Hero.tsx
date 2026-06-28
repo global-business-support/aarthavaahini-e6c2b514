@@ -1879,28 +1879,14 @@ export function Hero() {
   const [promoCards, setPromoCards] = useState<PromoCard[]>(fallbackPromoCards);
 
   useEffect(() => {
+    // Hero slides: always use the original fallback images (do not override from CMS).
+    // Only product cards are loaded dynamically from the CMS.
     (async () => {
-      const [{ data: heroData }, { data: cardsData }] = await Promise.all([
-        supabase
-          .from("hero_slides")
-          .select("*")
-          .eq("is_active", true)
-          .order("position", { ascending: true }),
-        supabase
-          .from("product_cards")
-          .select("*")
-          .eq("is_active", true)
-          .order("position", { ascending: true }),
-      ]);
-      if (heroData && heroData.length > 0) {
-        setSlides(
-          heroData.map((s) => ({
-            image: s.image_url,
-            title: s.show_text && s.title ? s.title : undefined,
-            subtitle: s.show_text && s.subtitle ? s.subtitle : undefined,
-          })),
-        );
-      }
+      const { data: cardsData } = await supabase
+        .from("product_cards")
+        .select("*")
+        .eq("is_active", true)
+        .order("position", { ascending: true });
       if (cardsData && cardsData.length > 0) {
         setPromoCards(
           cardsData.map((c) => ({
