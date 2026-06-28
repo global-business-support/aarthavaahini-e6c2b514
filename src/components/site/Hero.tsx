@@ -1963,14 +1963,25 @@ export function Hero() {
           >
             {slides.map((slide, index) => (
               <div key={index} className="relative h-full min-w-full">
-                <img
-                  src={slide.image}
-                  alt="Aarthvaahini financial services"
-                  className={`absolute inset-0 h-full w-full object-cover object-center sm:object-cover ${
-                    index === 0 ? "sm:object-[center_25%]" : "sm:object-top"
-                  }`}
-                  draggable={false}
-                />
+                {index === 0 ? (
+                  <>
+                    {/* Filled background that blends with the banner image so the blank areas are not white */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#022e8c] via-[#0f85ec] to-[#73abd9]" />
+                    <img
+                      src={slide.image}
+                      alt="Aarthvaahini financial services"
+                      className="absolute inset-0 h-full w-full object-contain object-center"
+                      draggable={false}
+                    />
+                  </>
+                ) : (
+                  <img
+                    src={slide.image}
+                    alt="Aarthvaahini financial services"
+                    className="absolute inset-0 h-full w-full object-cover object-center sm:object-cover sm:object-top"
+                    draggable={false}
+                  />
+                )}
 
 
 
