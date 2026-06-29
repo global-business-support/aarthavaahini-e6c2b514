@@ -2249,8 +2249,10 @@ type PromoCard = {
   button1Link: string;
   button2Link?: string;
   bg: string;
+  bgColor?: string;
   image: string;
 };
+
 
 const defaultSlides: Slide[] = [
   {
