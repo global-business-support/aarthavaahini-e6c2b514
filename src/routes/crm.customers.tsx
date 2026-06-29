@@ -45,6 +45,7 @@ const CUSTOMER_STAGES = [
   "Sanctioned",
   "Disburement",
   "Closed",
+  "Rejected",
 ] as const;
 
 type Stage = (typeof CUSTOMER_STAGES)[number];
@@ -55,6 +56,7 @@ const STAGE_COLOR: Record<Stage, string> = {
   Sanctioned: "border-violet-300 bg-violet-50 text-violet-700",
   Disburement: "border-emerald-300 bg-emerald-50 text-emerald-700",
   Closed: "border-slate-300 bg-slate-100 text-slate-700",
+  Rejected: "border-slate-300 bg-slate-100 text-slate-700",
 };
 
 type Row = {
