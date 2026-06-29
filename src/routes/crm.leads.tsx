@@ -689,7 +689,36 @@ function LeadsPage() {
               ))}
             </SelectContent>
           </Select>
+
+          <Select value={bankFilter} onValueChange={setBankFilter}>
+            <SelectTrigger className="w-[190px] bg-white">
+              <SelectValue placeholder="Bank" />
+            </SelectTrigger>
+            <SelectContent className="bg-white max-h-72">
+              <SelectItem value="all">All banks</SelectItem>
+              <SelectItem value="none">— Not set —</SelectItem>
+              {[...BANK_OPTIONS].sort((a, b) => a.localeCompare(b)).map((b) => (
+                <SelectItem key={b} value={b}>{b}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-[180px] bg-white">
+              <SelectValue placeholder="Sort" />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              <SelectItem value="recent">Newest first</SelectItem>
+              <SelectItem value="oldest">Oldest first</SelectItem>
+              <SelectItem value="name_asc">Name A → Z</SelectItem>
+              <SelectItem value="name_desc">Name Z → A</SelectItem>
+              <SelectItem value="amount_desc">Loan amount high → low</SelectItem>
+              <SelectItem value="amount_asc">Loan amount low → high</SelectItem>
+              <SelectItem value="cibil_desc">CIBIL high → low</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
+
       </Card>
 
       <Card className="overflow-hidden">
