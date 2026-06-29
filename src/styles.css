@@ -717,3 +717,69 @@ html {
     animation: none;
   }
 }
+/* =========================
+   CRM CMS MODAL FIX
+========================= */
+
+/* Dark background overlay */
+[data-radix-dialog-overlay],
+.fixed.inset-0.bg-black\/50,
+.fixed.inset-0.bg-black\/55,
+.fixed.inset-0.bg-black\/60 {
+  background: rgba(0, 0, 0, 0.55) !important;
+  backdrop-filter: none !important;
+  z-index: 99990 !important;
+}
+
+/* Modal box solid white */
+[data-radix-dialog-content],
+[role="dialog"] {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  opacity: 1 !important;
+  z-index: 99999 !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.35) !important;
+}
+
+/* Inputs / textarea solid white */
+[role="dialog"] input,
+[role="dialog"] textarea,
+[role="dialog"] select {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  opacity: 1 !important;
+}
+
+/* Placeholder readable */
+[role="dialog"] input::placeholder,
+[role="dialog"] textarea::placeholder {
+  color: #64748b !important;
+  opacity: 1 !important;
+}
+
+/* Labels visible */
+[role="dialog"] label,
+[role="dialog"] h2,
+[role="dialog"] h3,
+[role="dialog"] p,
+[role="dialog"] span {
+  color: #0f172a;
+}
+
+/* Close button visible */
+[role="dialog"] button {
+  opacity: 1 !important;
+}
+
+/* Mobile modal safe */
+@media (max-width: 640px) {
+  [role="dialog"] {
+    width: 94vw !important;
+    max-width: 94vw !important;
+    max-height: 88vh !important;
+    overflow-y: auto !important;
+    border-radius: 18px !important;
+  }
+}
