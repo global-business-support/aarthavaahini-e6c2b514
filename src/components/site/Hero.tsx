@@ -2229,10 +2229,12 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 import advisor33 from "@/assets/hero-advisor33.jpeg";
 import insuranceHero from "@/assets/insurance-hero.png";
 import mutualFundHero from "@/assets/mutual-fund-hero.png";
+
 
 type Slide = {
   image: string;
@@ -2250,7 +2252,7 @@ type PromoCard = {
   image: string;
 };
 
-const slides: Slide[] = [
+const defaultSlides: Slide[] = [
   {
     image: advisor33,
     position: "object-center",
@@ -2265,7 +2267,16 @@ const slides: Slide[] = [
   },
 ];
 
-const promoCards: PromoCard[] = [
+const PROMO_BG_PRESETS = [
+  "bg-[#70b8f7]",
+  "bg-[#eaf4ff]",
+  "bg-[#fff2cc]",
+  "bg-[#ffe4f1]",
+  "bg-[#dcfce7]",
+  "bg-[#f8aeb4]",
+];
+
+const defaultPromoCards: PromoCard[] = [
   {
     title: "Personal Loan",
     subtitle: "A loan for everything from dreams to emergencies",
@@ -2334,12 +2345,14 @@ const promoCards: PromoCard[] = [
   },
 ];
 
-function getVisibleCards(activeIndex: number) {
+function getVisibleCards(activeIndex: number, cards: PromoCard[]) {
+  if (!cards.length) return [];
   return [0, 1, 2].map((offset) => {
-    const index = (activeIndex + offset) % promoCards.length;
-    return promoCards[index];
+    const index = (activeIndex + offset) % cards.length;
+    return cards[index];
   });
 }
+
 
 export function Hero() {
   const [current, setCurrent] = useState(0);
