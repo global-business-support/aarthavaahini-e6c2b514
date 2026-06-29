@@ -2361,7 +2361,62 @@ export function Hero() {
   const [isHeroPaused, setIsHeroPaused] = useState(false);
   const [isPromoPaused, setIsPromoPaused] = useState(false);
 
-  const visiblePromoCards = getVisibleCards(activeCard);
+  const [slides, setSlides] = useState<Slide[]>(defaultSlides);
+  const [promoCards, setPromoCards] = useState<PromoCard[]>(defaultPromoCards);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [{ data: hs }, { data: pc }] = await Promise.all([
+          supabase
+            .from("hero_slides")
+            .select("image_url,is_active,position")
+            .eq("is_active", true)
+            .order("position", { ascending: true }),
+          supabase
+            .from("product_cards")
+            .select(
+              "title,subtitle,image_url,bg_color,button1_label,button1_link,button2_label,button2_link,is_active,position",
+            )
+            .eq("is_active", true)
+            .order("position", { ascending: true }),
+        ]);
+        if (cancelled) return;
+        if (hs && hs.length) {
+          setSlides(
+            hs
+              .filter((h) => h.image_url)
+              .map((h) => ({ image: h.image_url as string, position: "object-center" })),
+          );
+        }
+        if (pc && pc.length) {
+          setPromoCards(
+            pc.map((p, i) => ({
+              title: p.title ?? "",
+              subtitle: p.subtitle ?? "",
+              button1: p.button1_label ?? "Apply Now",
+              button2: p.button2_label ?? undefined,
+              button1Link: p.button1_link ?? "/contact",
+              button2Link: p.button2_link ?? undefined,
+              bg: p.bg_color
+                ? `bg-[${p.bg_color}]`
+                : PROMO_BG_PRESETS[i % PROMO_BG_PRESETS.length],
+              image: p.image_url ?? "",
+            })),
+          );
+        }
+      } catch (e) {
+        console.warn("CMS fetch failed, using defaults", e);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const visiblePromoCards = getVisibleCards(activeCard, promoCards);
+
 
   useEffect(() => {
     if (isHeroPaused) return;
