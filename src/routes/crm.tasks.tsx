@@ -452,7 +452,24 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
             )}
           </select>
         </div>
+
+        <div className="sm:col-span-2">
+          <Label>Link to Customer</Label>
+          <select
+            value={f.customer_id}
+            onChange={(e) => setF((prev) => ({ ...prev, customer_id: e.target.value }))}
+            className={inputClass}
+          >
+            <option value="">— None —</option>
+            {customers.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}{c.mobile ? ` · ${c.mobile}` : ""}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
+
 
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs text-slate-500">Save ke baad form clear hoga, popup open rahega.</p>
