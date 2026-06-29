@@ -261,6 +261,7 @@ function TasksPage() {
 }
 
 type AssigneeOpt = { id: string; name: string; kind: "employee" | "partner" };
+type CustomerOpt = { id: string; name: string; mobile: string | null };
 
 function NewTaskForm({ onSaved }: { onSaved: () => void }) {
   const initialTask = {
@@ -271,23 +272,33 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
     status: "pending",
     due_date: "",
     assignee: "" as string, // "kind:id"
+    customer_id: "" as string,
   };
 
   const [f, setF] = useState(initialTask);
   const [saving, setSaving] = useState(false);
   const [assignees, setAssignees] = useState<AssigneeOpt[]>([]);
+  const [customers, setCustomers] = useState<CustomerOpt[]>([]);
 
   useEffect(() => {
     (async () => {
-      const [emps, parts] = await Promise.all([
+      const [emps, parts, custs] = await Promise.all([
         supabase.from("employees").select("id,name").eq("status", "active").order("name"),
         supabase.from("partners").select("id,name").eq("status", "active").order("name"),
+        supabase.from("customers").select("id,customer_name,mobile").order("customer_name"),
       ]);
       const opts: AssigneeOpt[] = [
         ...(emps.data ?? []).map((e) => ({ id: e.id, name: e.name, kind: "employee" as const })),
         ...(parts.data ?? []).map((p) => ({ id: p.id, name: p.name, kind: "partner" as const })),
       ];
       setAssignees(opts);
+      setCustomers(
+        (custs.data ?? []).map((c) => ({
+          id: c.id,
+          name: c.customer_name,
+          mobile: c.mobile,
+        })),
+      );
     })();
   }, []);
 
@@ -316,6 +327,7 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
       due_date: f.due_date || null,
       assigned_employee_id,
       assigned_partner_id,
+      related_customer_id: f.customer_id || null,
     });
 
     setSaving(false);
@@ -324,6 +336,7 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
     setF(initialTask);
     onSaved();
   };
+
 
   return (
     <form onSubmit={submit} className="space-y-4">
