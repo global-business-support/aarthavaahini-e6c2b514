@@ -2401,9 +2401,9 @@ export function Hero() {
               button2: p.button2_label ?? undefined,
               button1Link: p.button1_link ?? "/contact",
               button2Link: p.button2_link ?? undefined,
-              bg: p.bg_color
-                ? `bg-[${p.bg_color}]`
-                : PROMO_BG_PRESETS[i % PROMO_BG_PRESETS.length],
+              bg: PROMO_BG_PRESETS[i % PROMO_BG_PRESETS.length],
+              bgColor: p.bg_color ?? undefined,
+
               image: p.image_url ?? "",
             })),
           );
