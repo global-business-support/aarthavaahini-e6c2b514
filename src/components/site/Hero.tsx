@@ -2400,19 +2400,19 @@ export function Hero() {
         <div className="relative w-full overflow-hidden">
           {/* HERO SLIDER */}
           <div
-            className="flex h-[66vh] min-h-[590px] w-full transition-transform duration-700 ease-in-out sm:h-[68vh] sm:min-h-[610px] lg:h-[70vh] lg:min-h-[640px]"
+            className="flex h-[52vh] min-h-[340px] w-full transition-transform duration-700 ease-in-out sm:h-[62vh] sm:min-h-[520px] lg:h-[70vh] lg:min-h-[640px]"
             style={{ transform: `translateX(-${current * 100}%)` }}
           >
             {slides.map((slide, index) => (
               <div
                 key={index}
-                className="relative h-full min-w-full overflow-hidden bg-white"
+                className="relative h-full min-w-full overflow-hidden bg-gradient-to-br from-[#022e8c] via-[#1b4ea8] to-[#73abd9]"
               >
                 <img
                   src={slide.image}
                   alt="Aarthvaahini financial services"
-                  className={`absolute inset-0 h-full w-full object-cover ${
-                    slide.position ?? "object-center"
+                  className={`absolute inset-0 h-full w-full object-contain object-center sm:object-cover ${
+                    slide.position ?? "sm:object-center"
                   }`}
                   draggable={false}
                 />
