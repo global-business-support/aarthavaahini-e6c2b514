@@ -53,7 +53,20 @@ const TASK_TYPES = [
 
 const PRIORITIES = ["low", "medium", "high"];
 
-const STATUSES = ["pending", "in_progress", "completed", "cancelled"];
+const STATUSES = [
+  "pending",
+  "pre_login",
+  "follow_up",
+  "login",
+  "sanctioned",
+  "disbursement",
+  "in_progress",
+  "completed",
+  "closed",
+  "rejected",
+  "cancelled",
+];
+
 
 function TasksPage() {
   const [rows, setRows] = useState<Row[]>([]);
