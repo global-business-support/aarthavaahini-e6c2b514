@@ -155,8 +155,37 @@ const items = [
   },
 ];
 
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+
 export function Testimonials() {
+  const [data, setData] = useState(items);
+
+  useEffect(() => {
+    (async () => {
+      const { data: rows } = await supabase
+        .from("testimonials")
+        .select("*")
+        .eq("is_active", true)
+        .order("position", { ascending: true });
+      if (rows && rows.length > 0) {
+        setData(
+          rows.map((r) => ({
+            name: r.name,
+            role: r.role ?? "",
+            text: r.text,
+            rating: r.rating,
+            image:
+              r.image_url ??
+              "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80",
+          })),
+        );
+      }
+    })();
+  }, []);
+
   return (
+
     <section
   id="testimonials"
   className="relative overflow-hidden bg-gradient-to-br from-sky-50 via-white to-blue-50 py-24 scroll-mt-24"
@@ -185,7 +214,7 @@ export function Testimonials() {
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {items.map((t) => (
+          {data.map((t) => (
             <Card
               key={t.name}
               className="group relative overflow-hidden rounded-3xl border border-blue-100 bg-white/90 p-7 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"

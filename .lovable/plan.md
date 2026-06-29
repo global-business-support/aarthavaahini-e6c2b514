@@ -1,48 +1,59 @@
-## Goal
-End-to-end loan workflow (Lead → Customer → Loan) with CIBIL & approval, plus website cleanup (remove Banking, updated contact details, EMI calculator tenure UI fix, Apply Now loan type + sub-type).
+# Admin CMS — Hero, Products, Testimonials & Dashboard Cards
 
-## 1. Database migration
-Add the missing fields needed for the workflow:
-- `leads`: `cibil_score INT`, `loan_type TEXT`, `loan_sub_type TEXT`, `loan_amount NUMERIC`
-- `customers`: `loan_type TEXT`, `loan_sub_type TEXT`, `loan_amount NUMERIC`, `cibil_score INT`, `stage TEXT DEFAULT 'New'`
+Admin login se 4 cheezein control hongi: Hero banners, homepage Financial Product cards, Testimonials aur CRM Dashboard ke stat/chart cards. Images device se upload hongi (Cloud Storage).
 
-Existing `loan_cases` table already supports the final loan stage.
+## 1. Database (single migration)
 
-## 2. CRM — Leads page (`src/routes/crm.leads.tsx`)
-- Add **CIBIL Score** input on the New Lead form + column in table (color-coded: <650 red, 650-749 amber, ≥750 green).
-- Add **Loan Type** + **Sub-Loan Type** dropdowns on lead form (sub-type list from `src/data/products.ts` loans).
-- Table shows: Name, Mobile, Loan Type (sub), Loan Amount, CIBIL.
-- Replace stage select with **Approve / Reject** action buttons:
-  - **Approve** → mark `status='Approved'` and auto-insert into `customers` (with loan_type, loan_amount, cibil_score).
-  - **Reject** → `status='Rejected'`.
+Storage bucket `site-assets` (public) banayenge images ke liye.
 
-## 3. CRM — Customers page (`src/routes/crm.customers.tsx`)
-- Table shows: Name, Mobile, Loan Type, Loan Amount, CIBIL, **Stage** dropdown (Docs → Login → Sanction → Disbursement → Closed).
-- On **Closed** → auto-insert into `loan_cases` (customer_id, loan_type, loan_amount, stage='Disbursement').
+4 naye tables (sab `public`, with GRANT + RLS):
 
-## 4. Website cleanup
-- Remove `/banking` route + every "Banking" mention from Header, Products (`Products.tsx`), Footer, LeadForm, ProductPage, etc.
-- Remove `banking` from PRODUCT_TYPES.
+- **`hero_slides`** — `id, position, image_url, title, subtitle, show_text, cta_label, cta_link, is_active`
+- **`product_cards`** — `id, position, title, subtitle, image_url, bg_color, button1_label, button1_link, button2_label, button2_link, is_active`
+- **`testimonials`** — `id, name, role, text, rating, image_url, is_verified, position, is_active`
+- **`dashboard_cards`** — `id, key (unique), label, value_override (nullable text), trend, icon, position, is_active`
+  - Agar `value_override` null hai → live count DB se (existing behaviour); admin chahe to manual override.
 
-## 5. Contact details update
-Update across **Footer**, **Contact page**, **Header** (and anywhere else):
-- Phone: **+91 98276 79993**
-- Email: **care@aarthvaahini.com**
-- Address: **2nd Floor, Shrinath Tower, Opposite C3 Hospital, Behind C21 Mall, Vijay Nagar, Indore, MP 452010**
+RLS policies:
+- `SELECT` to `anon` + `authenticated` jahaan `is_active = true` (public read for site).
+- `INSERT/UPDATE/DELETE` only `has_role(auth.uid(), 'admin')`.
 
-## 6. EMI Calculator (`src/components/site/EmiCalculator.tsx`)
-- **Remove the Tenure slider** from the front (default 20 yr internal). EMI math stays.
-- Keep "Tenure" calculation mode (so user can still calculate tenure) but standard EMI engine won't expose tenure input.
-- Verify EMI formula (already correct PMT formula).
+Seed migration me current hardcoded data daal denge (3 hero slides, 4 product cards, 6 testimonials, 4 dashboard stats) — site visually same dikhegi day-1.
 
-## 7. Home "Apply Now" form (`src/components/site/LeadForm.tsx`)
-- Add **Loan Type** dropdown (Home / Personal / Business / Car / Education / LAP / Project / Credit Card / Gold) — only when productType is `loan` and no productName fixed.
-- Add **Sub-Loan Type** (free text or specific variants).
-- Persist into `loan_type` and `loan_sub_type` columns.
+## 2. Storage
 
-## 8. Technical notes
-- All DB writes go through existing `supabase` client; RLS already permits staff/admin.
-- Will run migration first (one tool call), then edit code.
-- Types file `src/integrations/supabase/types.ts` regenerates after migration, so code changes follow.
+- Bucket `site-assets`, public read.
+- Storage policies: public SELECT; INSERT/UPDATE/DELETE only admin.
 
-This is large but mechanical. Approve and I'll start with the migration, then edits in parallel batches.
+## 3. Admin UI (new pages)
+
+Naya CRM sidebar group "Site Content" with 4 sub-pages:
+
+- `/crm/cms/banners` — list, add, edit, delete, reorder, toggle active. Image upload field (drag/drop + file picker) → Storage → URL save.
+- `/crm/cms/products` — same pattern + color picker for `bg_color` + button label/link inputs.
+- `/crm/cms/testimonials` — same pattern + rating slider + verified toggle.
+- `/crm/cms/dashboard-cards` — label/value override/icon select; live preview chip.
+
+Sab pages ek shared `<CmsEditor>` component use karenge — upload helper, sortable list, inline edit dialog.
+
+## 4. Public site rewiring
+
+- `src/components/site/Hero.tsx` — `slides` aur `promoCards` ko `useQuery` se DB se lo (fallback to current static arrays agar query fail/empty ho — no blank screen).
+- `src/components/site/Testimonials.tsx` — same pattern for testimonials.
+- `src/routes/crm.index.tsx` — dashboard stat cards values DB rows ke according render karenge (`value_override` ya live count).
+
+Reads server-publishable client se honge (public anon SELECT policy already covers this).
+
+## 5. Out of scope (this turn)
+
+- Chart datasets edit (sirf cards content, charts live data se hi rahenge).
+- Multi-language fields.
+- Image cropping UI (raw upload, recommended dimensions text dikhayenge).
+
+## 6. Verify
+
+- `bun run build` clean.
+- Admin can upload image → appears on homepage after refresh.
+- Non-admin user CMS pages access nahi kar sakta.
+
+Approve karein to migration + UI build kar dunga.
