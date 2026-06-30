@@ -43,6 +43,7 @@ import { Route as CrmEmployeesRouteImport } from './routes/crm.employees'
 import { Route as CrmDocumentsRouteImport } from './routes/crm.documents'
 import { Route as CrmCustomersRouteImport } from './routes/crm.customers'
 import { Route as CrmCmsRouteImport } from './routes/crm.cms'
+import { Route as CrmBanksRouteImport } from './routes/crm.banks'
 import { Route as CrmActivityRouteImport } from './routes/crm.activity'
 import { Route as BlogsSipGuideRouteImport } from './routes/blogs/sip-guide'
 import { Route as BlogsHomeLoanGuideRouteImport } from './routes/blogs/home-loan-guide'
@@ -220,6 +221,11 @@ const CrmCmsRoute = CrmCmsRouteImport.update({
   path: '/cms',
   getParentRoute: () => CrmRoute,
 } as any)
+const CrmBanksRoute = CrmBanksRouteImport.update({
+  id: '/banks',
+  path: '/banks',
+  getParentRoute: () => CrmRoute,
+} as any)
 const CrmActivityRoute = CrmActivityRouteImport.update({
   id: '/activity',
   path: '/activity',
@@ -272,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/blogs/home-loan-guide': typeof BlogsHomeLoanGuideRoute
   '/blogs/sip-guide': typeof BlogsSipGuideRoute
   '/crm/activity': typeof CrmActivityRoute
+  '/crm/banks': typeof CrmBanksRoute
   '/crm/cms': typeof CrmCmsRoute
   '/crm/customers': typeof CrmCustomersRoute
   '/crm/documents': typeof CrmDocumentsRoute
@@ -312,6 +319,7 @@ export interface FileRoutesByTo {
   '/blogs/home-loan-guide': typeof BlogsHomeLoanGuideRoute
   '/blogs/sip-guide': typeof BlogsSipGuideRoute
   '/crm/activity': typeof CrmActivityRoute
+  '/crm/banks': typeof CrmBanksRoute
   '/crm/cms': typeof CrmCmsRoute
   '/crm/customers': typeof CrmCustomersRoute
   '/crm/documents': typeof CrmDocumentsRoute
@@ -355,6 +363,7 @@ export interface FileRoutesById {
   '/blogs/home-loan-guide': typeof BlogsHomeLoanGuideRoute
   '/blogs/sip-guide': typeof BlogsSipGuideRoute
   '/crm/activity': typeof CrmActivityRoute
+  '/crm/banks': typeof CrmBanksRoute
   '/crm/cms': typeof CrmCmsRoute
   '/crm/customers': typeof CrmCustomersRoute
   '/crm/documents': typeof CrmDocumentsRoute
@@ -399,6 +408,7 @@ export interface FileRouteTypes {
     | '/blogs/home-loan-guide'
     | '/blogs/sip-guide'
     | '/crm/activity'
+    | '/crm/banks'
     | '/crm/cms'
     | '/crm/customers'
     | '/crm/documents'
@@ -439,6 +449,7 @@ export interface FileRouteTypes {
     | '/blogs/home-loan-guide'
     | '/blogs/sip-guide'
     | '/crm/activity'
+    | '/crm/banks'
     | '/crm/cms'
     | '/crm/customers'
     | '/crm/documents'
@@ -481,6 +492,7 @@ export interface FileRouteTypes {
     | '/blogs/home-loan-guide'
     | '/blogs/sip-guide'
     | '/crm/activity'
+    | '/crm/banks'
     | '/crm/cms'
     | '/crm/customers'
     | '/crm/documents'
@@ -760,6 +772,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmCmsRouteImport
       parentRoute: typeof CrmRoute
     }
+    '/crm/banks': {
+      id: '/crm/banks'
+      path: '/banks'
+      fullPath: '/crm/banks'
+      preLoaderRoute: typeof CrmBanksRouteImport
+      parentRoute: typeof CrmRoute
+    }
     '/crm/activity': {
       id: '/crm/activity'
       path: '/activity'
@@ -833,6 +852,7 @@ const BlogsRouteWithChildren = BlogsRoute._addFileChildren(BlogsRouteChildren)
 
 interface CrmRouteChildren {
   CrmActivityRoute: typeof CrmActivityRoute
+  CrmBanksRoute: typeof CrmBanksRoute
   CrmCmsRoute: typeof CrmCmsRoute
   CrmCustomersRoute: typeof CrmCustomersRoute
   CrmDocumentsRoute: typeof CrmDocumentsRoute
@@ -854,6 +874,7 @@ interface CrmRouteChildren {
 
 const CrmRouteChildren: CrmRouteChildren = {
   CrmActivityRoute: CrmActivityRoute,
+  CrmBanksRoute: CrmBanksRoute,
   CrmCmsRoute: CrmCmsRoute,
   CrmCustomersRoute: CrmCustomersRoute,
   CrmDocumentsRoute: CrmDocumentsRoute,
@@ -909,13 +930,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

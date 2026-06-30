@@ -2229,10 +2229,12 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 import advisor33 from "@/assets/hero-advisor33.jpeg";
 import insuranceHero from "@/assets/insurance-hero.png";
 import mutualFundHero from "@/assets/mutual-fund-hero.png";
+
 
 type Slide = {
   image: string;
@@ -2247,10 +2249,12 @@ type PromoCard = {
   button1Link: string;
   button2Link?: string;
   bg: string;
+  bgColor?: string;
   image: string;
 };
 
-const slides: Slide[] = [
+
+const defaultSlides: Slide[] = [
   {
     image: advisor33,
     position: "object-center",
@@ -2265,7 +2269,16 @@ const slides: Slide[] = [
   },
 ];
 
-const promoCards: PromoCard[] = [
+const PROMO_BG_PRESETS = [
+  "bg-[#70b8f7]",
+  "bg-[#eaf4ff]",
+  "bg-[#fff2cc]",
+  "bg-[#ffe4f1]",
+  "bg-[#dcfce7]",
+  "bg-[#f8aeb4]",
+];
+
+const defaultPromoCards: PromoCard[] = [
   {
     title: "Personal Loan",
     subtitle: "A loan for everything from dreams to emergencies",
@@ -2334,12 +2347,14 @@ const promoCards: PromoCard[] = [
   },
 ];
 
-function getVisibleCards(activeIndex: number) {
+function getVisibleCards(activeIndex: number, cards: PromoCard[]) {
+  if (!cards.length) return [];
   return [0, 1, 2].map((offset) => {
-    const index = (activeIndex + offset) % promoCards.length;
-    return promoCards[index];
+    const index = (activeIndex + offset) % cards.length;
+    return cards[index];
   });
 }
+
 
 export function Hero() {
   const [current, setCurrent] = useState(0);
@@ -2348,7 +2363,61 @@ export function Hero() {
   const [isHeroPaused, setIsHeroPaused] = useState(false);
   const [isPromoPaused, setIsPromoPaused] = useState(false);
 
-  const visiblePromoCards = getVisibleCards(activeCard);
+  const [slides, setSlides] = useState<Slide[]>(defaultSlides);
+  const [promoCards, setPromoCards] = useState<PromoCard[]>(defaultPromoCards);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [{ data: hs }, { data: pc }] = await Promise.all([
+          supabase
+            .from("hero_slides")
+            .select("image_url,is_active,position")
+            .eq("is_active", true)
+            .order("position", { ascending: true }),
+          supabase
+            .from("product_cards")
+            .select(
+              "title,subtitle,image_url,bg_color,button1_label,button1_link,button2_label,button2_link,is_active,position",
+            )
+            .eq("is_active", true)
+            .order("position", { ascending: true }),
+        ]);
+        if (cancelled) return;
+        if (hs && hs.length) {
+          const mapped = hs
+            .filter((h) => h.image_url)
+            .map((h) => ({ image: h.image_url as string, position: "object-center" }));
+          if (mapped.length) setSlides(mapped);
+        }
+        if (pc && pc.length) {
+          setPromoCards(
+            pc.map((p, i) => ({
+              title: p.title ?? "",
+              subtitle: p.subtitle ?? "",
+              button1: p.button1_label ?? "Apply Now",
+              button2: p.button2_label ?? undefined,
+              button1Link: p.button1_link ?? "/contact",
+              button2Link: p.button2_link ?? undefined,
+              bg: PROMO_BG_PRESETS[i % PROMO_BG_PRESETS.length],
+              bgColor: p.bg_color ?? undefined,
+
+              image: p.image_url ?? "",
+            })),
+          );
+        }
+      } catch (e) {
+        console.warn("CMS fetch failed, using defaults", e);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const visiblePromoCards = getVisibleCards(activeCard, promoCards);
+
 
   useEffect(() => {
     if (isHeroPaused) return;
@@ -2400,19 +2469,19 @@ export function Hero() {
         <div className="relative w-full overflow-hidden">
           {/* HERO SLIDER */}
           <div
-            className="flex h-[66vh] min-h-[590px] w-full transition-transform duration-700 ease-in-out sm:h-[68vh] sm:min-h-[610px] lg:h-[70vh] lg:min-h-[640px]"
+            className="flex h-[52vh] min-h-[340px] w-full transition-transform duration-700 ease-in-out sm:h-[62vh] sm:min-h-[520px] lg:h-[70vh] lg:min-h-[640px]"
             style={{ transform: `translateX(-${current * 100}%)` }}
           >
             {slides.map((slide, index) => (
               <div
                 key={index}
-                className="relative h-full min-w-full overflow-hidden bg-white"
+                className="relative h-full min-w-full overflow-hidden bg-gradient-to-br from-[#022e8c] via-[#1b4ea8] to-[#73abd9]"
               >
                 <img
                   src={slide.image}
                   alt="Aarthvaahini financial services"
-                  className={`absolute inset-0 h-full w-full object-cover ${
-                    slide.position ?? "object-center"
+                  className={`absolute inset-0 h-full w-full object-contain object-center sm:object-cover ${
+                    slide.position ?? "sm:object-center"
                   }`}
                   draggable={false}
                 />
@@ -2537,8 +2606,10 @@ export function Hero() {
               {visiblePromoCards.map((card) => (
                 <div
                   key={card.title}
-                  className={`relative h-[330px] overflow-hidden rounded-3xl shadow-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl ${card.bg}`}
+                  className={`relative h-[330px] overflow-hidden rounded-3xl shadow-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl ${card.bgColor ? "" : card.bg}`}
+                  style={card.bgColor ? { backgroundColor: card.bgColor } : undefined}
                 >
+
                   <div className="relative z-10 flex h-full flex-col justify-center p-7">
                     <h3 className="max-w-[62%] text-2xl font-bold text-[#08224a] lg:text-3xl">
                       {card.title}

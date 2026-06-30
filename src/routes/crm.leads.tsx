@@ -260,11 +260,14 @@ function LeadsPage() {
   const [filter, setFilter] = useState("");
   const [stageFilter, setStageFilter] = useState<string>("all");
   const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
+  const [bankFilter, setBankFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("recent");
   const [open, setOpen] = useState(false);
   const [noteLead, setNoteLead] = useState<Lead | null>(null);
   const [approveLead, setApproveLead] = useState<Lead | null>(null);
   const [rejectLead, setRejectLead] = useState<Lead | null>(null);
   const [profileLead, setProfileLead] = useState<string | null>(null);
+
 
 
   const rowSelectClass =
@@ -323,32 +326,55 @@ function LeadsPage() {
     return () => { channel.unsubscribe(); };
   }, []);
 
-  const filtered = leads.filter((l) => {
-    const term = filter.toLowerCase();
-    const stage = normaliseStage(l.status);
+  const filtered = leads
+    .filter((l) => {
+      const term = filter.toLowerCase();
+      const stage = normaliseStage(l.status);
 
-    const matchesText =
-      !term ||
-      (l.lead_name ?? l.full_name ?? "").toLowerCase().includes(term) ||
-      l.phone.includes(term) ||
-      (l.email ?? "").toLowerCase().includes(term) ||
-      (l.pan ?? "").toLowerCase().includes(term);
+      const matchesText =
+        !term ||
+        (l.lead_name ?? l.full_name ?? "").toLowerCase().includes(term) ||
+        l.phone.includes(term) ||
+        (l.email ?? "").toLowerCase().includes(term) ||
+        (l.pan ?? "").toLowerCase().includes(term);
 
-    const matchesStage = stageFilter === "all" || stage === stageFilter;
+      const matchesStage = stageFilter === "all" || stage === stageFilter;
 
-    const matchesAssignee =
-      assigneeFilter === "all" ||
-      (assigneeFilter === "unassigned"
-        ? !l.assigned_to
-        : l.assigned_to === assigneeFilter);
+      const matchesAssignee =
+        assigneeFilter === "all" ||
+        (assigneeFilter === "unassigned"
+          ? !l.assigned_to
+          : l.assigned_to === assigneeFilter);
 
-    const partnerVisible =
-      !isAdmin ||
-      (l.lead_source ?? "").toLowerCase() !== "partner" ||
-      (!!user && l.assigned_to === user.id);
+      const matchesBank =
+        bankFilter === "all" ||
+        (bankFilter === "none" ? !l.bank_name : l.bank_name === bankFilter);
 
-    return matchesText && matchesStage && matchesAssignee && partnerVisible;
-  });
+      const partnerVisible =
+        !isAdmin ||
+        (l.lead_source ?? "").toLowerCase() !== "partner" ||
+        (!!user && l.assigned_to === user.id);
+
+      return (
+        matchesText && matchesStage && matchesAssignee && matchesBank && partnerVisible
+      );
+    })
+    .sort((a, b) => {
+      const nameA = (a.lead_name ?? a.full_name ?? "").toLowerCase();
+      const nameB = (b.lead_name ?? b.full_name ?? "").toLowerCase();
+      if (sortBy === "name_asc") return nameA.localeCompare(nameB);
+      if (sortBy === "name_desc") return nameB.localeCompare(nameA);
+      if (sortBy === "amount_desc")
+        return (Number(b.loan_amount) || 0) - (Number(a.loan_amount) || 0);
+      if (sortBy === "amount_asc")
+        return (Number(a.loan_amount) || 0) - (Number(b.loan_amount) || 0);
+      if (sortBy === "cibil_desc")
+        return (b.cibil_score ?? 0) - (a.cibil_score ?? 0);
+      if (sortBy === "oldest")
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+
 
   const stageCounts = LEAD_STAGES.reduce<Record<Stage, number>>(
     (acc, s) => {
@@ -663,7 +689,36 @@ function LeadsPage() {
               ))}
             </SelectContent>
           </Select>
+
+          <Select value={bankFilter} onValueChange={setBankFilter}>
+            <SelectTrigger className="w-[190px] bg-white">
+              <SelectValue placeholder="Bank" />
+            </SelectTrigger>
+            <SelectContent className="bg-white max-h-72">
+              <SelectItem value="all">All banks</SelectItem>
+              <SelectItem value="none">— Not set —</SelectItem>
+              {[...BANK_OPTIONS].sort((a, b) => a.localeCompare(b)).map((b) => (
+                <SelectItem key={b} value={b}>{b}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-[180px] bg-white">
+              <SelectValue placeholder="Sort" />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              <SelectItem value="recent">Newest first</SelectItem>
+              <SelectItem value="oldest">Oldest first</SelectItem>
+              <SelectItem value="name_asc">Name A → Z</SelectItem>
+              <SelectItem value="name_desc">Name Z → A</SelectItem>
+              <SelectItem value="amount_desc">Loan amount high → low</SelectItem>
+              <SelectItem value="amount_asc">Loan amount low → high</SelectItem>
+              <SelectItem value="cibil_desc">CIBIL high → low</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
+
       </Card>
 
       <Card className="overflow-hidden">
