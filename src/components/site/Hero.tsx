@@ -692,49 +692,49 @@ export function Hero() {
               </div>
             )}
 
-            {/* RIGHT SIDE SERVICE CARDS - COLORS RESTORED */}
+            {/* RIGHT SIDE SERVICE CARDS - TRANSPARENT WHITE */}
             <div className="absolute bottom-20 right-4 z-20 hidden max-w-[900px] flex-wrap items-center justify-end gap-4 md:flex lg:right-8">
               <Link to="/loans">
-                <div className="flex min-w-[210px] items-center gap-4 rounded-2xl border border-blue-300/60 bg-blue-600/80 px-5 py-4 text-white shadow-xl backdrop-blur-md transition-all hover:scale-105 hover:bg-blue-700/90 lg:min-w-60">
+                <div className="flex min-w-[210px] items-center gap-4 rounded-2xl border border-white/40 bg-white/15 px-5 py-4 text-white shadow-xl backdrop-blur-md transition-all hover:scale-105 hover:bg-white/25 lg:min-w-60">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/20">
-                    <Wallet className="h-7 w-7 text-white" />
+                    <Wallet className="h-7 w-7 text-blue-300" />
                   </div>
 
                   <div>
                     <h3 className="text-base font-semibold lg:text-lg">
                       Loans
                     </h3>
-                    <p className="text-sm text-blue-50">Quick Loans</p>
+                    <p className="text-sm text-gray-100">Quick Loans</p>
                   </div>
                 </div>
               </Link>
 
               <Link to="/insurance">
-                <div className="flex min-w-[210px] items-center gap-4 rounded-2xl border border-pink-300/60 bg-pink-600/80 px-5 py-4 text-white shadow-xl backdrop-blur-md transition-all hover:scale-105 hover:bg-pink-700/90 lg:min-w-60">
+                <div className="flex min-w-[210px] items-center gap-4 rounded-2xl border border-white/40 bg-white/15 px-5 py-4 text-white shadow-xl backdrop-blur-md transition-all hover:scale-105 hover:bg-white/25 lg:min-w-60">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/20">
-                    <ShieldCheck className="h-7 w-7 text-white" />
+                    <ShieldCheck className="h-7 w-7 text-pink-300" />
                   </div>
 
                   <div>
                     <h3 className="text-base font-semibold lg:text-lg">
                       Insurance
                     </h3>
-                    <p className="text-sm text-pink-50">Secure Insurance</p>
+                    <p className="text-sm text-gray-100">Secure Insurance</p>
                   </div>
                 </div>
               </Link>
 
               <Link to="/mutual-funds">
-                <div className="flex min-w-[210px] items-center gap-4 rounded-2xl border border-green-300/60 bg-emerald-600/80 px-5 py-4 text-white shadow-xl backdrop-blur-md transition-all hover:scale-105 hover:bg-emerald-700/90 lg:min-w-60">
+                <div className="flex min-w-[210px] items-center gap-4 rounded-2xl border border-white/40 bg-white/15 px-5 py-4 text-white shadow-xl backdrop-blur-md transition-all hover:scale-105 hover:bg-white/25 lg:min-w-60">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/20">
-                    <TrendingUp className="h-7 w-7 text-white" />
+                    <TrendingUp className="h-7 w-7 text-green-300" />
                   </div>
 
                   <div>
                     <h3 className="text-base font-semibold lg:text-lg">
                       Wealth
                     </h3>
-                    <p className="text-sm text-emerald-50">Mutual Funds</p>
+                    <p className="text-sm text-gray-100">Mutual Funds</p>
                   </div>
                 </div>
               </Link>
