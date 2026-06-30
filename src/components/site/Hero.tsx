@@ -2386,11 +2386,10 @@ export function Hero() {
         ]);
         if (cancelled) return;
         if (hs && hs.length) {
-          setSlides(
-            hs
-              .filter((h) => h.image_url)
-              .map((h) => ({ image: h.image_url as string, position: "object-center" })),
-          );
+          const mapped = hs
+            .filter((h) => h.image_url)
+            .map((h) => ({ image: h.image_url as string, position: "object-center" }));
+          if (mapped.length) setSlides(mapped);
         }
         if (pc && pc.length) {
           setPromoCards(
