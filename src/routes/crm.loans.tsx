@@ -359,7 +359,7 @@ export const Route = createFileRoute("/crm/loans")({
   component: LoansPage,
 });
 
-const STAGES = [
+const LOAN_STAGES = [
   "Lead",
   "Documents",
   "Login",
@@ -438,7 +438,7 @@ function LoansPage() {
       return;
     }
 
-    // Rejected loan cases will not show in Loans page.
+    // Rejected cases should not show in Loans page.
     const activeLoanCases = ((data ?? []) as unknown as Row[]).filter(
       (row) => row.stage !== "Rejected",
     );
@@ -494,6 +494,15 @@ function LoansPage() {
     };
   }, [rows]);
 
+  const handleSaved = () => {
+    setEditing(null);
+
+    // Dialog pehle close hoga, phir reload — popup flicker/overlap fix.
+    window.setTimeout(() => {
+      load();
+    }, 120);
+  };
+
   return (
     <div className="space-y-4">
       <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 px-4 py-4 text-white shadow-md">
@@ -508,8 +517,7 @@ function LoansPage() {
             <div>
               <h1 className="text-lg font-bold">Loan Cases</h1>
               <p className="text-xs text-white/80">
-                Workflow: Lead → Documents → Login → Under Process → Sanction →
-                Disbursement → Completed
+                Workflow: {LOAN_STAGES.join(" → ")}
               </p>
             </div>
           </div>
@@ -615,9 +623,9 @@ function LoansPage() {
 
                       <TableCell>
                         {row.disbursement_amount
-                          ? `₹${Number(row.disbursement_amount).toLocaleString(
-                              "en-IN",
-                            )}`
+                          ? `₹${Number(
+                              row.disbursement_amount,
+                            ).toLocaleString("en-IN")}`
                           : "—"}
                       </TableCell>
 
@@ -663,10 +671,7 @@ function LoansPage() {
       <LoanEditDialog
         row={editing}
         onClose={() => setEditing(null)}
-        onSaved={() => {
-          setEditing(null);
-          load();
-        }}
+        onSaved={handleSaved}
       />
 
       <CustomerProfileDialog
@@ -748,9 +753,7 @@ function LoanEditDialog({
             ? Number(form.requested_amount)
             : null,
         tenure_months: form.tenure_months ? Number(form.tenure_months) : null,
-        interest_rate: form.interest_rate
-          ? Number(form.interest_rate)
-          : null,
+        interest_rate: form.interest_rate ? Number(form.interest_rate) : null,
         notes: form.notes || null,
         documents_checklist: form.docs,
       })
@@ -762,8 +765,6 @@ function LoanEditDialog({
       return;
     }
 
-    // If loan case is rejected after Login / Under Process / Sanction etc.,
-    // move related lead to Rejected Leads by updating leads.status = "Rejected".
     if (nextStage === "Rejected" && row.lead_id) {
       const { error: leadError } = await supabase
         .from("leads")
@@ -785,6 +786,7 @@ function LoanEditDialog({
       toast.success("Loan case updated");
     }
 
+    // Popup close first, then parent reload.
     onSaved();
   };
 
@@ -792,7 +794,7 @@ function LoanEditDialog({
     "h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100";
 
   return (
-    <Dialog open={!!row} onOpenChange={(value) => !value && onClose()}>
+    <Dialog open={!!row} onOpenChange={(value) => !value && !saving && onClose()}>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto bg-white">
         <DialogHeader>
           <DialogTitle>
@@ -813,7 +815,9 @@ function LoanEditDialog({
                 }
               >
                 {LOAN_TYPES.map((type) => (
-                  <option key={type}>{type}</option>
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
                 ))}
               </select>
             </div>
@@ -828,8 +832,10 @@ function LoanEditDialog({
                   setForm({ ...form, stage: event.target.value })
                 }
               >
-                {STAGES.map((stage) => (
-                  <option key={stage}>{stage}</option>
+                {LOAN_STAGES.map((stage) => (
+                  <option key={stage} value={stage}>
+                    {stage}
+                  </option>
                 ))}
               </select>
             </div>
@@ -972,7 +978,12 @@ function LoanEditDialog({
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={saving}
+              onClick={onClose}
+            >
               Cancel
             </Button>
 
@@ -981,9 +992,7 @@ function LoanEditDialog({
               disabled={saving}
               className="bg-emerald-600 text-white hover:bg-emerald-700"
             >
-              {saving && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
+              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Save Changes
             </Button>
           </div>
