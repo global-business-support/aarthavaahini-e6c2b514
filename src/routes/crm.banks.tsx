@@ -15,8 +15,36 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Search, Building2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Building2, Download } from "lucide-react";
 import { toast } from "sonner";
+
+const WEBSITE_BANKS: Array<{ name: string; domain: string; logo?: string; category: string }> = [
+  { name: "Bank of Baroda", domain: "bankofbaroda.in", category: "PSU Bank" },
+  { name: "State Bank of India", domain: "onlinesbi.sbi", category: "PSU Bank" },
+  { name: "Bank of India", domain: "bankofindia.co.in", category: "PSU Bank" },
+  { name: "Punjab National Bank", domain: "pnbindia.in", category: "PSU Bank" },
+  { name: "Central Bank of India", domain: "centralbankofindia.co.in", category: "PSU Bank" },
+  { name: "HDFC Bank", domain: "hdfcbank.com", category: "Private Bank" },
+  { name: "ICICI Bank", domain: "icicibank.com", category: "Private Bank" },
+  { name: "Axis Bank", domain: "axisbank.com", category: "Private Bank" },
+  { name: "Kotak Mahindra Bank", domain: "kotak.com", category: "Private Bank" },
+  { name: "IndusInd Bank", domain: "indusind.com", category: "Private Bank" },
+  { name: "RBL Bank", domain: "rblbank.com", category: "Private Bank" },
+  { name: "Yes Bank", domain: "yesbank.in", category: "Private Bank" },
+  { name: "Bandhan Bank", domain: "bandhanbank.com", category: "Private Bank" },
+  { name: "IDFC First Bank", domain: "idfcfirstbank.com", category: "Private Bank" },
+  { name: "Saraswat Bank", domain: "saraswatbank.com", category: "Co-op Bank" },
+  { name: "Aditya Birla Capital", domain: "adityabirlacapital.com", category: "NBFC" },
+  { name: "PNB Housing Finance", domain: "pnbhousing.com", category: "HFC" },
+  { name: "Tata Capital", domain: "tatacapital.com", category: "NBFC" },
+  { name: "Sundaram Housing Finance", domain: "sundaramhome.in", category: "HFC" },
+  { name: "SMFG India Credit", domain: "smfgindiacredit.com", category: "NBFC" },
+  { name: "Bajaj Finserv", domain: "bajajfinserv.in", category: "NBFC" },
+  { name: "Jio Finance", domain: "jiofinance.com", category: "NBFC" },
+  { name: "L&T Finance", domain: "ltfs.com", category: "NBFC" },
+  { name: "Cholamandalam Finance", domain: "cholamandalam.com", category: "NBFC" },
+  { name: "Mahindra Finance", domain: "mahindrafinance.com", category: "NBFC" },
+];
 
 export const Route = createFileRoute("/crm/banks")({ component: BanksPage });
 
@@ -48,6 +76,31 @@ function BanksPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Bank | null>(null);
   const [form, setForm] = useState<Omit<Bank, "id">>(EMPTY);
+
+  const importWebsiteBanks = async () => {
+    if (!confirm(`Import ${WEBSITE_BANKS.length} banks from the website list? Existing banks with the same name will be skipped.`)) return;
+    const existing = new Set(rows.map((r) => r.name.trim().toLowerCase()));
+    const toInsert = WEBSITE_BANKS.filter((b) => !existing.has(b.name.toLowerCase())).map((b, i) => ({
+      name: b.name,
+      domain: b.domain,
+      logo_url: b.logo ?? `https://logo.clearbit.com/${b.domain}`,
+      category: b.category,
+      is_active: true,
+      position: rows.length + i,
+      notes: null,
+    }));
+    if (toInsert.length === 0) {
+      toast.info("All website banks are already imported");
+      return;
+    }
+    const { error } = await supabase.from("banks").insert(toInsert);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(`Imported ${toInsert.length} banks`);
+    load();
+  };
 
   const load = async () => {
     setLoading(true);
@@ -142,9 +195,14 @@ function BanksPage() {
             Manage banks &amp; NBFCs shown across CRM lead forms and the public website.
           </p>
         </div>
-        <Button onClick={openNew} className="bg-sky-600 hover:bg-sky-700">
-          <Plus className="mr-1.5 h-4 w-4" /> Add Bank
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={importWebsiteBanks} variant="outline">
+            <Download className="mr-1.5 h-4 w-4" /> Import Website List
+          </Button>
+          <Button onClick={openNew} className="bg-sky-600 hover:bg-sky-700">
+            <Plus className="mr-1.5 h-4 w-4" /> Add Bank
+          </Button>
+        </div>
       </div>
 
       <Card className="p-4">
