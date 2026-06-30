@@ -77,6 +77,31 @@ function BanksPage() {
   const [editing, setEditing] = useState<Bank | null>(null);
   const [form, setForm] = useState<Omit<Bank, "id">>(EMPTY);
 
+  const importWebsiteBanks = async () => {
+    if (!confirm(`Import ${WEBSITE_BANKS.length} banks from the website list? Existing banks with the same name will be skipped.`)) return;
+    const existing = new Set(rows.map((r) => r.name.trim().toLowerCase()));
+    const toInsert = WEBSITE_BANKS.filter((b) => !existing.has(b.name.toLowerCase())).map((b, i) => ({
+      name: b.name,
+      domain: b.domain,
+      logo_url: b.logo ?? `https://logo.clearbit.com/${b.domain}`,
+      category: b.category,
+      is_active: true,
+      position: rows.length + i,
+      notes: null,
+    }));
+    if (toInsert.length === 0) {
+      toast.info("All website banks are already imported");
+      return;
+    }
+    const { error } = await supabase.from("banks").insert(toInsert);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(`Imported ${toInsert.length} banks`);
+    load();
+  };
+
   const load = async () => {
     setLoading(true);
     const { data, error } = await supabase
