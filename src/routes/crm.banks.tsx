@@ -15,8 +15,36 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Search, Building2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Building2, Download } from "lucide-react";
 import { toast } from "sonner";
+
+const WEBSITE_BANKS: Array<{ name: string; domain: string; logo?: string; category: string }> = [
+  { name: "Bank of Baroda", domain: "bankofbaroda.in", category: "PSU Bank" },
+  { name: "State Bank of India", domain: "onlinesbi.sbi", category: "PSU Bank" },
+  { name: "Bank of India", domain: "bankofindia.co.in", category: "PSU Bank" },
+  { name: "Punjab National Bank", domain: "pnbindia.in", category: "PSU Bank" },
+  { name: "Central Bank of India", domain: "centralbankofindia.co.in", category: "PSU Bank" },
+  { name: "HDFC Bank", domain: "hdfcbank.com", category: "Private Bank" },
+  { name: "ICICI Bank", domain: "icicibank.com", category: "Private Bank" },
+  { name: "Axis Bank", domain: "axisbank.com", category: "Private Bank" },
+  { name: "Kotak Mahindra Bank", domain: "kotak.com", category: "Private Bank" },
+  { name: "IndusInd Bank", domain: "indusind.com", category: "Private Bank" },
+  { name: "RBL Bank", domain: "rblbank.com", category: "Private Bank" },
+  { name: "Yes Bank", domain: "yesbank.in", category: "Private Bank" },
+  { name: "Bandhan Bank", domain: "bandhanbank.com", category: "Private Bank" },
+  { name: "IDFC First Bank", domain: "idfcfirstbank.com", category: "Private Bank" },
+  { name: "Saraswat Bank", domain: "saraswatbank.com", category: "Co-op Bank" },
+  { name: "Aditya Birla Capital", domain: "adityabirlacapital.com", category: "NBFC" },
+  { name: "PNB Housing Finance", domain: "pnbhousing.com", category: "HFC" },
+  { name: "Tata Capital", domain: "tatacapital.com", category: "NBFC" },
+  { name: "Sundaram Housing Finance", domain: "sundaramhome.in", category: "HFC" },
+  { name: "SMFG India Credit", domain: "smfgindiacredit.com", category: "NBFC" },
+  { name: "Bajaj Finserv", domain: "bajajfinserv.in", category: "NBFC" },
+  { name: "Jio Finance", domain: "jiofinance.com", category: "NBFC" },
+  { name: "L&T Finance", domain: "ltfs.com", category: "NBFC" },
+  { name: "Cholamandalam Finance", domain: "cholamandalam.com", category: "NBFC" },
+  { name: "Mahindra Finance", domain: "mahindrafinance.com", category: "NBFC" },
+];
 
 export const Route = createFileRoute("/crm/banks")({ component: BanksPage });
 
