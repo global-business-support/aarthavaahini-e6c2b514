@@ -66,6 +66,7 @@ const NAV: NavItem[] = [
   { to: "/crm/rejected", label: "Rejected Leads", icon: XCircle },
   { to: "/crm/employees", label: "Employees", icon: UserPlus },
   { to: "/crm/partners", label: "Partners", icon: Handshake },
+  { to: "/crm/banks", label: "Banks", icon: Banknote },
   { to: "/crm/loans", label: "Loans", icon: Banknote },
   { to: "/crm/insurance", label: "Insurance", icon: ShieldCheck },
   { to: "/crm/mutual-funds", label: "Mutual Funds", icon: TrendingUp },
