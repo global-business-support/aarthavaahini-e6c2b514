@@ -585,9 +585,9 @@ export function PartnerBanks() {
           </div>
 
           <div className="rounded-2xl border border-blue-100 bg-white p-5 text-center shadow-sm">
-            <h3 className="text-3xl font-bold text-[#17357e]">5+</h3>
+            <h3 className="text-3xl font-bold text-[#17357e]">1,678+</h3>
             <p className="mt-1 text-sm font-medium text-gray-500">
-              Partner Categories
+              Happy Customers
             </p>
           </div>
         </div>
