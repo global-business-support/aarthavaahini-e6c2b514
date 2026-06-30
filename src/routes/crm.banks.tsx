@@ -170,9 +170,14 @@ function BanksPage() {
             Manage banks &amp; NBFCs shown across CRM lead forms and the public website.
           </p>
         </div>
-        <Button onClick={openNew} className="bg-sky-600 hover:bg-sky-700">
-          <Plus className="mr-1.5 h-4 w-4" /> Add Bank
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={importWebsiteBanks} variant="outline">
+            <Download className="mr-1.5 h-4 w-4" /> Import Website List
+          </Button>
+          <Button onClick={openNew} className="bg-sky-600 hover:bg-sky-700">
+            <Plus className="mr-1.5 h-4 w-4" /> Add Bank
+          </Button>
+        </div>
       </div>
 
       <Card className="p-4">
