@@ -44,6 +44,45 @@ export type Database = {
         }
         Relationships: []
       }
+      banks: {
+        Row: {
+          category: string | null
+          created_at: string
+          domain: string | null
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          name: string
+          notes: string | null
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          domain?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name: string
+          notes?: string | null
+          position?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          domain?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name?: string
+          notes?: string | null
+          position?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       customers: {
         Row: {
           aadhaar: string | null
