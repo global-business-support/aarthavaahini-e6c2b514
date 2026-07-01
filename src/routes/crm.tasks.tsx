@@ -976,7 +976,7 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
       assigned_partner_id,
       related_customer_id: form.customer_id || null,
       related_loan_case_id: form.loan_case_id || null,
-    });
+    } as never);
 
     setSaving(false);
 
