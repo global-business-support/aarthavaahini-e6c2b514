@@ -511,6 +511,13 @@ export function Header() {
               <Calculator className="h-4 w-4" />
               Calculators
             </a>
+
+            <Link
+              to="/partner-signup"
+              className="rounded-xl px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 xl:text-[15px]"
+            >
+              Become a Partner
+            </Link>
           </nav>
 
           {/* RIGHT BUTTONS */}
@@ -671,6 +678,14 @@ export function Header() {
               >
                 Calculator
               </a>
+
+              <Link
+                to="/partner-signup"
+                className="font-medium text-emerald-700"
+                onClick={() => setMobileMenu(false)}
+              >
+                Become a Partner
+              </Link>
 
               {user ? (
                 <button
