@@ -681,7 +681,7 @@ export function Header() {
 
               <Link
                 to="/partner-signup"
-                className="font-medium text-emerald-700"
+                className="font-medium  text-[#17357e]"
                 onClick={() => setMobileMenu(false)}
               >
                 Become a Partner
