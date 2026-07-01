@@ -1,251 +1,321 @@
-// import { createFileRoute } from "@tanstack/react-router";
-// import { useEffect, useState } from "react";
-// import { useServerFn } from "@tanstack/react-start";
-// import { listPartners, createPartnerAccount, resetPartnerPassword, deletePartner, updatePartner } from "@/lib/partners.functions";
-// import { Card } from "@/components/ui/card";
-// import { Button } from "@/components/ui/button";
-// import { Input } from "@/components/ui/input";
-// import { Label } from "@/components/ui/label";
-// import { Badge } from "@/components/ui/badge";
-// import {
-//   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
-// } from "@/components/ui/dialog";
-// import {
-//   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-// } from "@/components/ui/select";
-// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-// import { Loader2, Plus, Handshake, Search, KeyRound, Trash2, Mail, Copy } from "lucide-react";
-// import { toast } from "sonner";
-
-// export const Route = createFileRoute("/crm/partners")({ component: PartnersPage });
-
-// const CATEGORIES = ["DSA / Connector", "Bank Partner", "NBFC", "Insurance Agent", "Mutual Fund Distributor", "Referral"];
-
-// function PartnersPage() {
-//   const fetchAll = useServerFn(listPartners);
-//   const create = useServerFn(createPartnerAccount);
-//   const reset = useServerFn(resetPartnerPassword);
-//   const del = useServerFn(deletePartner);
-//   const upd = useServerFn(updatePartner);
-
-//   const [rows, setRows] = useState<any[]>([]);
-//   const [loading, setLoading] = useState(true);
-//   const [open, setOpen] = useState(false);
-//   const [filter, setFilter] = useState("");
-//   const [pwOpen, setPwOpen] = useState<string | null>(null);
-//   const [newPw, setNewPw] = useState("");
-
-//   const load = () => { setLoading(true); fetchAll().then((r) => setRows(r.partners)).catch((e) => toast.error(e.message)).finally(() => setLoading(false)); };
-//   useEffect(() => { load(); }, []);
-
-//   const filtered = rows.filter((p) => {
-//     const q = filter.toLowerCase();
-//     return !q || p.name?.toLowerCase().includes(q) || p.organisation?.toLowerCase().includes(q) || p.phone?.includes(q) || p.email?.toLowerCase().includes(q);
-//   });
-
-//   const handleDelete = async (id: string) => {
-//     if (!confirm("Delete partner and their login? This cannot be undone.")) return;
-//     try { await del({ data: { id } }); toast.success("Partner deleted"); load(); } catch (e: any) { toast.error(e.message); }
-//   };
-//   const handleStatus = async (id: string, status: string) => {
-//     try { await upd({ data: { id, patch: { status } } }); toast.success("Status updated"); load(); } catch (e: any) { toast.error(e.message); }
-//   };
-//   const handleReset = async (id: string) => {
-//     if (!newPw || newPw.length < 6) return toast.error("Password must be 6+ chars");
-//     try { await reset({ data: { partnerId: id, password: newPw } }); toast.success("Password updated"); setPwOpen(null); setNewPw(""); }
-//     catch (e: any) { toast.error(e.message); }
-//   };
-
-//   return (
-//     <div className="space-y-4">
-//       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-sky-500 via-blue-500 to-cyan-500 p-5 text-white shadow-lg shadow-sky-500/20">
-//         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/20 blur-3xl" />
-//         <div className="relative flex flex-wrap items-end justify-between gap-3">
-//           <div>
-//             <div className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
-//               <Handshake className="h-3 w-3" /> Channel Partners
-//             </div>
-//             <h1 className="mt-2 text-2xl font-bold md:text-3xl">Partners</h1>
-//             <p className="text-sm text-white/80">{rows.length} partner{rows.length === 1 ? "" : "s"} · each gets their own portal at /partner</p>
-//           </div>
-//           <Dialog open={open} onOpenChange={setOpen}>
-//             <DialogTrigger asChild>
-//               <Button className="bg-white text-sky-700 shadow-md hover:bg-sky-50">
-//                 <Plus className="mr-2 h-4 w-4" /> Register Partner
-//               </Button>
-//             </DialogTrigger>
-//             <DialogContent className="max-w-2xl bg-white">
-//               <DialogHeader><DialogTitle>Register New Partner (creates login)</DialogTitle></DialogHeader>
-//               <PartnerForm onSaved={() => { setOpen(false); load(); }} create={create} />
-//             </DialogContent>
-//           </Dialog>
-//         </div>
-//       </div>
-
-//       <Card className="p-4">
-//         <div className="relative max-w-md">
-//           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-//           <Input placeholder="Search name, organisation, phone, email…" value={filter} onChange={(e) => setFilter(e.target.value)} className="pl-9" />
-//         </div>
-//       </Card>
-
-//       <Card className="overflow-hidden">
-//         {loading ? (
-//           <div className="flex h-32 items-center justify-center"><Loader2 className="h-5 w-5 animate-spin text-slate-400" /></div>
-//         ) : filtered.length === 0 ? (
-//           <div className="p-10 text-center text-sm text-slate-500">No partners yet. Register your first DSA / bank partner — they'll get login access to the Partner Portal.</div>
-//         ) : (
-//           <Table>
-//             <TableHeader>
-//               <TableRow>
-//                 <TableHead>Partner</TableHead>
-//                 <TableHead>Login Email</TableHead>
-//                 <TableHead>Category</TableHead>
-//                 <TableHead>Phone</TableHead>
-//                 <TableHead>Commission</TableHead>
-//                 <TableHead>Status</TableHead>
-//                 <TableHead className="text-right">Actions</TableHead>
-//               </TableRow>
-//             </TableHeader>
-//             <TableBody>
-//               {filtered.map((p) => (
-//                 <TableRow key={p.id}>
-//                   <TableCell>
-//                     <div className="font-medium">{p.name}</div>
-//                     <div className="text-xs text-slate-500">{p.organisation || "—"} · {p.city || "—"}</div>
-//                   </TableCell>
-//                   <TableCell>
-//                     <div className="flex items-center gap-1 text-sm">
-//                       <Mail className="h-3 w-3 text-slate-400" />{p.email}
-//                       <button onClick={() => { navigator.clipboard.writeText(p.email); toast.success("Email copied"); }} className="ml-1 text-slate-400 hover:text-sky-600"><Copy className="h-3 w-3" /></button>
-//                     </div>
-//                   </TableCell>
-//                   <TableCell><Badge variant="secondary">{p.category}</Badge></TableCell>
-//                   <TableCell className="text-sm">{p.phone}</TableCell>
-//                   <TableCell className="text-sm">{p.commission_pct || 0}%</TableCell>
-//                   <TableCell>
-//                     <Select value={p.status} onValueChange={(v) => handleStatus(p.id, v)}>
-//                       <SelectTrigger className="h-8 w-28"><SelectValue /></SelectTrigger>
-//                       <SelectContent className="bg-white">
-//                         <SelectItem value="Active">Active</SelectItem>
-//                         <SelectItem value="Pending">Pending</SelectItem>
-//                         <SelectItem value="Inactive">Inactive</SelectItem>
-//                       </SelectContent>
-//                     </Select>
-//                   </TableCell>
-//                   <TableCell className="text-right">
-//                     <Dialog open={pwOpen === p.id} onOpenChange={(o) => { setPwOpen(o ? p.id : null); setNewPw(""); }}>
-//                       <DialogTrigger asChild>
-//                         <Button variant="ghost" size="sm" title="Reset password"><KeyRound className="h-4 w-4" /></Button>
-//                       </DialogTrigger>
-//                       <DialogContent className="max-w-sm bg-white">
-//                         <DialogHeader><DialogTitle>Reset password for {p.name}</DialogTitle></DialogHeader>
-//                         <div className="space-y-3">
-//                           <Input type="text" placeholder="New password (min 6 chars)" value={newPw} onChange={(e) => setNewPw(e.target.value)} />
-//                           <Button className="w-full bg-sky-600 text-white" onClick={() => handleReset(p.id)}>Set Password</Button>
-//                         </div>
-//                       </DialogContent>
-//                     </Dialog>
-//                     <Button variant="ghost" size="sm" onClick={() => handleDelete(p.id)} className="text-red-600 hover:bg-red-50"><Trash2 className="h-4 w-4" /></Button>
-//                   </TableCell>
-//                 </TableRow>
-//               ))}
-//             </TableBody>
-//           </Table>
-//         )}
-//       </Card>
-//     </div>
-//   );
-// }
-
-// function PartnerForm({ onSaved, create }: { onSaved: () => void; create: any }) {
-//   const [f, setF] = useState({
-//     name: "", organisation: "", category: CATEGORIES[0],
-//     phone: "", email: "", password: "", city: "",
-//     commission_pct: 1, notes: "",
-//   });
-//   const [busy, setBusy] = useState(false);
-
-//   return (
-//     <form
-//       onSubmit={async (e) => {
-//         e.preventDefault();
-//         if (!f.name.trim() || !f.phone.trim() || !f.email.trim() || !f.password) return toast.error("Name, phone, email and password required");
-//         setBusy(true);
-//         try {
-//           await create({ data: f });
-//           toast.success(`Partner registered. Share login: ${f.email}`);
-//           onSaved();
-//         } catch (err: any) { toast.error(err.message); }
-//         finally { setBusy(false); }
-//       }}
-//       className="grid grid-cols-1 gap-3 sm:grid-cols-2"
-//     >
-//       <Fld label="Partner Name *"><Input required value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></Fld>
-//       <Fld label="Organisation"><Input value={f.organisation} onChange={(e) => setF({ ...f, organisation: e.target.value })} /></Fld>
-//       <Fld label="Login Email *"><Input type="email" required value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} placeholder="partner@example.com" /></Fld>
-//       <Fld label="Password *"><Input type="text" required value={f.password} onChange={(e) => setF({ ...f, password: e.target.value })} placeholder="min 6 chars" /></Fld>
-//       <Fld label="Phone *"><Input required value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} /></Fld>
-//       <Fld label="City"><Input value={f.city} onChange={(e) => setF({ ...f, city: e.target.value })} /></Fld>
-//       <Fld label="Category">
-//         <Select value={f.category} onValueChange={(v) => setF({ ...f, category: v })}>
-//           <SelectTrigger><SelectValue /></SelectTrigger>
-//           <SelectContent className="bg-white">{CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-//         </Select>
-//       </Fld>
-//       <Fld label="Commission %"><Input type="number" step="0.01" value={f.commission_pct} onChange={(e) => setF({ ...f, commission_pct: Number(e.target.value) })} /></Fld>
-//       <div className="sm:col-span-2"><Fld label="Notes"><Input value={f.notes} onChange={(e) => setF({ ...f, notes: e.target.value })} placeholder="Agreement date, contact person…" /></Fld></div>
-//       <div className="sm:col-span-2 flex justify-end">
-//         <Button type="submit" disabled={busy} className="bg-gradient-to-r from-sky-500 to-blue-500 text-white">
-//           {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Register & Create Login
-//         </Button>
-//       </div>
-//     </form>
-//   );
-// }
-
-// function Fld({ label, children }: { label: string; children: React.ReactNode }) {
-//   return <div className="min-w-0"><Label className="text-xs">{label}</Label><div className="mt-1">{children}</div></div>;
-// }
-import { createFileRoute, Link } from "@tanstack/react-router";
-
-import { Header } from "@/components/site/Header";
-import { Footer } from "@/components/site/Footer";
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Loader2,
+  Handshake,
+  Search,
+  Phone,
+  Mail,
+  MapPin,
+  Eye,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/crm/partners")({
-  component: CrmPartnersPage,
+  component: PartnersPage,
 });
 
-function CrmPartnersPage() {
+type PartnerLead = {
+  id: string;
+  full_name: string;
+  phone: string | null;
+  email: string | null;
+  city: string | null;
+  product_name: string | null;
+  status: string;
+  lead_source: string | null;
+  message: string | null;
+  created_at: string;
+};
+
+function PartnersPage() {
+  const [rows, setRows] = useState<PartnerLead[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [q, setQ] = useState("");
+  const [status, setStatus] = useState("all");
+  const [view, setView] = useState<PartnerLead | null>(null);
+
+  const load = async () => {
+    setLoading(true);
+    const { data } = await supabase
+      .from("leads")
+      .select(
+        "id, full_name, phone, email, city, product_name, status, lead_source, message, created_at",
+      )
+      .eq("product_type", "partner")
+      .order("created_at", { ascending: false });
+    setRows((data ?? []) as PartnerLead[]);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    load();
+    const ch = supabase
+      .channel("partner-leads")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "leads" },
+        () => load(),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, []);
+
+  const updateStatus = async (id: string, newStatus: string) => {
+    const { error } = await supabase
+      .from("leads")
+      .update({ status: newStatus })
+      .eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success(`Marked as ${newStatus}`);
+    load();
+  };
+
+  const filtered = rows.filter((r) => {
+    if (status !== "all" && r.status !== status) return false;
+    if (!q) return true;
+    const s = q.toLowerCase();
+    return (
+      r.full_name?.toLowerCase().includes(s) ||
+      r.phone?.includes(q) ||
+      r.email?.toLowerCase().includes(s) ||
+      r.product_name?.toLowerCase().includes(s)
+    );
+  });
+
+  const counts = {
+    total: rows.length,
+    pending: rows.filter((r) => r.status === "New").length,
+    approved: rows.filter((r) => r.status === "Approved").length,
+  };
+
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-
-      <main className="container mx-auto px-6 py-28">
-        <div className="mx-auto max-w-4xl text-center">
-          <span className="rounded-full bg-[#17357e]/10 px-5 py-2 text-sm font-bold text-[#17357e]">
-            CRM Partners
-          </span>
-
-          <h1 className="mt-6 text-4xl font-bold text-[#07142f] sm:text-5xl">
-            Partner Management Coming Soon
-          </h1>
-
-          <p className="mt-5 text-lg leading-8 text-slate-600">
-            This CRM section will be used to manage partners, partner accounts,
-            passwords, leads and partner performance.
-          </p>
-
-          <Link to="/crm">
-            <Button className="mt-8 rounded-xl bg-gradient-to-r from-[#17357e] to-blue-600 text-white">
-              Back to CRM
-            </Button>
-          </Link>
+    <div className="space-y-4">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-sky-500 via-blue-500 to-indigo-500 p-5 text-white shadow-lg">
+        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/20 blur-3xl" />
+        <div className="relative flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <div className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
+              <Handshake className="h-3 w-3" /> Channel Partners
+            </div>
+            <h1 className="mt-2 text-2xl font-bold md:text-3xl">Partner Applications</h1>
+            <p className="text-sm text-white/80">
+              {counts.total} total · {counts.pending} pending review · {counts.approved} approved
+            </p>
+          </div>
+          <a
+            href="/partner-signup"
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-full bg-white/95 px-4 py-2 text-sm font-semibold text-sky-700 shadow-md hover:bg-white"
+          >
+            View public signup →
+          </a>
         </div>
-      </main>
+      </div>
 
-      <Footer />
+      <Card className="p-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="relative min-w-[220px] flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Input
+              placeholder="Search name, phone, email, category…"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <select
+            className="h-9 rounded-md border border-input bg-white px-3 text-sm"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
+            <option value="all">All Status</option>
+            <option value="New">New / Pending</option>
+            <option value="Contacted">Contacted</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+      </Card>
+
+      <Card className="overflow-hidden">
+        {loading ? (
+          <div className="flex h-40 items-center justify-center">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="p-10 text-center text-sm text-slate-500">
+            No partner applications yet. Applications from{" "}
+            <a
+              href="/partner-signup"
+              className="font-medium text-sky-600 underline"
+            >
+              /partner-signup
+            </a>{" "}
+            will appear here.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Partner</TableHead>
+                  <TableHead>Contact</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>City</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Applied</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filtered.map((r) => (
+                  <TableRow key={r.id}>
+                    <TableCell className="font-medium">{r.full_name}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-0.5 text-xs">
+                        {r.phone && (
+                          <span className="flex items-center gap-1">
+                            <Phone className="h-3 w-3 text-slate-400" />
+                            {r.phone}
+                          </span>
+                        )}
+                        {r.email && (
+                          <span className="flex items-center gap-1 text-slate-500">
+                            <Mail className="h-3 w-3 text-slate-400" />
+                            {r.email}
+                          </span>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">{r.product_name ?? "—"}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      {r.city ? (
+                        <span className="flex items-center gap-1 text-xs">
+                          <MapPin className="h-3 w-3 text-slate-400" />
+                          {r.city}
+                        </span>
+                      ) : (
+                        "—"
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        className={
+                          r.status === "Approved"
+                            ? "bg-emerald-100 text-emerald-700"
+                            : r.status === "Rejected"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-amber-100 text-amber-700"
+                        }
+                      >
+                        {r.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-xs text-slate-500">
+                      {new Date(r.created_at).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setView(r)}
+                          title="View details"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-emerald-600 hover:bg-emerald-50"
+                          onClick={() => updateStatus(r.id, "Approved")}
+                          title="Approve"
+                        >
+                          <CheckCircle2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-red-600 hover:bg-red-50"
+                          onClick={() => updateStatus(r.id, "Rejected")}
+                          title="Reject"
+                        >
+                          <XCircle className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </Card>
+
+      <Dialog open={!!view} onOpenChange={(o) => !o && setView(null)}>
+        <DialogContent className="max-w-lg bg-white">
+          <DialogHeader>
+            <DialogTitle>{view?.full_name}</DialogTitle>
+          </DialogHeader>
+          {view && (
+            <div className="space-y-3 text-sm">
+              <Row label="Phone" value={view.phone} />
+              <Row label="Email" value={view.email} />
+              <Row label="City" value={view.city} />
+              <Row label="Category" value={view.product_name} />
+              <Row label="Source" value={view.lead_source} />
+              <Row label="Status" value={view.status} />
+              <div>
+                <div className="text-xs font-semibold uppercase text-slate-500">
+                  Message
+                </div>
+                <pre className="mt-1 whitespace-pre-wrap rounded-lg bg-slate-50 p-3 text-xs text-slate-700">
+                  {view.message ?? "—"}
+                </pre>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string | null }) {
+  return (
+    <div className="flex justify-between border-b border-slate-100 pb-1.5">
+      <span className="text-xs font-semibold uppercase text-slate-500">
+        {label}
+      </span>
+      <span className="text-slate-800">{value ?? "—"}</span>
     </div>
   );
 }
