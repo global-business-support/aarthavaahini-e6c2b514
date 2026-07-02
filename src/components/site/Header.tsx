@@ -68,26 +68,26 @@
 //         <div className="container mx-auto flex h-16 items-center justify-between gap-2 px-3 sm:px-4 lg:px-6">
 //           {/* LOGO */}
 //           <Link
-//   to="/"
-//   className="flex min-w-0 shrink-0 items-center gap-0"
-//   onClick={() => setMobileMenu(false)}
-// >
-//   {/* Tree Logo */}
-//   <img
-//     src={logo}
-//     alt="Aarthvaahini Logo"
-//     className="block h-9 w-9 shrink-0 object-contain sm:h-11 sm:w-11 lg:h-12 lg:w-12"
-//     draggable={false}
-//   />
+//             to="/"
+//             className="flex min-w-0 shrink-0 items-center gap-0 overflow-visible"
+//             onClick={() => setMobileMenu(false)}
+//           >
+//             {/* Tree Logo */}
+//             <img
+//               src={logo}
+//               alt="Aarthvaahini Logo"
+//               className="block h-9 w-9 shrink-0 object-contain sm:h-11 sm:w-11 md:h-11 md:w-11 lg:h-12 lg:w-12 xl:h-[52px] xl:w-[52px]"
+//               draggable={false}
+//             />
 
-//   {/* Heading Logo - closer to tree logo */}
-//   <img
-//     src={headingLogo}
-//     alt="Aarthvaahini"
-//     className="block h-7 w-[120px] shrink-0 -translate-x-2 translate-y-1 object-contain sm:h-8 sm:w-[155px] sm:-translate-x-2.5 sm:translate-y-1.5 md:w-[135px] lg:h-9 lg:w-[195px] xl:w-[210px]"
-//     draggable={false}
-//   />
-// </Link>
+//             {/* Heading Logo - extra close and responsive */}
+//             <img
+//               src={headingLogo}
+//               alt="Aarthvaahini"
+//               className="block h-7 w-[128px] shrink-0 -translate-x-7 translate-y-1 object-contain sm:h-8 sm:w-[165px] sm:-translate-x-8 sm:translate-y-1.5 md:h-8 md:w-[150px] md:-translate-x-8 lg:h-9 lg:w-[205px] lg:-translate-x-9 xl:h-9 xl:w-[218px] xl:-translate-x-10"
+//               draggable={false}
+//             />
+//           </Link>
 
 //           {/* DESKTOP NAV */}
 //           <nav className="hidden items-center gap-2 lg:flex xl:gap-3">
@@ -119,6 +119,13 @@
 //               <Calculator className="h-4 w-4" />
 //               Calculators
 //             </a>
+
+//             <Link
+//               to="/partner-signup"
+//               className="rounded-xl px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 xl:text-[15px]"
+//             >
+//               Become a Partner
+//             </Link>
 //           </nav>
 
 //           {/* RIGHT BUTTONS */}
@@ -280,6 +287,14 @@
 //                 Calculator
 //               </a>
 
+//               <Link
+//                 to="/partner-signup"
+//                 className="font-medium  text-[#17357e]"
+//                 onClick={() => setMobileMenu(false)}
+//               >
+//                 Become a Partner
+//               </Link>
+
 //               {user ? (
 //                 <button
 //                   type="button"
@@ -311,82 +326,44 @@
 //         )}
 //       </header>
 
-//       {/* BOTTOM NAV
+//       {/* BOTTOM NAV */}
 //       {showBottomNav && (
-//         <div className="fixed bottom-6 left-1/2 z-[9999] hidden -translate-x-1/2 lg:flex">
-//           <div className="flex items-center gap-8 rounded-full border border-white/20 bg-white/90 px-8 py-4 shadow-2xl backdrop-blur-xl">
+//         <div className="fixed bottom-4 left-1/2 z-[9999] flex w-[94vw] max-w-[620px] -translate-x-1/2 justify-center sm:bottom-6">
+//           <div className="flex w-full items-center justify-between gap-2 rounded-full border border-white/20 bg-white/95 px-3 py-3 shadow-2xl backdrop-blur-xl sm:gap-6 sm:px-8 sm:py-4">
 //             <a
 //               href="/#hero"
-//               className="flex items-center gap-2 font-medium text-[#17357e] transition hover:text-blue-600"
+//               className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#17357e] transition hover:text-blue-600 sm:flex-row sm:gap-2 sm:text-base"
 //             >
 //               <Home className="h-5 w-5" />
-//               Home
+//               <span>Home</span>
 //             </a>
 
 //             <a
 //               href="/#testimonials"
-//               className="flex items-center gap-2 font-medium text-[#17357e] transition hover:text-blue-600"
+//               className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#17357e] transition hover:text-blue-600 sm:flex-row sm:gap-2 sm:text-base"
 //             >
 //               <Star className="h-5 w-5" />
-//               Testimonials
+//               <span>Testimonials</span>
 //             </a>
 
 //             <a
 //               href="/#products"
-//               className="flex items-center gap-2 font-medium text-[#17357e] transition hover:text-blue-600"
+//               className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#17357e] transition hover:text-blue-600 sm:flex-row sm:gap-2 sm:text-base"
 //             >
 //               <MessageSquare className="h-5 w-5" />
-//               Products
+//               <span>Products</span>
 //             </a>
 
 //             <Link
 //               to="/contact"
-//               className="flex items-center gap-2 font-medium text-[#17357e] transition hover:text-blue-600"
+//               className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#17357e] transition hover:text-blue-600 sm:flex-row sm:gap-2 sm:text-base"
 //             >
 //               <Phone className="h-5 w-5" />
-//               Contact
+//               <span>Contact</span>
 //             </Link>
 //           </div>
 //         </div>
-//       )} */}
-//       {/* BOTTOM NAV */}
-// {showBottomNav && (
-//   <div className="fixed bottom-4 left-1/2 z-[9999] flex w-[94vw] max-w-[620px] -translate-x-1/2 justify-center sm:bottom-6">
-//     <div className="flex w-full items-center justify-between gap-2 rounded-full border border-white/20 bg-white/95 px-3 py-3 shadow-2xl backdrop-blur-xl sm:gap-6 sm:px-8 sm:py-4">
-//       <a
-//         href="/#hero"
-//         className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#17357e] transition hover:text-blue-600 sm:flex-row sm:gap-2 sm:text-base"
-//       >
-//         <Home className="h-5 w-5" />
-//         <span>Home</span>
-//       </a>
-
-//       <a
-//         href="/#testimonials"
-//         className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#17357e] transition hover:text-blue-600 sm:flex-row sm:gap-2 sm:text-base"
-//       >
-//         <Star className="h-5 w-5" />
-//         <span>Testimonials</span>
-//       </a>
-
-//       <a
-//         href="/#products"
-//         className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#17357e] transition hover:text-blue-600 sm:flex-row sm:gap-2 sm:text-base"
-//       >
-//         <MessageSquare className="h-5 w-5" />
-//         <span>Products</span>
-//       </a>
-
-//       <Link
-//         to="/contact"
-//         className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#17357e] transition hover:text-blue-600 sm:flex-row sm:gap-2 sm:text-base"
-//       >
-//         <Phone className="h-5 w-5" />
-//         <span>Contact</span>
-//       </Link>
-//     </div>
-//   </div>
-// )}
+//       )}
 //     </>
 //   );
 // }
@@ -405,13 +382,13 @@ import {
   ChevronDown,
   Menu,
   X,
-  LogIn,
   Calculator,
   Home,
   MessageSquare,
   Phone,
   Star,
   LogOut,
+  Handshake,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -424,20 +401,10 @@ export function Header() {
 
   const [mobileMenu, setMobileMenu] = useState(false);
   const [showBottomNav, setShowBottomNav] = useState(false);
-  const [showHeader, setShowHeader] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
       setShowBottomNav(window.scrollY > 500);
-
-      if (window.scrollY > lastScrollY && window.scrollY > 80) {
-        setShowHeader(false);
-      } else {
-        setShowHeader(true);
-      }
-
-      setLastScrollY(window.scrollY);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -445,38 +412,30 @@ export function Header() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [lastScrollY]);
+  }, []);
 
   return (
     <>
       {/* HEADER */}
-      <header
-        className={`fixed top-0 z-[9999] w-full border-b border-white/20 bg-white/90 shadow-sm backdrop-blur-xl transition-all duration-500 ${
-          showHeader
-            ? "translate-y-0 opacity-100"
-            : "-translate-y-full opacity-0"
-        }`}
-      >
-        <div className="container mx-auto flex h-16 items-center justify-between gap-2 px-3 sm:px-4 lg:px-6">
+      <header className="fixed top-0 z-[9999] w-full border-b border-blue-100 bg-white/95 shadow-md backdrop-blur-xl">
+        <div className="container mx-auto flex h-20 items-center justify-between gap-3 px-3 sm:px-4 lg:px-6">
           {/* LOGO */}
           <Link
             to="/"
-            className="flex min-w-0 shrink-0 items-center gap-0 overflow-visible"
+            className="flex min-w-0 shrink-0 items-center gap-1 overflow-visible"
             onClick={() => setMobileMenu(false)}
           >
-            {/* Tree Logo */}
             <img
               src={logo}
               alt="Aarthvaahini Logo"
-              className="block h-9 w-9 shrink-0 object-contain sm:h-11 sm:w-11 md:h-11 md:w-11 lg:h-12 lg:w-12 xl:h-[52px] xl:w-[52px]"
+              className="block h-14 w-14 shrink-0 object-contain sm:h-16 sm:w-16 lg:h-[72px] lg:w-[72px]"
               draggable={false}
             />
 
-            {/* Heading Logo - extra close and responsive */}
             <img
               src={headingLogo}
               alt="Aarthvaahini"
-              className="block h-7 w-[128px] shrink-0 -translate-x-7 translate-y-1 object-contain sm:h-8 sm:w-[165px] sm:-translate-x-8 sm:translate-y-1.5 md:h-8 md:w-[150px] md:-translate-x-8 lg:h-9 lg:w-[205px] lg:-translate-x-9 xl:h-9 xl:w-[218px] xl:-translate-x-10"
+              className="block h-10 w-[170px] shrink-0 -translate-x-5 translate-y-1 object-contain sm:h-12 sm:w-[210px] sm:-translate-x-6 lg:h-[54px] lg:w-[260px] lg:-translate-x-7"
               draggable={false}
             />
           </Link>
@@ -485,39 +444,32 @@ export function Header() {
           <nav className="hidden items-center gap-2 lg:flex xl:gap-3">
             <Link
               to="/loans"
-              className="rounded-xl px-4 py-2 text-sm font-semibold text-[#17357e] hover:bg-blue-50 xl:text-[15px]"
+              className="rounded-xl px-4 py-2 text-[15px] font-semibold text-[#17357e] transition hover:bg-blue-50 xl:text-base"
             >
               Loan
             </Link>
 
             <Link
               to="/insurance"
-              className="rounded-xl px-4 py-2 text-sm font-semibold text-[#17357e] hover:bg-blue-50 xl:text-[15px]"
+              className="rounded-xl px-4 py-2 text-[15px] font-semibold text-[#17357e] transition hover:bg-blue-50 xl:text-base"
             >
               Insurance
             </Link>
 
             <Link
               to="/mutual-funds"
-              className="rounded-xl px-4 py-2 text-sm font-semibold text-[#17357e] hover:bg-blue-50 xl:text-[15px]"
+              className="rounded-xl px-4 py-2 text-[15px] font-semibold text-[#17357e] transition hover:bg-blue-50 xl:text-base"
             >
               Mutual Funds
             </Link>
 
             <a
               href="/#calculator"
-              className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-[#17357e] hover:bg-blue-50 xl:text-[15px]"
+              className="flex items-center gap-2 rounded-xl px-4 py-2 text-[15px] font-semibold text-[#17357e] transition hover:bg-blue-50 xl:text-base"
             >
               <Calculator className="h-4 w-4" />
               Calculators
             </a>
-
-            <Link
-              to="/partner-signup"
-              className="rounded-xl px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 xl:text-[15px]"
-            >
-              Become a Partner
-            </Link>
           </nav>
 
           {/* RIGHT BUTTONS */}
@@ -525,21 +477,20 @@ export function Header() {
             {user ? (
               <Button
                 onClick={signOut}
-                variant="outline"
-                className="rounded-full border-red-200 px-5 text-red-600 hover:bg-red-50 xl:px-6"
+                className="rounded-full bg-gradient-to-r from-red-600 to-red-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-red-700 hover:to-red-600 xl:px-7 xl:text-base"
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
               </Button>
             ) : (
-              <Link to="/admin">
-                <Button
-                  variant="outline"
-                  className="rounded-full border-blue-200 px-5 text-[#17357e] hover:bg-blue-50 xl:px-6"
+              <Link to="/partner-signup">
+                <button
+                  type="button"
+                  className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[#17357e] to-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 xl:px-7 xl:text-base"
                 >
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Admin Login
-                </Button>
+                  <Handshake className="h-4 w-4" />
+                  Become a Partner
+                </button>
               </Link>
             )}
 
@@ -632,7 +583,7 @@ export function Header() {
           <button
             type="button"
             onClick={() => setMobileMenu((prev) => !prev)}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 text-[#17357e] lg:hidden"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-blue-100 text-[#17357e] lg:hidden"
             aria-label="Toggle mobile menu"
           >
             {mobileMenu ? (
@@ -645,7 +596,7 @@ export function Header() {
 
         {/* MOBILE MENU */}
         {mobileMenu && (
-          <div className="absolute left-0 top-16 z-[9999] w-full border-t bg-white px-6 py-5 shadow-xl lg:hidden">
+          <div className="absolute left-0 top-20 z-[9999] w-full border-t bg-white px-6 py-5 shadow-xl lg:hidden">
             <div className="flex flex-col gap-4">
               <Link
                 to="/loans"
@@ -681,13 +632,13 @@ export function Header() {
 
               <Link
                 to="/partner-signup"
-                className="font-medium  text-[#17357e]"
+                className="font-medium text-[#17357e]"
                 onClick={() => setMobileMenu(false)}
               >
                 Become a Partner
               </Link>
 
-              {user ? (
+              {user && (
                 <button
                   type="button"
                   onClick={() => {
@@ -698,18 +649,17 @@ export function Header() {
                 >
                   Logout
                 </button>
-              ) : (
-                <Link
-                  to="/admin"
-                  className="font-medium text-[#17357e]"
-                  onClick={() => setMobileMenu(false)}
-                >
-                  Admin Login
-                </Link>
               )}
 
+              <Link to="/partner-signup" onClick={() => setMobileMenu(false)}>
+                <Button className="mt-2 w-full rounded-full bg-gradient-to-r from-[#17357e] to-blue-600 text-white">
+                  <Handshake className="mr-2 h-4 w-4" />
+                  Become a Partner
+                </Button>
+              </Link>
+
               <Link to="/contact" onClick={() => setMobileMenu(false)}>
-                <Button className="mt-2 w-full bg-gradient-to-r from-[#17357e] to-blue-600">
+                <Button className="w-full rounded-full bg-gradient-to-r from-[#17357e] to-blue-600">
                   Apply Now
                 </Button>
               </Link>
