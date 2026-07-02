@@ -536,13 +536,13 @@ export function Hero() {
         className="relative w-full overflow-hidden bg-white pt-16"
       >
         <div className="relative w-full overflow-hidden bg-[#0f4fa8]">
-          <div className="relative aspect-[16/9] w-full overflow-hidden md:h-[620px] md:aspect-auto">
+          <div className="relative aspect-[16/9] w-full overflow-hidden bg-[linear-gradient(135deg,#022e8c_0%,#73abd9_100%)]">
             {slides.map((slide, index) => (
               <img
                 key={slide.image}
                 src={slide.image}
                 alt="Aarthvaahini Financial Services"
-                className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${
+                className={`absolute inset-0 h-full w-full object-contain object-center transition-opacity duration-700 ${
                   index === current ? "opacity-100" : "opacity-0"
                 }`}
                 draggable={false}
