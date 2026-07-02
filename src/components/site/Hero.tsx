@@ -4645,6 +4645,7 @@
 //   );
 // }
 import { useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
@@ -4731,19 +4732,6 @@ const promoCards: PromoCard[] = [
   },
 ];
 
-function getHdfcStyleCards(activeIndex: number) {
-  const total = promoCards.length;
-
-  return [-1, 0, 1].map((offset) => {
-    const index = (activeIndex + offset + total) % total;
-
-    return {
-      card: promoCards[index],
-      offset,
-    };
-  });
-}
-
 export function Hero() {
   const [current, setCurrent] = useState(0);
   const [activeCard, setActiveCard] = useState(0);
@@ -4751,7 +4739,6 @@ export function Hero() {
   const [isProductPaused, setIsProductPaused] = useState(false);
 
   const activeSlide = slides[current];
-  const visiblePromoCards = getHdfcStyleCards(activeCard);
 
   useEffect(() => {
     if (isHeroPaused) return;
@@ -4763,13 +4750,13 @@ export function Hero() {
     return () => window.clearInterval(slider);
   }, [isHeroPaused]);
 
-  // PRODUCT AUTO SLIDE
+  // HDFC STYLE AUTO SLIDE
   useEffect(() => {
     if (isProductPaused) return;
 
     const productSlider = window.setInterval(() => {
       setActiveCard((prev) => (prev + 1) % promoCards.length);
-    }, 3000);
+    }, 3200);
 
     return () => window.clearInterval(productSlider);
   }, [isProductPaused]);
@@ -4792,16 +4779,36 @@ export function Hero() {
     );
   };
 
-  const getCardPositionClass = (offset: number) => {
-    if (offset === 0) {
-      return "z-30 translate-x-0 scale-100 opacity-100 blur-0";
-    }
+  const getCardOffset = (index: number) => {
+    const total = promoCards.length;
+    let offset = index - activeCard;
 
-    if (offset === -1) {
-      return "z-10 -translate-x-[106%] scale-[0.88] opacity-40 blur-[1px]";
-    }
+    if (offset > total / 2) offset -= total;
+    if (offset < -total / 2) offset += total;
 
-    return "z-10 translate-x-[106%] scale-[0.88] opacity-40 blur-[1px]";
+    return offset;
+  };
+
+  const getCardStyle = (index: number): CSSProperties => {
+    const offset = getCardOffset(index);
+    const absOffset = Math.abs(offset);
+
+    const isCenter = offset === 0;
+    const isSide = absOffset === 1;
+    const isHidden = absOffset > 1;
+
+    return {
+      left: "50%",
+      transform: `translateX(calc(-50% + ${offset} * min(720px, 105vw))) scale(${
+        isCenter ? 1 : isSide ? 0.88 : 0.75
+      })`,
+      opacity: isCenter ? 1 : isSide ? 0.42 : 0,
+      filter: isCenter ? "blur(0px)" : isSide ? "blur(1.2px)" : "blur(3px)",
+      zIndex: isCenter ? 30 : isSide ? 10 : 0,
+      pointerEvents: isHidden ? "none" : "auto",
+      transition:
+        "transform 950ms cubic-bezier(0.22, 1, 0.36, 1), opacity 950ms ease, filter 950ms ease",
+    };
   };
 
   return (
@@ -4917,7 +4924,7 @@ export function Hero() {
         </div>
       </section>
 
-      {/* HDFC STYLE PRODUCT AUTO SLIDER */}
+      {/* HDFC STYLE SMOOTH PRODUCT AUTO SLIDER */}
       <section
         className="relative z-10 overflow-hidden bg-white py-10 sm:py-12"
         onMouseEnter={() => setIsProductPaused(true)}
@@ -4936,46 +4943,47 @@ export function Hero() {
             </p>
           </div>
 
-          <div className="relative mx-auto max-w-[1420px] overflow-hidden py-6">
+          <div className="relative mx-auto max-w-[1440px] overflow-hidden py-6">
             <div className="relative flex min-h-[370px] items-center justify-center sm:min-h-[420px]">
-              {visiblePromoCards.map(({ card, offset }) => (
-                <div
-                  key={`${card.title}-${offset}`}
-                  className={`absolute w-[88%] max-w-[620px] transition-all duration-700 ease-in-out sm:w-[78%] lg:w-[620px] ${getCardPositionClass(
-                    offset,
-                  )}`}
-                >
-                  <div
-                    className={`group relative h-[320px] overflow-hidden rounded-[22px] ${card.bg} shadow-xl transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-2xl active:scale-[1.03] sm:h-[365px]`}
-                  >
-                    {/* IMAGE - NO CUT */}
-                    <img
-                      src={card.image}
-                      alt={card.title}
-                      className="h-full w-full object-contain object-center transition-transform duration-700 group-hover:scale-[1.02]"
-                      draggable={false}
-                    />
+              {promoCards.map((card, index) => {
+                const isCenter = getCardOffset(index) === 0;
 
-                    {/* APPLY NOW BUTTON ONLY CENTER CARD */}
-                    {offset === 0 && (
-                      <div className="absolute bottom-8 left-8 z-30">
-                        <Link to={card.applyLink}>
-                          <button
-                            type="button"
-                            className="inline-flex items-center gap-2 rounded-lg bg-[#00539b] px-6 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-[#17357e] hover:shadow-xl active:scale-95"
-                          >
-                            Apply Now
-                            <ArrowRight className="h-4 w-4" />
-                          </button>
-                        </Link>
-                      </div>
-                    )}
+                return (
+                  <div
+                    key={card.title}
+                    className="absolute w-[88%] max-w-[620px] sm:w-[78%] lg:w-[620px]"
+                    style={getCardStyle(index)}
+                  >
+                    <div
+                      className={`group relative h-[320px] overflow-hidden rounded-[22px] ${card.bg} shadow-xl transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-2xl active:scale-[1.03] sm:h-[365px]`}
+                    >
+                      <img
+                        src={card.image}
+                        alt={card.title}
+                        className="h-full w-full object-contain object-center transition-transform duration-700 group-hover:scale-[1.02]"
+                        draggable={false}
+                      />
+
+                      {isCenter && (
+                        <div className="absolute bottom-8 left-8 z-30">
+                          <Link to={card.applyLink}>
+                            <button
+                              type="button"
+                              className="inline-flex items-center gap-2 rounded-lg bg-[#00539b] px-6 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-[#17357e] hover:shadow-xl active:scale-95"
+                            >
+                              Apply Now
+                              <ArrowRight className="h-4 w-4" />
+                            </button>
+                          </Link>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
-            {/* HDFC STYLE SMALL ARROWS */}
+            {/* HDFC STYLE ARROWS */}
             <div className="mt-4 flex items-center justify-center gap-5">
               <button
                 type="button"
