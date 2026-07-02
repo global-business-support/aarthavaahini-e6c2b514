@@ -536,7 +536,7 @@ export function Hero() {
         className="relative w-full overflow-hidden bg-white pt-16"
       >
         <div className="relative w-full overflow-hidden bg-[#0f4fa8]">
-          <div className="relative aspect-[16/9] w-full overflow-hidden bg-[linear-gradient(135deg,#022e8c_0%,#73abd9_100%)]">
+          <div className="relative aspect-[21/9] max-h-[420px] w-full overflow-hidden bg-[linear-gradient(135deg,#022e8c_0%,#73abd9_100%)] md:max-h-[500px]">
             {slides.map((slide, index) => (
               <img
                 key={slide.image}
