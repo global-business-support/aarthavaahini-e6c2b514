@@ -533,21 +533,13 @@ export function Hero() {
         className="relative w-full overflow-hidden bg-white pt-20"
       >
         <div className="relative w-full overflow-hidden bg-[#0f4fa8]">
-<<<<<<< HEAD
-          <div className="relative aspect-[21/9] max-h-[420px] w-full overflow-hidden bg-[linear-gradient(135deg,#022e8c_0%,#73abd9_100%)] md:max-h-[500px]">
-=======
           <div className="relative h-[520px] w-full overflow-hidden sm:h-[560px] md:h-[620px] lg:h-[680px] xl:h-[720px]">
->>>>>>> 86ecec0 (Fix hero image crop and remove dots)
             {slides.map((slide, index) => (
               <img
                 key={slide.image}
                 src={slide.image}
                 alt="Aarthvaahini Financial Services"
-<<<<<<< HEAD
-                className={`absolute inset-0 h-full w-full object-contain object-center transition-opacity duration-700 ${
-=======
                 className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
->>>>>>> 86ecec0 (Fix hero image crop and remove dots)
                   index === current ? "opacity-100" : "opacity-0"
                 }`}
                 style={{
