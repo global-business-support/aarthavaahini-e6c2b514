@@ -328,28 +328,111 @@ export function EligibilityChecker() {
             <Tabs value={activeProduct} onValueChange={(v) => { setActiveProduct(v as ProductKey); setSubmitted(false); }}>
               <TabsList className="grid grid-cols-4 lg:grid-cols-4 h-auto gap-1 bg-slate-100 p-1">
                 {PRODUCTS.slice(0, 4).map((p) => (
-                  <TabsTrigger key={p.key} value={p.key} className="text-xs py-2">
+                  <TabsTrigger key={p.key} value={p.key} className={`text-xs py-2 ${ACTIVE_TAB_CLASS[p.key]}`}>
                     <p.icon className="h-3.5 w-3.5 mr-1" />{p.name.split(" ")[0]}
                   </TabsTrigger>
                 ))}
               </TabsList>
               <TabsList className="grid grid-cols-4 h-auto gap-1 bg-slate-100 p-1 mt-2">
                 {PRODUCTS.slice(4).map((p) => (
-                  <TabsTrigger key={p.key} value={p.key} className="text-xs py-2">
+                  <TabsTrigger key={p.key} value={p.key} className={`text-xs py-2 ${ACTIVE_TAB_CLASS[p.key]}`}>
                     <p.icon className="h-3.5 w-3.5 mr-1" />{p.name.split(" ")[0]}
                   </TabsTrigger>
                 ))}
               </TabsList>
 
               {PRODUCTS.map((p) => (
-                <TabsContent key={p.key} value={p.key} className="mt-5 space-y-4">
-                  <div className={`rounded-2xl bg-gradient-to-r ${p.color} text-white p-4 flex items-center gap-3`}>
-                    <p.icon className="h-7 w-7" />
-                    <div>
-                      <div className="font-semibold">{p.name}</div>
-                      <div className="text-xs text-white/80 capitalize">{p.category} eligibility check</div>
+                <TabsContent key={p.key} value={p.key} className="mt-5">
+                  <div className="grid gap-5 md:grid-cols-2">
+                    {/* LEFT: Result panel */}
+                    <div className="order-2 md:order-1">
+                      {!submitted ? (
+                        <div className="flex h-full min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
+                          <p.icon className="h-10 w-10 text-slate-400 mb-3" />
+                          <div className="font-semibold text-slate-700">{p.name}</div>
+                          <div className="text-xs text-slate-500 mt-1">Fill the details and click "Check Eligibility" to see your result here.</div>
+                        </div>
+                      ) : (
+                        <div className={`rounded-2xl border p-5 h-full ${result.eligible ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}>
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                              {result.eligible ? (
+                                <CheckCircle2 className="h-6 w-6 text-green-600" />
+                              ) : (
+                                <XCircle className="h-6 w-6 text-red-600" />
+                              )}
+                              <div className={`font-semibold ${result.eligible ? "text-green-800" : "text-red-800"}`}>
+                                {result.eligible ? "You are Eligible!" : "Not Eligible"}
+                              </div>
+                            </div>
+                            <div className="text-xs font-semibold text-slate-700">Score: {result.score}/100</div>
+                          </div>
+
+                          <div className="grid grid-cols-1 gap-2 text-sm">
+                            {result.maxAmount !== undefined && (
+                              <div className="rounded-xl bg-white p-3">
+                                <div className="text-slate-500 text-xs">Max Eligible Amount</div>
+                                <div className="font-semibold text-slate-900">{formatINR(result.maxAmount)}</div>
+                              </div>
+                            )}
+                            {result.estimatedEmi !== undefined && (
+                              <div className="rounded-xl bg-white p-3">
+                                <div className="text-slate-500 text-xs">Estimated EMI</div>
+                                <div className="font-semibold text-slate-900">{formatINR(result.estimatedEmi)}/mo</div>
+                              </div>
+                            )}
+                            {result.premium !== undefined && (
+                              <div className="rounded-xl bg-white p-3">
+                                <div className="text-slate-500 text-xs">Estimated Premium</div>
+                                <div className="font-semibold text-slate-900">{formatINR(result.premium)}/yr</div>
+                              </div>
+                            )}
+                          </div>
+
+                          {result.positives.length > 0 && (
+                            <ul className="mt-3 space-y-1 text-sm text-green-800">
+                              {result.positives.map((r, i) => (
+                                <li key={i} className="flex gap-2"><CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0" />{r}</li>
+                              ))}
+                            </ul>
+                          )}
+                          {result.reasons.length > 0 && (
+                            <ul className="mt-3 space-y-1 text-sm text-red-800">
+                              {result.reasons.map((r, i) => (
+                                <li key={i} className="flex gap-2"><XCircle className="h-4 w-4 mt-0.5 shrink-0" />{r}</li>
+                              ))}
+                            </ul>
+                          )}
+
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button className="mt-4 w-full rounded-full bg-[#17357e] text-white">
+                                {result.eligible ? "Apply Now" : "Talk to an Expert"}
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-lg rounded-3xl">
+                              <DialogHeader>
+                                <DialogTitle>{p.name} — Application</DialogTitle>
+                              </DialogHeader>
+                              <LeadForm
+                                productType={p.category === "loan" ? "loan" : p.category === "insurance" ? "insurance" : "mutual_fund"}
+                                productName={p.name}
+                              />
+                            </DialogContent>
+                          </Dialog>
+                        </div>
+                      )}
                     </div>
-                  </div>
+
+                    {/* RIGHT: Product-specific form */}
+                    <div className="order-1 md:order-2 space-y-4">
+                      <div className={`rounded-2xl bg-gradient-to-r ${p.color} text-white p-4 flex items-center gap-3`}>
+                        <p.icon className="h-7 w-7" />
+                        <div>
+                          <div className="font-semibold">{p.name}</div>
+                          <div className="text-xs text-white/80 capitalize">{p.category} eligibility check</div>
+                        </div>
+                      </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     {p.fields.includes("loanAmount") && (
