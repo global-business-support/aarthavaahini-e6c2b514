@@ -90,6 +90,17 @@ const PRODUCTS: ProductDef[] = [
   { key: "mutual_funds", name: "Mutual Funds / SIP", category: "investment", icon: TrendingUp, color: "from-amber-500 to-orange-600", fields: ["sipAmount"] },
 ];
 
+const ACTIVE_TAB_CLASS: Record<ProductKey, string> = {
+  personal_loan: "data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+  home_loan: "data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+  business_loan: "data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-green-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+  car_loan: "data-[state=active]:bg-gradient-to-r data-[state=active]:from-rose-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+  education_loan: "data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-fuchsia-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+  health_insurance: "data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+  life_insurance: "data-[state=active]:bg-gradient-to-r data-[state=active]:from-sky-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+  mutual_funds: "data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+};
+
 interface EligibilityResult {
   eligible: boolean;
   score: number; // 0-100
