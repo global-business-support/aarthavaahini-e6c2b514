@@ -434,137 +434,68 @@ export function EligibilityChecker() {
                         </div>
                       </div>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    {p.fields.includes("loanAmount") && (
-                      <div>
-                        <Label>Loan Amount (₹)</Label>
-                        <Input type="number" value={extras[p.key].loanAmount ?? 0} onChange={(e) => updateExtra("loanAmount", +e.target.value)} />
-                      </div>
-                    )}
-                    {p.fields.includes("loanTenure") && (
-                      <div>
-                        <Label>Tenure (years)</Label>
-                        <Input type="number" value={extras[p.key].loanTenure ?? 0} onChange={(e) => updateExtra("loanTenure", +e.target.value)} />
-                      </div>
-                    )}
-                    {p.fields.includes("propertyValue") && (
-                      <div>
-                        <Label>Property Value (₹)</Label>
-                        <Input type="number" value={extras[p.key].propertyValue ?? 0} onChange={(e) => updateExtra("propertyValue", +e.target.value)} />
-                      </div>
-                    )}
-                    {p.fields.includes("vehicleValue") && (
-                      <div>
-                        <Label>Vehicle Value (₹)</Label>
-                        <Input type="number" value={extras[p.key].vehicleValue ?? 0} onChange={(e) => updateExtra("vehicleValue", +e.target.value)} />
-                      </div>
-                    )}
-                    {p.fields.includes("collegeFees") && (
-                      <div>
-                        <Label>Total College Fees (₹)</Label>
-                        <Input type="number" value={extras[p.key].collegeFees ?? 0} onChange={(e) => updateExtra("collegeFees", +e.target.value)} />
-                      </div>
-                    )}
-                    {p.fields.includes("businessTurnover") && (
-                      <div>
-                        <Label>Annual Turnover (₹)</Label>
-                        <Input type="number" value={extras[p.key].businessTurnover ?? 0} onChange={(e) => updateExtra("businessTurnover", +e.target.value)} />
-                      </div>
-                    )}
-                    {p.fields.includes("sumAssured") && (
-                      <div>
-                        <Label>Sum Assured (₹)</Label>
-                        <Input type="number" value={extras[p.key].sumAssured ?? 0} onChange={(e) => updateExtra("sumAssured", +e.target.value)} />
-                      </div>
-                    )}
-                    {p.fields.includes("members") && (
-                      <div>
-                        <Label>Members to Cover</Label>
-                        <Input type="number" value={extras[p.key].members ?? 1} onChange={(e) => updateExtra("members", +e.target.value)} />
-                      </div>
-                    )}
-                    {p.fields.includes("sipAmount") && (
-                      <div>
-                        <Label>Monthly SIP (₹)</Label>
-                        <Input type="number" value={extras[p.key].sipAmount ?? 0} onChange={(e) => updateExtra("sipAmount", +e.target.value)} />
-                      </div>
-                    )}
-                  </div>
-
-                  <Button onClick={() => setSubmitted(true)} className="w-full rounded-full bg-gradient-to-r from-[#17357e] to-blue-600 text-white">
-                    Check Eligibility
-                  </Button>
-
-                  {submitted && (
-                    <div className={`rounded-2xl border p-5 ${result.eligible ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}>
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          {result.eligible ? (
-                            <CheckCircle2 className="h-6 w-6 text-green-600" />
-                          ) : (
-                            <XCircle className="h-6 w-6 text-red-600" />
-                          )}
-                          <div className={`font-semibold ${result.eligible ? "text-green-800" : "text-red-800"}`}>
-                            {result.eligible ? "You are Eligible!" : "Not Eligible — review below"}
-                          </div>
-                        </div>
-                        <div className="text-sm font-semibold text-slate-700">Score: {result.score}/100</div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3 text-sm">
-                        {result.maxAmount !== undefined && (
-                          <div className="rounded-xl bg-white p-3">
-                            <div className="text-slate-500 text-xs">Max Eligible Amount</div>
-                            <div className="font-semibold text-slate-900">{formatINR(result.maxAmount)}</div>
+                      <div className="grid grid-cols-2 gap-3">
+                        {p.fields.includes("loanAmount") && (
+                          <div>
+                            <Label>Loan Amount (₹)</Label>
+                            <Input type="number" value={extras[p.key].loanAmount ?? 0} onChange={(e) => updateExtra("loanAmount", +e.target.value)} />
                           </div>
                         )}
-                        {result.estimatedEmi !== undefined && (
-                          <div className="rounded-xl bg-white p-3">
-                            <div className="text-slate-500 text-xs">Estimated EMI</div>
-                            <div className="font-semibold text-slate-900">{formatINR(result.estimatedEmi)}/mo</div>
+                        {p.fields.includes("loanTenure") && (
+                          <div>
+                            <Label>Tenure (years)</Label>
+                            <Input type="number" value={extras[p.key].loanTenure ?? 0} onChange={(e) => updateExtra("loanTenure", +e.target.value)} />
                           </div>
                         )}
-                        {result.premium !== undefined && (
-                          <div className="rounded-xl bg-white p-3">
-                            <div className="text-slate-500 text-xs">Estimated Premium</div>
-                            <div className="font-semibold text-slate-900">{formatINR(result.premium)}/yr</div>
+                        {p.fields.includes("propertyValue") && (
+                          <div>
+                            <Label>Property Value (₹)</Label>
+                            <Input type="number" value={extras[p.key].propertyValue ?? 0} onChange={(e) => updateExtra("propertyValue", +e.target.value)} />
+                          </div>
+                        )}
+                        {p.fields.includes("vehicleValue") && (
+                          <div>
+                            <Label>Vehicle Value (₹)</Label>
+                            <Input type="number" value={extras[p.key].vehicleValue ?? 0} onChange={(e) => updateExtra("vehicleValue", +e.target.value)} />
+                          </div>
+                        )}
+                        {p.fields.includes("collegeFees") && (
+                          <div>
+                            <Label>Total College Fees (₹)</Label>
+                            <Input type="number" value={extras[p.key].collegeFees ?? 0} onChange={(e) => updateExtra("collegeFees", +e.target.value)} />
+                          </div>
+                        )}
+                        {p.fields.includes("businessTurnover") && (
+                          <div>
+                            <Label>Annual Turnover (₹)</Label>
+                            <Input type="number" value={extras[p.key].businessTurnover ?? 0} onChange={(e) => updateExtra("businessTurnover", +e.target.value)} />
+                          </div>
+                        )}
+                        {p.fields.includes("sumAssured") && (
+                          <div>
+                            <Label>Sum Assured (₹)</Label>
+                            <Input type="number" value={extras[p.key].sumAssured ?? 0} onChange={(e) => updateExtra("sumAssured", +e.target.value)} />
+                          </div>
+                        )}
+                        {p.fields.includes("members") && (
+                          <div>
+                            <Label>Members to Cover</Label>
+                            <Input type="number" value={extras[p.key].members ?? 1} onChange={(e) => updateExtra("members", +e.target.value)} />
+                          </div>
+                        )}
+                        {p.fields.includes("sipAmount") && (
+                          <div>
+                            <Label>Monthly SIP (₹)</Label>
+                            <Input type="number" value={extras[p.key].sipAmount ?? 0} onChange={(e) => updateExtra("sipAmount", +e.target.value)} />
                           </div>
                         )}
                       </div>
 
-                      {result.positives.length > 0 && (
-                        <ul className="mt-3 space-y-1 text-sm text-green-800">
-                          {result.positives.map((r, i) => (
-                            <li key={i} className="flex gap-2"><CheckCircle2 className="h-4 w-4 mt-0.5" />{r}</li>
-                          ))}
-                        </ul>
-                      )}
-                      {result.reasons.length > 0 && (
-                        <ul className="mt-3 space-y-1 text-sm text-red-800">
-                          {result.reasons.map((r, i) => (
-                            <li key={i} className="flex gap-2"><XCircle className="h-4 w-4 mt-0.5" />{r}</li>
-                          ))}
-                        </ul>
-                      )}
-
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button className="mt-4 w-full rounded-full bg-[#17357e] text-white">
-                            {result.eligible ? "Apply Now" : "Talk to an Expert"}
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-lg rounded-3xl">
-                          <DialogHeader>
-                            <DialogTitle>{p.name} — Application</DialogTitle>
-                          </DialogHeader>
-                          <LeadForm
-                            productType={p.category === "loan" ? "loan" : p.category === "insurance" ? "insurance" : "mutual_fund"}
-                            productName={p.name}
-                          />
-                        </DialogContent>
-                      </Dialog>
+                      <Button onClick={() => setSubmitted(true)} className="w-full rounded-full bg-gradient-to-r from-[#17357e] to-blue-600 text-white">
+                        Check Eligibility
+                      </Button>
                     </div>
-                  )}
+                  </div>
                 </TabsContent>
               ))}
             </Tabs>
