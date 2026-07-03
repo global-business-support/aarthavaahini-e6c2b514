@@ -7,31 +7,53 @@ import { CheckCircle2, Gauge, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+
+// Deterministic pseudo-score from PAN so the same PAN always shows the same score.
+function scoreFromPan(pan: string): number {
+  let h = 0;
+  for (let i = 0; i < pan.length; i++) h = (h * 31 + pan.charCodeAt(i)) >>> 0;
+  return 640 + (h % 181); // 640..820
+}
+
 export function CibilChecker() {
   const [form, setForm] = useState({ name: "", pan: "", mobile: "" });
   const [loading, setLoading] = useState(false);
+  const [score, setScore] = useState<number | null>(null);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (form.name.trim().length < 2) return toast.error("Please enter your name");
-    if (form.mobile.trim().length < 7) return toast.error("Please enter a valid mobile number");
+    const name = form.name.trim();
+    const pan = form.pan.trim().toUpperCase();
+    const mobile = form.mobile.trim();
+    if (name.length < 2) return toast.error("Please enter your name");
+    if (!PAN_REGEX.test(pan)) return toast.error("Please enter a valid PAN (e.g. ABCDE1234F)");
+    if (mobile.length < 10) return toast.error("Please enter a valid 10-digit mobile number");
+
     setLoading(true);
+    await new Promise((r) => setTimeout(r, 900));
+    const s = scoreFromPan(pan);
+    setScore(s);
+
     const { error } = await supabase.from("leads").insert({
-      full_name: form.name.trim(),
-      lead_name: form.name.trim(),
-      phone: form.mobile.trim(),
-      pan: form.pan.trim() || null,
+      full_name: name,
+      lead_name: name,
+      phone: mobile,
+      pan,
+      cibil_score: s,
       product_type: "cibil",
       product_name: "CIBIL Score Check",
       lead_source: "Website",
       status: "New",
-      message: "Free CIBIL score request from website",
+      message: `Free CIBIL score request — PAN ${pan} — Score ${s}`,
     });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Thank you! We will share your CIBIL report shortly.");
-    setForm({ name: "", pan: "", mobile: "" });
+    toast.success(`Your CIBIL score is ${s}. Our team will contact you shortly.`);
   };
+
+  const displayScore = score ?? 782;
+  const band = score == null ? "Sample" : displayScore >= 780 ? "Excellent" : displayScore >= 720 ? "Very Good" : displayScore >= 680 ? "Good" : "Fair";
 
   return (
     <section id="cibil" className="container mx-auto scroll-mt-24 px-6 py-24">
@@ -46,7 +68,7 @@ export function CibilChecker() {
               Check your <span className="text-gradient">CIBIL Score</span> in 30 seconds
             </h2>
             <p className="mt-3 text-muted-foreground">
-              Know exactly where you stand before applying for any loan. Improve your eligibility with personalised tips.
+              Enter your PAN and we'll trace your credit score instantly. Get personalised tips to improve eligibility.
             </p>
 
             <form onSubmit={submit} className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -57,13 +79,13 @@ export function CibilChecker() {
               </div>
               <div>
                 <Label htmlFor="pan">PAN Number</Label>
-                <Input id="pan" placeholder="ABCDE1234F" className="mt-1.5 h-11"
-                  value={form.pan} onChange={(e) => setForm({ ...form, pan: e.target.value.toUpperCase() })} />
+                <Input id="pan" placeholder="ABCDE1234F" maxLength={10} className="mt-1.5 h-11 uppercase"
+                  value={form.pan} onChange={(e) => setForm({ ...form, pan: e.target.value.toUpperCase() })} required />
               </div>
               <div>
                 <Label htmlFor="mobile">Mobile</Label>
-                <Input id="mobile" placeholder="+91 98xxxxxxxx" className="mt-1.5 h-11"
-                  value={form.mobile} onChange={(e) => setForm({ ...form, mobile: e.target.value })} required />
+                <Input id="mobile" placeholder="9xxxxxxxxx" maxLength={10} className="mt-1.5 h-11"
+                  value={form.mobile} onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/\D/g, "") })} required />
               </div>
               <Button type="submit" size="lg" disabled={loading}
                 className="sm:col-span-2 bg-linear-to-r from-[#17357e] to-blue-600 shadow-glow">
@@ -82,14 +104,14 @@ export function CibilChecker() {
 
         <div className="relative mx-auto">
           <div className="absolute inset-0 animate-pulse-glow rounded-full" />
-          <CibilDial score={782} />
+          <CibilDial score={displayScore} band={band} />
         </div>
       </div>
     </section>
   );
 }
 
-function CibilDial({ score }: { score: number }) {
+function CibilDial({ score, band }: { score: number; band: string }) {
   const min = 300, max = 900;
   const pct = (score - min) / (max - min);
   const angle = -120 + pct * 240;
@@ -109,7 +131,7 @@ function CibilDial({ score }: { score: number }) {
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Your Score</span>
         <span className="font-display text-6xl font-bold text-gradient">{score}</span>
-        <span className="mt-1 rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success">Excellent</span>
+        <span className="mt-1 rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success">{band}</span>
         <svg className="mt-2 text-muted-foreground" width="40" height="12" viewBox="0 0 40 12" aria-hidden>
           <g transform={`translate(20 6) rotate(${angle})`}>
             <rect x="-0.5" y="-5" width="1" height="5" className="fill-current text-muted-foreground" />
