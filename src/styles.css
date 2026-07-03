@@ -5,6 +5,20 @@ html {
   scroll-behavior: smooth;
   width: 100%;
   overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+/* Smoother momentum scrolling inside overflow containers on iOS/macOS */
+.overflow-auto, .overflow-y-auto, .overflow-x-auto, [data-radix-scroll-area-viewport] {
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Removed invalid at-rule @source which caused a warning. */
