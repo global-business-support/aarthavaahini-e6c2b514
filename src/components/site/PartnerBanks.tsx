@@ -14,7 +14,6 @@
 //   banks: Bank[];
 // };
 
-// // Multi-source logo fallback chain — tries each until one loads.
 // function buildLogoSources(bank: Bank): string[] {
 //   const sources: string[] = [];
 
@@ -92,7 +91,6 @@
 //       },
 //     ],
 //   },
-  
 //   {
 //     title: "",
 //     subtitle: "",
@@ -237,7 +235,7 @@
 //       className="bg-gradient-to-b from-blue-50/70 via-white to-blue-50/50 py-14 sm:py-20"
 //     >
 //       <div className="container mx-auto px-4 sm:px-6">
-//         {/* HEADING */}
+//         {/* TOP HEADING */}
 //         <div className="mx-auto max-w-4xl text-center">
 //           <span className="inline-block rounded-full bg-[#17357e]/10 px-4 py-1 text-[10px] font-semibold uppercase tracking-widest text-[#17357e] sm:text-xs">
 //             Trusted Financial Network
@@ -272,19 +270,19 @@
 //           </div>
 
 //           <div className="rounded-2xl border border-blue-100 bg-white p-5 text-center shadow-sm">
-//             <h3 className="text-3xl font-bold text-[#17357e]">5+</h3>
+//             <h3 className="text-3xl font-bold text-[#17357e]">1,678+</h3>
 //             <p className="mt-1 text-sm font-medium text-gray-500">
-//               Partner Categories
+//               Happy Customers
 //             </p>
 //           </div>
 //         </div>
 
-//         {/* CATEGORY WISE PARTNERS */}
-//         <div className="mt-12 space-y-12">
-//           {PARTNER_CATEGORIES.map((category) => (
-//             <div key={category.title}>
-//               <div className="mb-5 flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
-//                 <div>
+//         {/* BANKS */}
+//         <div className="mt-10 space-y-4">
+//           {PARTNER_CATEGORIES.map((category, index) => (
+//             <div key={`${category.title}-${index}`}>
+//               {index === 0 && (
+//                 <div className="mb-4">
 //                   <h3 className="text-xl font-bold text-[#07142f] sm:text-2xl">
 //                     {category.title}
 //                   </h3>
@@ -293,11 +291,7 @@
 //                     {category.subtitle}
 //                   </p>
 //                 </div>
-
-//                 <span className="w-fit rounded-full bg-blue-50 px-4 py-1 text-xs font-semibold text-blue-700">
-//                   {category.banks.length} Partners
-//                 </span>
-//               </div>
+//               )}
 
 //               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-5">
 //                 {category.banks.map((bank) => (
@@ -592,8 +586,31 @@ export function PartnerBanks() {
           </div>
         </div>
 
-        {/* BANKS */}
-        <div className="mt-10 space-y-4">
+        {/* MOBILE TOUCH SLIDER */}
+        <div className="mt-10 md:hidden">
+          <div className="mb-4">
+            <h3 className="text-xl font-bold text-[#07142f]">
+              Leading Banks & financial institutions
+            </h3>
+
+            <p className="mt-1 text-sm text-gray-500">
+              Trusted financial partners
+            </p>
+          </div>
+
+          <div className="-mx-4 overflow-x-auto px-4 pb-4">
+            <div className="flex w-max gap-4">
+              {BANKS.map((bank) => (
+                <div key={bank.name} className="w-[180px] shrink-0">
+                  <PartnerCard bank={bank} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* DESKTOP BANKS GRID */}
+        <div className="mt-10 hidden space-y-4 md:block">
           {PARTNER_CATEGORIES.map((category, index) => (
             <div key={`${category.title}-${index}`}>
               {index === 0 && (
