@@ -15,6 +15,13 @@ export const Route = createFileRoute("/cibil")({
   component: CibilPage,
 });
 
+const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+function scoreFromPan(pan: string): number {
+  let h = 0;
+  for (let i = 0; i < pan.length; i++) h = (h * 31 + pan.charCodeAt(i)) >>> 0;
+  return 640 + (h % 181);
+}
+
 function CibilPage() {
   const [loading, setLoading] = useState(false);
   const [score, setScore] = useState<number | null>(null);
@@ -22,17 +29,21 @@ function CibilPage() {
 
   const check = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (form.full_name.trim().length < 2 || form.phone.trim().length < 7)
-      return toast.error("Sahi details daale");
+    const name = form.full_name.trim();
+    const pan = form.pan.trim().toUpperCase();
+    const phone = form.phone.trim();
+    if (name.length < 2) return toast.error("Please enter your full name");
+    if (!PAN_REGEX.test(pan)) return toast.error("Enter a valid PAN (e.g. ABCDE1234F)");
+    if (phone.length < 10) return toast.error("Enter a valid 10-digit mobile");
     setLoading(true);
-    // Mock CIBIL — realistic distribution 650-820
-    await new Promise((r) => setTimeout(r, 1400));
-    const s = Math.floor(650 + Math.random() * 170);
+    await new Promise((r) => setTimeout(r, 1200));
+    const s = scoreFromPan(pan);
     setScore(s);
     await supabase.from("leads").insert({
-      full_name: form.full_name.trim(), phone: form.phone.trim(),
+      full_name: name, lead_name: name, phone, pan, cibil_score: s,
       product_type: "cibil", product_name: "CIBIL Score Check",
-      message: `PAN: ${form.pan}, Score: ${s}`,
+      lead_source: "Website", status: "New",
+      message: `CIBIL request — PAN ${pan} — Score ${s}`,
     });
     setLoading(false);
   };
