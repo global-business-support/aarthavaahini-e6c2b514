@@ -44,6 +44,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import { CustomerProfileDialog } from "@/components/crm/CustomerProfileDialog";
+import { INDIA_STATES, citiesForState } from "@/data/india-cities";
 
 
 export const Route = createFileRoute("/crm/leads")({
@@ -1071,20 +1072,27 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
         />
       </Field>
 
-      <Field label="City">
-        <Input
-          className="border-blue-200 focus-visible:ring-blue-400"
-          value={f.city}
-          onChange={(e) => setF((prev) => ({ ...prev, city: e.target.value }))}
-        />
+      <Field label="State">
+        <select
+          className="h-9 w-full rounded-md border border-indigo-200 bg-white px-3 text-sm"
+          value={f.state}
+          onChange={(e) => setF((prev) => ({ ...prev, state: e.target.value, city: "" }))}
+        >
+          <option value="">Select state</option>
+          {INDIA_STATES.map((s) => (<option key={s} value={s}>{s}</option>))}
+        </select>
       </Field>
 
-      <Field label="State">
-        <Input
-          className="border-indigo-200 focus-visible:ring-indigo-400"
-          value={f.state}
-          onChange={(e) => setF((prev) => ({ ...prev, state: e.target.value }))}
-        />
+      <Field label="City">
+        <select
+          className="h-9 w-full rounded-md border border-blue-200 bg-white px-3 text-sm disabled:opacity-60"
+          value={f.city}
+          onChange={(e) => setF((prev) => ({ ...prev, city: e.target.value }))}
+          disabled={!f.state}
+        >
+          <option value="">{f.state ? "Select city" : "Select state first"}</option>
+          {citiesForState(f.state).map((c) => (<option key={c} value={c}>{c}</option>))}
+        </select>
       </Field>
 
       <Field label="Product Interest">

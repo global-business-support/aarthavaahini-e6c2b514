@@ -175,11 +175,26 @@ function PartnerSignupPage() {
                         onChange={(e) => setF({ ...f, email: e.target.value })}
                       />
                     </Field>
+                    <Field label="State">
+                      <select
+                        className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm"
+                        value={f.state ?? ""}
+                        onChange={(e) => setF({ ...f, state: e.target.value, city: "" })}
+                      >
+                        <option value="">Select state</option>
+                        {INDIA_STATES.map((s) => (<option key={s} value={s}>{s}</option>))}
+                      </select>
+                    </Field>
                     <Field label="City">
-                      <Input
+                      <select
+                        className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm disabled:opacity-60"
                         value={f.city}
                         onChange={(e) => setF({ ...f, city: e.target.value })}
-                      />
+                        disabled={!f.state}
+                      >
+                        <option value="">{f.state ? "Select city" : "Select state first"}</option>
+                        {citiesForState(f.state ?? "").map((c) => (<option key={c} value={c}>{c}</option>))}
+                      </select>
                     </Field>
                     <Field label="Partner Category">
                       <select
