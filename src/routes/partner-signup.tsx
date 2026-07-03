@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2, Handshake, CheckCircle2 } from "lucide-react";
+import { INDIA_STATES, citiesForState } from "@/data/india-cities";
 
 export const Route = createFileRoute("/partner-signup")({
   head: () => ({
@@ -47,6 +48,7 @@ function PartnerSignupPage() {
     phone: "",
     email: "",
     city: "",
+    state: "",
     experience: "",
     message: "",
   });
@@ -66,6 +68,7 @@ function PartnerSignupPage() {
       phone: f.phone.trim(),
       email: f.email.trim() || null,
       city: f.city.trim() || null,
+      state: f.state.trim() || null,
       product_type: "partner",
       product_name: f.category,
       lead_source: "Partner Signup",
