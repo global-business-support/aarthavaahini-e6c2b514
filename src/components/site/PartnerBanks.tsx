@@ -277,8 +277,31 @@
 //           </div>
 //         </div>
 
-//         {/* BANKS */}
-//         <div className="mt-10 space-y-4">
+//         {/* MOBILE TOUCH SLIDER */}
+//         <div className="mt-10 md:hidden">
+//           <div className="mb-4">
+//             <h3 className="text-xl font-bold text-[#07142f]">
+//               Leading Banks & financial institutions
+//             </h3>
+
+//             <p className="mt-1 text-sm text-gray-500">
+//               Trusted financial partners
+//             </p>
+//           </div>
+
+//           <div className="-mx-4 overflow-x-auto px-4 pb-4">
+//             <div className="flex w-max gap-4">
+//               {BANKS.map((bank) => (
+//                 <div key={bank.name} className="w-[180px] shrink-0">
+//                   <PartnerCard bank={bank} />
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* DESKTOP BANKS GRID */}
+//         <div className="mt-10 hidden space-y-4 md:block">
 //           {PARTNER_CATEGORIES.map((category, index) => (
 //             <div key={`${category.title}-${index}`}>
 //               {index === 0 && (
@@ -538,11 +561,34 @@ function PartnerCard({ bank }: { bank: Bank }) {
 }
 
 export function PartnerBanks() {
+  const mobileBanks = [...BANKS, ...BANKS];
+
   return (
     <section
       id="partners"
       className="bg-gradient-to-b from-blue-50/70 via-white to-blue-50/50 py-14 sm:py-20"
     >
+      <style>
+        {`
+          @keyframes mobileBankAutoScroll {
+            0% {
+              transform: translateX(0);
+            }
+            100% {
+              transform: translateX(-50%);
+            }
+          }
+
+          .mobile-bank-auto-scroll {
+            animation: mobileBankAutoScroll 35s linear infinite;
+          }
+
+          .mobile-bank-auto-scroll:hover {
+            animation-play-state: paused;
+          }
+        `}
+      </style>
+
       <div className="container mx-auto px-4 sm:px-6">
         {/* TOP HEADING */}
         <div className="mx-auto max-w-4xl text-center">
@@ -586,7 +632,7 @@ export function PartnerBanks() {
           </div>
         </div>
 
-        {/* MOBILE TOUCH SLIDER */}
+        {/* MOBILE AUTO SLIDER */}
         <div className="mt-10 md:hidden">
           <div className="mb-4">
             <h3 className="text-xl font-bold text-[#07142f]">
@@ -598,10 +644,13 @@ export function PartnerBanks() {
             </p>
           </div>
 
-          <div className="-mx-4 overflow-x-auto px-4 pb-4">
-            <div className="flex w-max gap-4">
-              {BANKS.map((bank) => (
-                <div key={bank.name} className="w-[180px] shrink-0">
+          <div className="-mx-4 overflow-hidden px-4 pb-4">
+            <div className="mobile-bank-auto-scroll flex w-max gap-4">
+              {mobileBanks.map((bank, index) => (
+                <div
+                  key={`${bank.name}-${index}`}
+                  className="w-[180px] shrink-0"
+                >
                   <PartnerCard bank={bank} />
                 </div>
               ))}
