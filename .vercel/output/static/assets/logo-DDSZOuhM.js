@@ -1,1 +1,0 @@
-import{b as o}from"./utils-x76h9AQO.js";const e=[["path",{d:"M4 5h16",key:"1tepv9"}],["path",{d:"M4 12h16",key:"1lakjw"}],["path",{d:"M4 19h16",key:"1djgab"}]],a=o("menu",e),n="/assets/logo-BMtyXnJ0.png";export{a as M,n as l};
