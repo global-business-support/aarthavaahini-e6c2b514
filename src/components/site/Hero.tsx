@@ -721,7 +721,7 @@ export function Hero() {
 
             {/* FIRST SLIDE BUTTONS - DESKTOP ONLY */}
             {activeSlide.showButtons && (
-              <div className="absolute bottom-20 left-4 z-20 hidden flex-wrap items-center gap-3 px-3 sm:left-6 md:left-10 md:flex lg:left-14">
+              <div className="absolute bottom-12 left-4 z-20 hidden flex-wrap items-center gap-3 px-3 sm:left-6 md:left-10 md:flex lg:left-14">
                 <Link to="/contact">
                   <Button className="h-10 rounded-xl bg-gradient-to-r from-[#17357e] to-blue-600 px-4 text-sm font-semibold text-white shadow-lg transition-all hover:scale-105 sm:px-5 md:h-12 md:px-7 md:text-base">
                     Free Consultation
