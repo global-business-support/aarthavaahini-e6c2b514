@@ -1044,38 +1044,8 @@ export function Hero() {
     null,
   );
 
-  const [slides, setSlides] = useState<Slide[]>(defaultSlides);
-  const [promoCards, setPromoCards] = useState<PromoCard[]>(defaultPromoCards);
-
-  useEffect(() => {
-    const loadCms = async () => {
-      const [heroRes, cardRes] = await Promise.all([
-        supabase.from("hero_slides").select("*").eq("is_active", true).order("position", { ascending: true }),
-        supabase.from("product_cards").select("*").eq("is_active", true).order("position", { ascending: true }),
-      ]);
-      if (heroRes.data && heroRes.data.length > 0) {
-        setSlides(heroRes.data.map((r: any) => ({
-          image: normalizeImageUrl(r.image_url),
-          objectPosition: "left top",
-        })));
-      }
-      if (cardRes.data && cardRes.data.length > 0) {
-        setPromoCards(cardRes.data.map((r: any) => ({
-          title: r.title,
-          image: normalizeImageUrl(r.image_url) || personalLoanImg,
-          applyLink: r.button1_link || r.button2_link || "/contact",
-          bg: r.bg_color ? "" : "bg-[#dbeafe]",
-        })));
-      }
-    };
-    loadCms();
-    const channel = supabase
-      .channel("site-cms-sync")
-      .on("postgres_changes", { event: "*", schema: "public", table: "hero_slides" }, loadCms)
-      .on("postgres_changes", { event: "*", schema: "public", table: "product_cards" }, loadCms)
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, []);
+  const [slides] = useState<Slide[]>(defaultSlides);
+  const [promoCards] = useState<PromoCard[]>(defaultPromoCards);
 
 
   useEffect(() => {
