@@ -969,6 +969,8 @@ import businessLoanImg from "@/assets/products/business-loan.png";
 import insuranceCardImg from "@/assets/products/insurance.png";
 import mutualFundsImg from "@/assets/products/mutual-funds.png";
 import homeLoanImg from "@/assets/products/home-loan.png";
+import { supabase } from "@/integrations/supabase/client";
+import { normalizeImageUrl } from "@/lib/validation";
 
 type Slide = {
   image: string;
@@ -982,7 +984,7 @@ type PromoCard = {
   bg: string;
 };
 
-const slides: Slide[] = [
+const defaultSlides: Slide[] = [
   {
     image: advisor33,
     objectPosition: "left top",
@@ -997,7 +999,7 @@ const slides: Slide[] = [
   },
 ];
 
-const promoCards: PromoCard[] = [
+const defaultPromoCards: PromoCard[] = [
   {
     title: "Personal Loan",
     image: personalLoanImg,
@@ -1030,6 +1032,7 @@ const promoCards: PromoCard[] = [
   },
 ];
 
+
 export function Hero() {
   const [current, setCurrent] = useState(0);
   const [activeCard, setActiveCard] = useState(0);
@@ -1040,6 +1043,10 @@ export function Hero() {
   const [productTouchStart, setProductTouchStart] = useState<number | null>(
     null,
   );
+
+  const [slides] = useState<Slide[]>(defaultSlides);
+  const [promoCards] = useState<PromoCard[]>(defaultPromoCards);
+
 
   useEffect(() => {
     if (isHeroPaused) return;

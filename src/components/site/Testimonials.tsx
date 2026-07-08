@@ -157,12 +157,13 @@ const items = [
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { normalizeImageUrl } from "@/lib/validation";
 
 export function Testimonials() {
   const [data, setData] = useState(items);
 
   useEffect(() => {
-    (async () => {
+    const load = async () => {
       const { data: rows } = await supabase
         .from("testimonials")
         .select("*")
@@ -176,13 +177,20 @@ export function Testimonials() {
             text: r.text,
             rating: r.rating,
             image:
-              r.image_url ??
+              normalizeImageUrl(r.image_url) ||
               "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80",
           })),
         );
       }
-    })();
+    };
+    load();
+    const channel = supabase
+      .channel("site-testimonials-sync")
+      .on("postgres_changes", { event: "*", schema: "public", table: "testimonials" }, () => load())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, []);
+
 
   return (
 
