@@ -1,4 +1,935 @@
-// // // // // // import { useMemo, useState } from "react";
+// // // // // // // import { useMemo, useState } from "react";
+// // // // // // import { Button } from "@/components/ui/button";
+// // // // // // import { Input } from "@/components/ui/input";
+// // // // // // import { Label } from "@/components/ui/label";
+// // // // // // import {
+// // // // // //   Select,
+// // // // // //   SelectContent,
+// // // // // //   SelectItem,
+// // // // // //   SelectTrigger,
+// // // // // //   SelectValue,
+// // // // // // } from "@/components/ui/select";
+// // // // // // import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// // // // // // import {
+// // // // // //   Dialog,
+// // // // // //   DialogContent,
+// // // // // //   DialogHeader,
+// // // // // //   DialogTitle,
+// // // // // //   DialogTrigger,
+// // // // // // } from "@/components/ui/dialog";
+// // // // // // import { LeadForm } from "./LeadForm";
+// // // // // // import {
+// // // // // //   CheckCircle2,
+// // // // // //   XCircle,
+// // // // // //   Wallet,
+// // // // // //   Home,
+// // // // // //   Briefcase,
+// // // // // //   Car,
+// // // // // //   GraduationCap,
+// // // // // //   HeartPulse,
+// // // // // //   ShieldCheck,
+// // // // // //   TrendingUp,
+// // // // // //   Calculator,
+// // // // // // } from "lucide-react";
+
+// // // // // // type EmploymentType = "salaried" | "self_employed" | "business" | "student";
+
+// // // // // // interface BaseInputs {
+// // // // // //   fullName: string;
+// // // // // //   age: number;
+// // // // // //   city: string;
+// // // // // //   employment: EmploymentType;
+// // // // // //   monthlyIncome: number;
+// // // // // //   monthlyEmi: number;
+// // // // // //   cibil: number;
+// // // // // //   workYears: number;
+// // // // // // }
+
+// // // // // // interface ProductExtras {
+// // // // // //   loanAmount?: number;
+// // // // // //   loanTenure?: number;
+// // // // // //   propertyValue?: number;
+// // // // // //   vehicleValue?: number;
+// // // // // //   collegeFees?: number;
+// // // // // //   businessTurnover?: number;
+// // // // // //   sumAssured?: number;
+// // // // // //   members?: number;
+// // // // // //   sipAmount?: number;
+// // // // // // }
+
+// // // // // // type ProductKey =
+// // // // // //   | "personal_loan"
+// // // // // //   | "home_loan"
+// // // // // //   | "business_loan"
+// // // // // //   | "car_loan"
+// // // // // //   | "education_loan"
+// // // // // //   | "health_insurance"
+// // // // // //   | "life_insurance"
+// // // // // //   | "mutual_funds";
+
+// // // // // // interface ProductDef {
+// // // // // //   key: ProductKey;
+// // // // // //   name: string;
+// // // // // //   category: "loan" | "insurance" | "investment";
+// // // // // //   icon: React.ComponentType<{ className?: string }>;
+// // // // // //   color: string;
+// // // // // //   fields: Array<keyof ProductExtras>;
+// // // // // // }
+
+// // // // // // const PRODUCTS: ProductDef[] = [
+// // // // // //   {
+// // // // // //     key: "personal_loan",
+// // // // // //     name: "Personal Loan",
+// // // // // //     category: "loan",
+// // // // // //     icon: Wallet,
+// // // // // //     color: "from-blue-500 to-indigo-600",
+// // // // // //     fields: ["loanAmount", "loanTenure"],
+// // // // // //   },
+// // // // // //   {
+// // // // // //     key: "home_loan",
+// // // // // //     name: "Home Loan",
+// // // // // //     category: "loan",
+// // // // // //     icon: Home,
+// // // // // //     color: "from-orange-500 to-amber-600",
+// // // // // //     fields: ["loanAmount", "loanTenure", "propertyValue"],
+// // // // // //   },
+// // // // // //   {
+// // // // // //     key: "business_loan",
+// // // // // //     name: "Business Loan",
+// // // // // //     category: "loan",
+// // // // // //     icon: Briefcase,
+// // // // // //     color: "from-emerald-500 to-green-600",
+// // // // // //     fields: ["loanAmount", "loanTenure", "businessTurnover"],
+// // // // // //   },
+// // // // // //   {
+// // // // // //     key: "car_loan",
+// // // // // //     name: "Car Loan",
+// // // // // //     category: "loan",
+// // // // // //     icon: Car,
+// // // // // //     color: "from-rose-500 to-pink-600",
+// // // // // //     fields: ["loanAmount", "loanTenure", "vehicleValue"],
+// // // // // //   },
+// // // // // //   {
+// // // // // //     key: "education_loan",
+// // // // // //     name: "Education Loan",
+// // // // // //     category: "loan",
+// // // // // //     icon: GraduationCap,
+// // // // // //     color: "from-purple-500 to-fuchsia-600",
+// // // // // //     fields: ["loanAmount", "loanTenure", "collegeFees"],
+// // // // // //   },
+// // // // // //   {
+// // // // // //     key: "health_insurance",
+// // // // // //     name: "Health Insurance",
+// // // // // //     category: "insurance",
+// // // // // //     icon: HeartPulse,
+// // // // // //     color: "from-teal-500 to-cyan-600",
+// // // // // //     fields: ["sumAssured", "members"],
+// // // // // //   },
+// // // // // //   {
+// // // // // //     key: "life_insurance",
+// // // // // //     name: "Life Insurance",
+// // // // // //     category: "insurance",
+// // // // // //     icon: ShieldCheck,
+// // // // // //     color: "from-sky-500 to-blue-600",
+// // // // // //     fields: ["sumAssured"],
+// // // // // //   },
+// // // // // //   {
+// // // // // //     key: "mutual_funds",
+// // // // // //     name: "Mutual Funds",
+// // // // // //     category: "investment",
+// // // // // //     icon: TrendingUp,
+// // // // // //     color: "from-amber-500 to-orange-600",
+// // // // // //     fields: ["sipAmount"],
+// // // // // //   },
+// // // // // // ];
+
+// // // // // // const ACTIVE_TAB_CLASS: Record<ProductKey, string> = {
+// // // // // //   personal_loan:
+// // // // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+// // // // // //   home_loan:
+// // // // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+// // // // // //   business_loan:
+// // // // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-green-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+// // // // // //   car_loan:
+// // // // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-rose-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+// // // // // //   education_loan:
+// // // // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-fuchsia-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+// // // // // //   health_insurance:
+// // // // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+// // // // // //   life_insurance:
+// // // // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-sky-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+// // // // // //   mutual_funds:
+// // // // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-md",
+// // // // // // };
+
+// // // // // // interface EligibilityResult {
+// // // // // //   eligible: boolean;
+// // // // // //   score: number;
+// // // // // //   maxAmount?: number;
+// // // // // //   estimatedEmi?: number;
+// // // // // //   premium?: number;
+// // // // // //   reasons: string[];
+// // // // // //   positives: string[];
+// // // // // // }
+
+// // // // // // function compute(
+// // // // // //   product: ProductDef,
+// // // // // //   base: BaseInputs,
+// // // // // //   ex: ProductExtras,
+// // // // // // ): EligibilityResult {
+// // // // // //   const reasons: string[] = [];
+// // // // // //   const positives: string[] = [];
+// // // // // //   let score = 60;
+
+// // // // // //   if (base.age < 21) {
+// // // // // //     reasons.push("Minimum age requirement is 21 years");
+// // // // // //   } else if (base.age > 21) {
+// // // // // //     positives.push("Age criteria met");
+// // // // // //     score += 5;
+// // // // // //   }
+
+// // // // // //   if (base.monthlyIncome <= 0) {
+// // // // // //     reasons.push("Monthly income is required");
+// // // // // //   }
+
+// // // // // //   const FOIR_CAP = 0.55;
+// // // // // //   const foir =
+// // // // // //     base.monthlyIncome > 0
+// // // // // //       ? (base.monthlyEmi / base.monthlyIncome) * 100
+// // // // // //       : 100;
+
+// // // // // //   if (foir > FOIR_CAP * 100) {
+// // // // // //     reasons.push(`Existing EMI burden too high (FOIR ${foir.toFixed(0)}%)`);
+// // // // // //   } else if (foir < 30) {
+// // // // // //     positives.push("Healthy FOIR");
+// // // // // //     score += 5;
+// // // // // //   }
+
+// // // // // //   if (product.category === "loan") {
+// // // // // //     if (base.cibil < 650) {
+// // // // // //       reasons.push(`CIBIL score ${base.cibil} below 650`);
+// // // // // //     } else if (base.cibil >= 750) {
+// // // // // //       positives.push("Excellent CIBIL score");
+// // // // // //       score += 15;
+// // // // // //     } else {
+// // // // // //       positives.push("Acceptable CIBIL score");
+// // // // // //       score += 8;
+// // // // // //     }
+
+// // // // // //     if (base.workYears < 1) {
+// // // // // //       reasons.push("Minimum 1 year work experience required");
+// // // // // //     } else if (base.workYears >= 3) {
+// // // // // //       positives.push("Stable work history");
+// // // // // //       score += 5;
+// // // // // //     }
+// // // // // //   }
+
+// // // // // //   const rate =
+// // // // // //     product.key === "home_loan"
+// // // // // //       ? 8.5
+// // // // // //       : product.key === "car_loan"
+// // // // // //         ? 9.5
+// // // // // //         : product.key === "education_loan"
+// // // // // //           ? 10.5
+// // // // // //           : product.key === "business_loan"
+// // // // // //             ? 14
+// // // // // //             : 12;
+
+// // // // // //   const tenure = ex.loanTenure && ex.loanTenure > 0 ? ex.loanTenure : 5;
+
+// // // // // //   let maxAmount: number | undefined;
+// // // // // //   let estimatedEmi: number | undefined;
+// // // // // //   let premium: number | undefined;
+
+// // // // // //   if (product.category === "loan") {
+// // // // // //     const maxEmi = Math.max(
+// // // // // //       0,
+// // // // // //       base.monthlyIncome * FOIR_CAP - base.monthlyEmi,
+// // // // // //     );
+
+// // // // // //     const r = rate / 1200;
+// // // // // //     const n = tenure * 12;
+
+// // // // // //     maxAmount =
+// // // // // //       r > 0
+// // // // // //         ? (maxEmi * (Math.pow(1 + r, n) - 1)) /
+// // // // // //           (r * Math.pow(1 + r, n))
+// // // // // //         : maxEmi * n;
+
+// // // // // //     if (
+// // // // // //       product.key === "home_loan" &&
+// // // // // //       ex.propertyValue &&
+// // // // // //       ex.propertyValue > 0
+// // // // // //     ) {
+// // // // // //       maxAmount = Math.min(maxAmount, ex.propertyValue * 0.8);
+// // // // // //     }
+
+// // // // // //     if (product.key === "car_loan" && ex.vehicleValue && ex.vehicleValue > 0) {
+// // // // // //       maxAmount = Math.min(maxAmount, ex.vehicleValue * 0.85);
+// // // // // //     }
+
+// // // // // //     if (
+// // // // // //       product.key === "education_loan" &&
+// // // // // //       ex.collegeFees &&
+// // // // // //       ex.collegeFees > 0
+// // // // // //     ) {
+// // // // // //       maxAmount = Math.min(maxAmount, ex.collegeFees);
+// // // // // //     }
+
+// // // // // //     if (
+// // // // // //       product.key === "business_loan" &&
+// // // // // //       ex.businessTurnover &&
+// // // // // //       ex.businessTurnover > 0
+// // // // // //     ) {
+// // // // // //       maxAmount = Math.min(maxAmount, ex.businessTurnover * 0.3);
+// // // // // //     }
+
+// // // // // //     const requested = ex.loanAmount ?? 0;
+
+// // // // // //     if (requested > 0) {
+// // // // // //       if (requested > maxAmount) {
+// // // // // //         reasons.push(
+// // // // // //           `Requested amount exceeds max eligible ₹${Math.round(
+// // // // // //             maxAmount,
+// // // // // //           ).toLocaleString("en-IN")}`,
+// // // // // //         );
+// // // // // //       } else {
+// // // // // //         positives.push("Requested amount within eligibility");
+// // // // // //         score += 10;
+// // // // // //       }
+
+// // // // // //       estimatedEmi =
+// // // // // //         (requested * r * Math.pow(1 + r, n)) /
+// // // // // //         (Math.pow(1 + r, n) - 1);
+// // // // // //     }
+// // // // // //   }
+
+// // // // // //   if (product.category === "insurance") {
+// // // // // //     if (product.key === "health_insurance") {
+// // // // // //       const members = ex.members ?? 1;
+// // // // // //       const sum = ex.sumAssured ?? 500000;
+
+// // // // // //       premium = Math.round(
+// // // // // //         (sum / 100000) *
+// // // // // //           700 *
+// // // // // //           Math.max(1, members * 0.8) *
+// // // // // //           (base.age > 45 ? 1.5 : 1),
+// // // // // //       );
+
+// // // // // //       positives.push("Insurance plans available");
+// // // // // //       score += 10;
+// // // // // //     } else {
+// // // // // //       const sum = ex.sumAssured ?? 1000000;
+
+// // // // // //       premium = Math.round(
+// // // // // //         (sum / 100000) * 450 * (base.age > 45 ? 1.6 : 1),
+// // // // // //       );
+
+// // // // // //       if (base.age > 65) {
+// // // // // //         reasons.push("Age above 65 — limited plans available");
+// // // // // //       } else {
+// // // // // //         positives.push("Term plan options available");
+// // // // // //       }
+
+// // // // // //       score += 8;
+// // // // // //     }
+// // // // // //   }
+
+// // // // // //   if (product.category === "investment") {
+// // // // // //     const sip = ex.sipAmount ?? 0;
+
+// // // // // //     if (sip < 500) {
+// // // // // //       reasons.push("Minimum SIP is ₹500");
+// // // // // //     } else {
+// // // // // //       positives.push("SIP amount accepted");
+// // // // // //       score += 10;
+// // // // // //     }
+
+// // // // // //     if (base.monthlyEmi + sip > base.monthlyIncome * 0.7) {
+// // // // // //       reasons.push("SIP + EMI exceeds 70% of income");
+// // // // // //     }
+// // // // // //   }
+
+// // // // // //   score = Math.max(0, Math.min(100, score));
+// // // // // //   const eligible = reasons.length === 0;
+
+// // // // // //   return {
+// // // // // //     eligible,
+// // // // // //     score,
+// // // // // //     maxAmount,
+// // // // // //     estimatedEmi,
+// // // // // //     premium,
+// // // // // //     reasons,
+// // // // // //     positives,
+// // // // // //   };
+// // // // // // }
+
+// // // // // // const formatINR = (n: number) =>
+// // // // // //   n >= 10000000
+// // // // // //     ? `₹${(n / 10000000).toFixed(2)} Cr`
+// // // // // //     : n >= 100000
+// // // // // //       ? `₹${(n / 100000).toFixed(2)} L`
+// // // // // //       : `₹${Math.round(n).toLocaleString("en-IN")}`;
+
+// // // // // // export function EligibilityChecker() {
+// // // // // //   const [base, setBase] = useState<BaseInputs>({
+// // // // // //     fullName: "",
+// // // // // //     age: 28,
+// // // // // //     city: "",
+// // // // // //     employment: "salaried",
+// // // // // //     monthlyIncome: 50000,
+// // // // // //     monthlyEmi: 0,
+// // // // // //     cibil: 720,
+// // // // // //     workYears: 3,
+// // // // // //   });
+
+// // // // // //   const [activeProduct, setActiveProduct] =
+// // // // // //     useState<ProductKey>("personal_loan");
+
+// // // // // //   const [extras, setExtras] = useState<Record<ProductKey, ProductExtras>>({
+// // // // // //     personal_loan: { loanAmount: 500000, loanTenure: 5 },
+// // // // // //     home_loan: {
+// // // // // //       loanAmount: 3000000,
+// // // // // //       loanTenure: 20,
+// // // // // //       propertyValue: 5000000,
+// // // // // //     },
+// // // // // //     business_loan: {
+// // // // // //       loanAmount: 1000000,
+// // // // // //       loanTenure: 5,
+// // // // // //       businessTurnover: 5000000,
+// // // // // //     },
+// // // // // //     car_loan: {
+// // // // // //       loanAmount: 700000,
+// // // // // //       loanTenure: 5,
+// // // // // //       vehicleValue: 900000,
+// // // // // //     },
+// // // // // //     education_loan: {
+// // // // // //       loanAmount: 800000,
+// // // // // //       loanTenure: 7,
+// // // // // //       collegeFees: 1000000,
+// // // // // //     },
+// // // // // //     health_insurance: {
+// // // // // //       sumAssured: 500000,
+// // // // // //       members: 2,
+// // // // // //     },
+// // // // // //     life_insurance: {
+// // // // // //       sumAssured: 5000000,
+// // // // // //     },
+// // // // // //     mutual_funds: {
+// // // // // //       sipAmount: 5000,
+// // // // // //     },
+// // // // // //   });
+
+// // // // // //   const [submitted, setSubmitted] = useState(false);
+
+// // // // // //   const product = useMemo(
+// // // // // //     () => PRODUCTS.find((p) => p.key === activeProduct)!,
+// // // // // //     [activeProduct],
+// // // // // //   );
+
+// // // // // //   const result = useMemo(
+// // // // // //     () => compute(product, base, extras[activeProduct]),
+// // // // // //     [product, base, extras, activeProduct],
+// // // // // //   );
+
+// // // // // //   const updateExtra = (k: keyof ProductExtras, v: number) => {
+// // // // // //     setExtras((prev) => ({
+// // // // // //       ...prev,
+// // // // // //       [activeProduct]: {
+// // // // // //         ...prev[activeProduct],
+// // // // // //         [k]: v,
+// // // // // //       },
+// // // // // //     }));
+// // // // // //   };
+
+// // // // // //   return (
+// // // // // //     <section
+// // // // // //       id="eligibility"
+// // // // // //       className="relative bg-gradient-to-br from-slate-50 via-white to-blue-50 py-20"
+// // // // // //     >
+// // // // // //       <div className="container mx-auto px-4">
+// // // // // //         <div className="mx-auto mb-10 max-w-3xl text-center">
+// // // // // //           <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-1.5 text-sm font-semibold text-blue-700">
+// // // // // //             <Calculator className="h-4 w-4" />
+// // // // // //             Eligibility Check
+// // // // // //           </div>
+
+// // // // // //           <h2 className="text-3xl font-bold text-slate-900 md:text-4xl">
+// // // // // //             Check Your Eligibility — Product Wise
+// // // // // //           </h2>
+
+// // // // // //           <p className="mt-3 text-slate-600">
+// // // // // //             Enter your employment & financial details once and instantly check
+// // // // // //             eligibility for every loan, insurance and investment product.
+// // // // // //           </p>
+// // // // // //         </div>
+
+// // // // // //         <div className="grid gap-6 lg:grid-cols-5">
+// // // // // //           {/* LEFT: Common details */}
+// // // // // //           <div className="h-fit overflow-visible rounded-3xl border bg-white p-6 shadow-sm lg:col-span-2">
+// // // // // //             <h3 className="mb-4 text-lg font-semibold text-slate-900">
+// // // // // //               Your Details
+// // // // // //             </h3>
+
+// // // // // //             <div className="space-y-4">
+// // // // // //               <div>
+// // // // // //                 <Label>Full Name</Label>
+// // // // // //                 <Input
+// // // // // //                   value={base.fullName}
+// // // // // //                   onChange={(e) =>
+// // // // // //                     setBase({ ...base, fullName: e.target.value })
+// // // // // //                   }
+// // // // // //                   placeholder="As per PAN"
+// // // // // //                 />
+// // // // // //               </div>
+
+// // // // // //               <div className="grid grid-cols-2 gap-3">
+// // // // // //                 <div>
+// // // // // //                   <Label>Age</Label>
+// // // // // //                   <Input
+// // // // // //                     type="number"
+// // // // // //                     value={base.age}
+// // // // // //                     onChange={(e) =>
+// // // // // //                       setBase({ ...base, age: +e.target.value })
+// // // // // //                     }
+// // // // // //                   />
+// // // // // //                 </div>
+
+// // // // // //                 <div>
+// // // // // //                   <Label>City</Label>
+// // // // // //                   <Input
+// // // // // //                     value={base.city}
+// // // // // //                     onChange={(e) =>
+// // // // // //                       setBase({ ...base, city: e.target.value })
+// // // // // //                     }
+// // // // // //                     placeholder="Mumbai"
+// // // // // //                   />
+// // // // // //                 </div>
+// // // // // //               </div>
+
+// // // // // //               <div>
+// // // // // //                 <Label>Employment Type</Label>
+
+// // // // // //                 <Select
+// // // // // //                   value={base.employment}
+// // // // // //                   onValueChange={(v: EmploymentType) =>
+// // // // // //                     setBase({ ...base, employment: v })
+// // // // // //                   }
+// // // // // //                 >
+// // // // // //                   <SelectTrigger className="mt-2 h-12 rounded-xl border-slate-300 bg-white">
+// // // // // //                     <SelectValue placeholder="Select employment type" />
+// // // // // //                   </SelectTrigger>
+
+// // // // // //                   <SelectContent
+// // // // // //                     position="popper"
+// // // // // //                     sideOffset={8}
+// // // // // //                     className="z-[9999] rounded-xl border border-slate-200 bg-white shadow-xl"
+// // // // // //                   >
+// // // // // //                     <SelectItem value="salaried">Salaried</SelectItem>
+// // // // // //                     <SelectItem value="self_employed">
+// // // // // //                       Self Employed Professional
+// // // // // //                     </SelectItem>
+// // // // // //                     <SelectItem value="business">Business Owner</SelectItem>
+// // // // // //                     <SelectItem value="student">Student</SelectItem>
+// // // // // //                   </SelectContent>
+// // // // // //                 </Select>
+// // // // // //               </div>
+
+// // // // // //               <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
+// // // // // //                 <div>
+// // // // // //                   <Label>Monthly Income (₹)</Label>
+// // // // // //                   <Input
+// // // // // //                     type="number"
+// // // // // //                     value={base.monthlyIncome}
+// // // // // //                     onChange={(e) =>
+// // // // // //                       setBase({
+// // // // // //                         ...base,
+// // // // // //                         monthlyIncome: +e.target.value,
+// // // // // //                       })
+// // // // // //                     }
+// // // // // //                   />
+// // // // // //                 </div>
+
+// // // // // //                 <div>
+// // // // // //                   <Label>Existing EMI (₹/month)</Label>
+// // // // // //                   <Input
+// // // // // //                     type="number"
+// // // // // //                     value={base.monthlyEmi}
+// // // // // //                     onChange={(e) =>
+// // // // // //                       setBase({
+// // // // // //                         ...base,
+// // // // // //                         monthlyEmi: +e.target.value,
+// // // // // //                       })
+// // // // // //                     }
+// // // // // //                     placeholder="e.g. 15000"
+// // // // // //                   />
+// // // // // //                 </div>
+// // // // // //               </div>
+
+// // // // // //               <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
+// // // // // //                 <div>
+// // // // // //                   <Label>CIBIL Score</Label>
+// // // // // //                   <Input
+// // // // // //                     type="number"
+// // // // // //                     value={base.cibil}
+// // // // // //                     onChange={(e) =>
+// // // // // //                       setBase({ ...base, cibil: +e.target.value })
+// // // // // //                     }
+// // // // // //                   />
+// // // // // //                 </div>
+
+// // // // // //                 <div>
+// // // // // //                   <Label>Work Experience (yrs)</Label>
+// // // // // //                   <Input
+// // // // // //                     type="number"
+// // // // // //                     value={base.workYears}
+// // // // // //                     onChange={(e) =>
+// // // // // //                       setBase({
+// // // // // //                         ...base,
+// // // // // //                         workYears: +e.target.value,
+// // // // // //                       })
+// // // // // //                     }
+// // // // // //                   />
+// // // // // //                 </div>
+// // // // // //               </div>
+// // // // // //             </div>
+// // // // // //           </div>
+
+// // // // // //           {/* RIGHT: Product tabs */}
+// // // // // //           <div className="rounded-3xl border bg-white p-6 shadow-sm lg:col-span-3">
+// // // // // //             <Tabs
+// // // // // //               value={activeProduct}
+// // // // // //               onValueChange={(v) => {
+// // // // // //                 setActiveProduct(v as ProductKey);
+// // // // // //                 setSubmitted(false);
+// // // // // //               }}
+// // // // // //             >
+// // // // // //               <TabsList className="grid h-auto grid-cols-2 gap-2 bg-slate-100 p-1 sm:grid-cols-4">
+// // // // // //                 {PRODUCTS.slice(0, 4).map((p) => (
+// // // // // //                   <TabsTrigger
+// // // // // //                     key={p.key}
+// // // // // //                     value={p.key}
+// // // // // //                     className={`py-2 text-xs sm:text-sm ${ACTIVE_TAB_CLASS[p.key]}`}
+// // // // // //                   >
+// // // // // //                     <p.icon className="mr-1 h-3.5 w-3.5" />
+// // // // // //                     {p.name}
+// // // // // //                   </TabsTrigger>
+// // // // // //                 ))}
+// // // // // //               </TabsList>
+
+// // // // // //               <TabsList className="mt-2 grid h-auto grid-cols-2 gap-2 bg-slate-100 p-1 sm:grid-cols-4">
+// // // // // //                 {PRODUCTS.slice(4).map((p) => (
+// // // // // //                   <TabsTrigger
+// // // // // //                     key={p.key}
+// // // // // //                     value={p.key}
+// // // // // //                     className={`py-2 text-xs sm:text-sm ${ACTIVE_TAB_CLASS[p.key]}`}
+// // // // // //                   >
+// // // // // //                     <p.icon className="mr-1 h-3.5 w-3.5" />
+// // // // // //                     {p.name}
+// // // // // //                   </TabsTrigger>
+// // // // // //                 ))}
+// // // // // //               </TabsList>
+
+// // // // // //               {PRODUCTS.map((p) => (
+// // // // // //                 <TabsContent key={p.key} value={p.key} className="mt-5">
+// // // // // //                   <div className="grid gap-5 md:grid-cols-2">
+// // // // // //                     {/* LEFT: Product-specific form */}
+// // // // // //                     <div className="order-1 space-y-4 md:order-1">
+// // // // // //                       <div
+// // // // // //                         className={`flex items-center gap-3 rounded-2xl bg-gradient-to-r ${p.color} p-4 text-white`}
+// // // // // //                       >
+// // // // // //                         <p.icon className="h-7 w-7" />
+
+// // // // // //                         <div>
+// // // // // //                           <div className="font-semibold">{p.name}</div>
+
+// // // // // //                           <div className="text-xs capitalize text-white/80">
+// // // // // //                             {p.category} eligibility check
+// // // // // //                           </div>
+// // // // // //                         </div>
+// // // // // //                       </div>
+
+// // // // // //                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+// // // // // //                         {p.fields.includes("loanAmount") && (
+// // // // // //                           <div>
+// // // // // //                             <Label>Loan Amount (₹)</Label>
+// // // // // //                             <Input
+// // // // // //                               type="number"
+// // // // // //                               value={extras[p.key].loanAmount ?? 0}
+// // // // // //                               onChange={(e) =>
+// // // // // //                                 updateExtra("loanAmount", +e.target.value)
+// // // // // //                               }
+// // // // // //                             />
+// // // // // //                           </div>
+// // // // // //                         )}
+
+// // // // // //                         {p.fields.includes("loanTenure") && (
+// // // // // //                           <div>
+// // // // // //                             <Label>Tenure (years)</Label>
+// // // // // //                             <Input
+// // // // // //                               type="number"
+// // // // // //                               value={extras[p.key].loanTenure ?? 0}
+// // // // // //                               onChange={(e) =>
+// // // // // //                                 updateExtra("loanTenure", +e.target.value)
+// // // // // //                               }
+// // // // // //                             />
+// // // // // //                           </div>
+// // // // // //                         )}
+
+// // // // // //                         {p.fields.includes("propertyValue") && (
+// // // // // //                           <div>
+// // // // // //                             <Label>Property Value (₹)</Label>
+// // // // // //                             <Input
+// // // // // //                               type="number"
+// // // // // //                               value={extras[p.key].propertyValue ?? 0}
+// // // // // //                               onChange={(e) =>
+// // // // // //                                 updateExtra("propertyValue", +e.target.value)
+// // // // // //                               }
+// // // // // //                             />
+// // // // // //                           </div>
+// // // // // //                         )}
+
+// // // // // //                         {p.fields.includes("vehicleValue") && (
+// // // // // //                           <div>
+// // // // // //                             <Label>Vehicle Value (₹)</Label>
+// // // // // //                             <Input
+// // // // // //                               type="number"
+// // // // // //                               value={extras[p.key].vehicleValue ?? 0}
+// // // // // //                               onChange={(e) =>
+// // // // // //                                 updateExtra("vehicleValue", +e.target.value)
+// // // // // //                               }
+// // // // // //                             />
+// // // // // //                           </div>
+// // // // // //                         )}
+
+// // // // // //                         {p.fields.includes("collegeFees") && (
+// // // // // //                           <div>
+// // // // // //                             <Label>Total College Fees (₹)</Label>
+// // // // // //                             <Input
+// // // // // //                               type="number"
+// // // // // //                               value={extras[p.key].collegeFees ?? 0}
+// // // // // //                               onChange={(e) =>
+// // // // // //                                 updateExtra("collegeFees", +e.target.value)
+// // // // // //                               }
+// // // // // //                             />
+// // // // // //                           </div>
+// // // // // //                         )}
+
+// // // // // //                         {p.fields.includes("businessTurnover") && (
+// // // // // //                           <div>
+// // // // // //                             <Label>Annual Turnover (₹)</Label>
+// // // // // //                             <Input
+// // // // // //                               type="number"
+// // // // // //                               value={extras[p.key].businessTurnover ?? 0}
+// // // // // //                               onChange={(e) =>
+// // // // // //                                 updateExtra(
+// // // // // //                                   "businessTurnover",
+// // // // // //                                   +e.target.value,
+// // // // // //                                 )
+// // // // // //                               }
+// // // // // //                             />
+// // // // // //                           </div>
+// // // // // //                         )}
+
+// // // // // //                         {p.fields.includes("sumAssured") && (
+// // // // // //                           <div>
+// // // // // //                             <Label>Sum Assured (₹)</Label>
+// // // // // //                             <Input
+// // // // // //                               type="number"
+// // // // // //                               value={extras[p.key].sumAssured ?? 0}
+// // // // // //                               onChange={(e) =>
+// // // // // //                                 updateExtra("sumAssured", +e.target.value)
+// // // // // //                               }
+// // // // // //                             />
+// // // // // //                           </div>
+// // // // // //                         )}
+
+// // // // // //                         {p.fields.includes("members") && (
+// // // // // //                           <div>
+// // // // // //                             <Label>Members to Cover</Label>
+// // // // // //                             <Input
+// // // // // //                               type="number"
+// // // // // //                               value={extras[p.key].members ?? 1}
+// // // // // //                               onChange={(e) =>
+// // // // // //                                 updateExtra("members", +e.target.value)
+// // // // // //                               }
+// // // // // //                             />
+// // // // // //                           </div>
+// // // // // //                         )}
+
+// // // // // //                         {p.fields.includes("sipAmount") && (
+// // // // // //                           <div>
+// // // // // //                             <Label>Monthly SIP (₹)</Label>
+// // // // // //                             <Input
+// // // // // //                               type="number"
+// // // // // //                               value={extras[p.key].sipAmount ?? 0}
+// // // // // //                               onChange={(e) =>
+// // // // // //                                 updateExtra("sipAmount", +e.target.value)
+// // // // // //                               }
+// // // // // //                             />
+// // // // // //                           </div>
+// // // // // //                         )}
+// // // // // //                       </div>
+
+// // // // // //                       <Button
+// // // // // //                         onClick={() => setSubmitted(true)}
+// // // // // //                         className="w-full rounded-full bg-gradient-to-r from-[#17357e] to-blue-600 text-white"
+// // // // // //                       >
+// // // // // //                         Check Eligibility
+// // // // // //                       </Button>
+// // // // // //                     </div>
+
+// // // // // //                     {/* RIGHT: Result panel */}
+// // // // // //                     <div className="order-2 md:order-2">
+// // // // // //                       {!submitted ? (
+// // // // // //                         <div className="flex h-full min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
+// // // // // //                           <p.icon className="mb-3 h-10 w-10 text-slate-400" />
+
+// // // // // //                           <div className="font-semibold text-slate-700">
+// // // // // //                             {p.name}
+// // // // // //                           </div>
+
+// // // // // //                           <div className="mt-1 text-xs text-slate-500">
+// // // // // //                             Fill the details and click "Check Eligibility" to
+// // // // // //                             see your result here.
+// // // // // //                           </div>
+// // // // // //                         </div>
+// // // // // //                       ) : (
+// // // // // //                         <div
+// // // // // //                           className={`h-full rounded-2xl border p-5 ${
+// // // // // //                             result.eligible
+// // // // // //                               ? "border-green-200 bg-green-50"
+// // // // // //                               : "border-red-200 bg-red-50"
+// // // // // //                           }`}
+// // // // // //                         >
+// // // // // //                           <div className="mb-3 flex items-center justify-between">
+// // // // // //                             <div className="flex items-center gap-2">
+// // // // // //                               {result.eligible ? (
+// // // // // //                                 <CheckCircle2 className="h-6 w-6 text-green-600" />
+// // // // // //                               ) : (
+// // // // // //                                 <XCircle className="h-6 w-6 text-red-600" />
+// // // // // //                               )}
+
+// // // // // //                               <div
+// // // // // //                                 className={`font-semibold ${
+// // // // // //                                   result.eligible
+// // // // // //                                     ? "text-green-800"
+// // // // // //                                     : "text-red-800"
+// // // // // //                                 }`}
+// // // // // //                               >
+// // // // // //                                 {result.eligible
+// // // // // //                                   ? "You are Eligible!"
+// // // // // //                                   : "Not Eligible"}
+// // // // // //                               </div>
+// // // // // //                             </div>
+
+// // // // // //                             <div className="text-xs font-semibold text-slate-700">
+// // // // // //                               Score: {result.score}/100
+// // // // // //                             </div>
+// // // // // //                           </div>
+
+// // // // // //                           <div className="grid grid-cols-1 gap-2 text-sm">
+// // // // // //                             {result.maxAmount !== undefined && (
+// // // // // //                               <div className="rounded-xl bg-white p-3">
+// // // // // //                                 <div className="text-xs text-slate-500">
+// // // // // //                                   Max Eligible Amount
+// // // // // //                                 </div>
+
+// // // // // //                                 <div className="font-semibold text-slate-900">
+// // // // // //                                   {formatINR(result.maxAmount)}
+// // // // // //                                 </div>
+// // // // // //                               </div>
+// // // // // //                             )}
+
+// // // // // //                             {result.estimatedEmi !== undefined && (
+// // // // // //                               <div className="rounded-xl bg-white p-3">
+// // // // // //                                 <div className="text-xs text-slate-500">
+// // // // // //                                   Estimated EMI
+// // // // // //                                 </div>
+
+// // // // // //                                 <div className="font-semibold text-slate-900">
+// // // // // //                                   {formatINR(result.estimatedEmi)}/mo
+// // // // // //                                 </div>
+// // // // // //                               </div>
+// // // // // //                             )}
+
+// // // // // //                             {result.premium !== undefined && (
+// // // // // //                               <div className="rounded-xl bg-white p-3">
+// // // // // //                                 <div className="text-xs text-slate-500">
+// // // // // //                                   Estimated Premium
+// // // // // //                                 </div>
+
+// // // // // //                                 <div className="font-semibold text-slate-900">
+// // // // // //                                   {formatINR(result.premium)}/yr
+// // // // // //                                 </div>
+// // // // // //                               </div>
+// // // // // //                             )}
+// // // // // //                           </div>
+
+// // // // // //                           {result.positives.length > 0 && (
+// // // // // //                             <ul className="mt-3 space-y-1 text-sm text-green-800">
+// // // // // //                               {result.positives.map((r, i) => (
+// // // // // //                                 <li key={i} className="flex gap-2">
+// // // // // //                                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+// // // // // //                                   {r}
+// // // // // //                                 </li>
+// // // // // //                               ))}
+// // // // // //                             </ul>
+// // // // // //                           )}
+
+// // // // // //                           {result.reasons.length > 0 && (
+// // // // // //                             <ul className="mt-3 space-y-1 text-sm text-red-800">
+// // // // // //                               {result.reasons.map((r, i) => (
+// // // // // //                                 <li key={i} className="flex gap-2">
+// // // // // //                                   <XCircle className="mt-0.5 h-4 w-4 shrink-0" />
+// // // // // //                                   {r}
+// // // // // //                                 </li>
+// // // // // //                               ))}
+// // // // // //                             </ul>
+// // // // // //                           )}
+
+// // // // // //                           <Dialog>
+// // // // // //                             <DialogTrigger asChild>
+// // // // // //                               <Button className="mt-4 w-full rounded-full bg-[#17357e] text-white">
+// // // // // //                                 {result.eligible
+// // // // // //                                   ? "Apply Now"
+// // // // // //                                   : "Talk to an Expert"}
+// // // // // //                               </Button>
+// // // // // //                             </DialogTrigger>
+
+// // // // // //                             <DialogContent className="max-w-lg rounded-3xl">
+// // // // // //                               <DialogHeader>
+// // // // // //                                 <DialogTitle>
+// // // // // //                                   {p.name} — Application
+// // // // // //                                 </DialogTitle>
+// // // // // //                               </DialogHeader>
+
+// // // // // //                               <LeadForm
+// // // // // //                                 productType={
+// // // // // //                                   p.category === "loan"
+// // // // // //                                     ? "loan"
+// // // // // //                                     : p.category === "insurance"
+// // // // // //                                       ? "insurance"
+// // // // // //                                       : "mutual_fund"
+// // // // // //                                 }
+// // // // // //                                 productName={p.name}
+// // // // // //                               />
+// // // // // //                             </DialogContent>
+// // // // // //                           </Dialog>
+// // // // // //                         </div>
+// // // // // //                       )}
+// // // // // //                     </div>
+// // // // // //                   </div>
+// // // // // //                 </TabsContent>
+// // // // // //               ))}
+// // // // // //             </Tabs>
+// // // // // //           </div>
+// // // // // //         </div>
+// // // // // //       </div>
+// // // // // //     </section>
+// // // // // //   );
+// // // // // // }
+// // // // // import { useMemo, useState } from "react";
 // // // // // import { Button } from "@/components/ui/button";
 // // // // // import { Input } from "@/components/ui/input";
 // // // // // import { Label } from "@/components/ui/label";
@@ -940,7 +1871,6 @@
 // // // //   SelectTrigger,
 // // // //   SelectValue,
 // // // // } from "@/components/ui/select";
-// // // // import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // // // // import {
 // // // //   Dialog,
 // // // //   DialogContent,
@@ -961,6 +1891,9 @@
 // // // //   ShieldCheck,
 // // // //   TrendingUp,
 // // // //   Calculator,
+// // // //   IndianRupee,
+// // // //   ClipboardCheck,
+// // // //   UserRound,
 // // // // } from "lucide-react";
 
 // // // // type EmploymentType = "salaried" | "self_employed" | "business" | "student";
@@ -1074,25 +2007,6 @@
 // // // //   },
 // // // // ];
 
-// // // // const ACTIVE_TAB_CLASS: Record<ProductKey, string> = {
-// // // //   personal_loan:
-// // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md",
-// // // //   home_loan:
-// // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-md",
-// // // //   business_loan:
-// // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-green-600 data-[state=active]:text-white data-[state=active]:shadow-md",
-// // // //   car_loan:
-// // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-rose-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-md",
-// // // //   education_loan:
-// // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-fuchsia-600 data-[state=active]:text-white data-[state=active]:shadow-md",
-// // // //   health_insurance:
-// // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-600 data-[state=active]:text-white data-[state=active]:shadow-md",
-// // // //   life_insurance:
-// // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-sky-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md",
-// // // //   mutual_funds:
-// // // //     "data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-md",
-// // // // };
-
 // // // // interface EligibilityResult {
 // // // //   eligible: boolean;
 // // // //   score: number;
@@ -1114,7 +2028,7 @@
 
 // // // //   if (base.age < 21) {
 // // // //     reasons.push("Minimum age requirement is 21 years");
-// // // //   } else if (base.age > 21) {
+// // // //   } else {
 // // // //     positives.push("Age criteria met");
 // // // //     score += 5;
 // // // //   }
@@ -1157,14 +2071,16 @@
 
 // // // //   const rate =
 // // // //     product.key === "home_loan"
-// // // //       ? 8.5
-// // // //       : product.key === "car_loan"
-// // // //         ? 9.5
-// // // //         : product.key === "education_loan"
-// // // //           ? 10.5
-// // // //           : product.key === "business_loan"
-// // // //             ? 14
-// // // //             : 12;
+// // // //       ? 7.1
+// // // //       : product.key === "personal_loan"
+// // // //         ? 9.99
+// // // //         : product.key === "business_loan"
+// // // //           ? 11.99
+// // // //           : product.key === "car_loan"
+// // // //             ? 7.65
+// // // //             : product.key === "education_loan"
+// // // //               ? 8.5
+// // // //               : 10;
 
 // // // //   const tenure = ex.loanTenure && ex.loanTenure > 0 ? ex.loanTenure : 5;
 
@@ -1373,34 +2289,101 @@
 // // // //     }));
 // // // //   };
 
+// // // //   const ProductIcon = product.icon;
+
 // // // //   return (
 // // // //     <section
 // // // //       id="eligibility"
-// // // //       className="relative bg-gradient-to-br from-slate-50 via-white to-blue-50 py-20"
+// // // //       className="relative bg-gradient-to-br from-slate-50 via-white to-blue-50 py-14 sm:py-20"
 // // // //     >
-// // // //       <div className="container mx-auto px-4">
-// // // //         <div className="mx-auto mb-10 max-w-3xl text-center">
+// // // //       <div className="container mx-auto px-4 sm:px-6">
+// // // //         <div className="mx-auto mb-8 max-w-3xl text-center sm:mb-10">
 // // // //           <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-1.5 text-sm font-semibold text-blue-700">
 // // // //             <Calculator className="h-4 w-4" />
 // // // //             Eligibility Check
 // // // //           </div>
 
 // // // //           <h2 className="text-3xl font-bold text-slate-900 md:text-4xl">
-// // // //             Check Your Eligibility — Product Wise
+// // // //             Check Your Eligibility
 // // // //           </h2>
 
-// // // //           <p className="mt-3 text-slate-600">
-// // // //             Enter your employment & financial details once and instantly check
-// // // //             eligibility for every loan, insurance and investment product.
+// // // //           <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base">
+// // // //             Select product, fill your basic details, enter amount and instantly
+// // // //             check your eligibility.
 // // // //           </p>
 // // // //         </div>
 
-// // // //         <div className="grid gap-6 lg:grid-cols-5">
-// // // //           {/* LEFT: Common details */}
-// // // //           <div className="h-fit overflow-visible rounded-3xl border bg-white p-6 shadow-sm lg:col-span-2">
-// // // //             <h3 className="mb-4 text-lg font-semibold text-slate-900">
-// // // //               Your Details
-// // // //             </h3>
+// // // //         <div className="grid gap-5 xl:grid-cols-[0.9fr_1.2fr_1fr_1fr]">
+// // // //           {/* 1. PRODUCT */}
+// // // //           <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+// // // //             <div className="mb-4 flex items-center gap-2">
+// // // //               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+// // // //                 <ClipboardCheck className="h-5 w-5" />
+// // // //               </div>
+
+// // // //               <div>
+// // // //                 <h3 className="text-lg font-bold text-slate-900">Product</h3>
+// // // //                 <p className="text-xs text-slate-500">
+// // // //                   Choose product category
+// // // //                 </p>
+// // // //               </div>
+// // // //             </div>
+
+// // // //             <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-1">
+// // // //               {PRODUCTS.map((p) => {
+// // // //                 const Icon = p.icon;
+// // // //                 const active = activeProduct === p.key;
+
+// // // //                 return (
+// // // //                   <button
+// // // //                     key={p.key}
+// // // //                     type="button"
+// // // //                     onClick={() => {
+// // // //                       setActiveProduct(p.key);
+// // // //                       setSubmitted(false);
+// // // //                     }}
+// // // //                     className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${
+// // // //                       active
+// // // //                         ? `border-transparent bg-gradient-to-r ${p.color} text-white shadow-md`
+// // // //                         : "border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-200 hover:bg-blue-50"
+// // // //                     }`}
+// // // //                   >
+// // // //                     <Icon
+// // // //                       className={`h-5 w-5 shrink-0 ${
+// // // //                         active ? "text-white" : "text-slate-500"
+// // // //                       }`}
+// // // //                     />
+
+// // // //                     <div>
+// // // //                       <div className="text-sm font-semibold">{p.name}</div>
+// // // //                       <div
+// // // //                         className={`text-[11px] capitalize ${
+// // // //                           active ? "text-white/80" : "text-slate-400"
+// // // //                         }`}
+// // // //                       >
+// // // //                         {p.category}
+// // // //                       </div>
+// // // //                     </div>
+// // // //                   </button>
+// // // //                 );
+// // // //               })}
+// // // //             </div>
+// // // //           </div>
+
+// // // //           {/* 2. FORM */}
+// // // //           <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+// // // //             <div className="mb-4 flex items-center gap-2">
+// // // //               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
+// // // //                 <UserRound className="h-5 w-5" />
+// // // //               </div>
+
+// // // //               <div>
+// // // //                 <h3 className="text-lg font-bold text-slate-900">Form</h3>
+// // // //                 <p className="text-xs text-slate-500">
+// // // //                   Personal & income details
+// // // //                 </p>
+// // // //               </div>
+// // // //             </div>
 
 // // // //             <div className="space-y-4">
 // // // //               <div>
@@ -1411,10 +2394,11 @@
 // // // //                     setBase({ ...base, fullName: e.target.value })
 // // // //                   }
 // // // //                   placeholder="As per PAN"
+// // // //                   className="mt-1"
 // // // //                 />
 // // // //               </div>
 
-// // // //               <div className="grid grid-cols-2 gap-3">
+// // // //               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
 // // // //                 <div>
 // // // //                   <Label>Age</Label>
 // // // //                   <Input
@@ -1423,6 +2407,7 @@
 // // // //                     onChange={(e) =>
 // // // //                       setBase({ ...base, age: +e.target.value })
 // // // //                     }
+// // // //                     className="mt-1"
 // // // //                   />
 // // // //                 </div>
 
@@ -1434,6 +2419,7 @@
 // // // //                       setBase({ ...base, city: e.target.value })
 // // // //                     }
 // // // //                     placeholder="Mumbai"
+// // // //                     className="mt-1"
 // // // //                   />
 // // // //                 </div>
 // // // //               </div>
@@ -1447,7 +2433,7 @@
 // // // //                     setBase({ ...base, employment: v })
 // // // //                   }
 // // // //                 >
-// // // //                   <SelectTrigger className="mt-2 h-12 rounded-xl border-slate-300 bg-white">
+// // // //                   <SelectTrigger className="mt-1 h-11 rounded-xl border-slate-300 bg-white">
 // // // //                     <SelectValue placeholder="Select employment type" />
 // // // //                   </SelectTrigger>
 
@@ -1466,7 +2452,7 @@
 // // // //                 </Select>
 // // // //               </div>
 
-// // // //               <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
+// // // //               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
 // // // //                 <div>
 // // // //                   <Label>Monthly Income (₹)</Label>
 // // // //                   <Input
@@ -1478,6 +2464,7 @@
 // // // //                         monthlyIncome: +e.target.value,
 // // // //                       })
 // // // //                     }
+// // // //                     className="mt-1"
 // // // //                   />
 // // // //                 </div>
 
@@ -1493,11 +2480,12 @@
 // // // //                       })
 // // // //                     }
 // // // //                     placeholder="e.g. 15000"
+// // // //                     className="mt-1"
 // // // //                   />
 // // // //                 </div>
 // // // //               </div>
 
-// // // //               <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
+// // // //               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
 // // // //                 <div>
 // // // //                   <Label>CIBIL Score</Label>
 // // // //                   <Input
@@ -1506,6 +2494,7 @@
 // // // //                     onChange={(e) =>
 // // // //                       setBase({ ...base, cibil: +e.target.value })
 // // // //                     }
+// // // //                     className="mt-1"
 // // // //                   />
 // // // //                 </div>
 
@@ -1520,340 +2509,318 @@
 // // // //                         workYears: +e.target.value,
 // // // //                       })
 // // // //                     }
+// // // //                     className="mt-1"
 // // // //                   />
 // // // //                 </div>
 // // // //               </div>
 // // // //             </div>
 // // // //           </div>
 
-// // // //           {/* RIGHT: Product tabs */}
-// // // //           <div className="rounded-3xl border bg-white p-6 shadow-sm lg:col-span-3">
-// // // //             <Tabs
-// // // //               value={activeProduct}
-// // // //               onValueChange={(v) => {
-// // // //                 setActiveProduct(v as ProductKey);
-// // // //                 setSubmitted(false);
-// // // //               }}
+// // // //           {/* 3. AMOUNT */}
+// // // //           <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+// // // //             <div className="mb-4 flex items-center gap-2">
+// // // //               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+// // // //                 <IndianRupee className="h-5 w-5" />
+// // // //               </div>
+
+// // // //               <div>
+// // // //                 <h3 className="text-lg font-bold text-slate-900">Amount</h3>
+// // // //                 <p className="text-xs text-slate-500">
+// // // //                   {product.name} details
+// // // //                 </p>
+// // // //               </div>
+// // // //             </div>
+
+// // // //             <div
+// // // //               className={`mb-5 flex items-center gap-3 rounded-2xl bg-gradient-to-r ${product.color} p-4 text-white`}
 // // // //             >
-// // // //               <TabsList className="grid h-auto grid-cols-2 gap-2 bg-slate-100 p-1 sm:grid-cols-4">
-// // // //                 {PRODUCTS.slice(0, 4).map((p) => (
-// // // //                   <TabsTrigger
-// // // //                     key={p.key}
-// // // //                     value={p.key}
-// // // //                     className={`py-2 text-xs sm:text-sm ${ACTIVE_TAB_CLASS[p.key]}`}
-// // // //                   >
-// // // //                     <p.icon className="mr-1 h-3.5 w-3.5" />
-// // // //                     {p.name}
-// // // //                   </TabsTrigger>
-// // // //                 ))}
-// // // //               </TabsList>
+// // // //               <ProductIcon className="h-7 w-7" />
 
-// // // //               <TabsList className="mt-2 grid h-auto grid-cols-2 gap-2 bg-slate-100 p-1 sm:grid-cols-4">
-// // // //                 {PRODUCTS.slice(4).map((p) => (
-// // // //                   <TabsTrigger
-// // // //                     key={p.key}
-// // // //                     value={p.key}
-// // // //                     className={`py-2 text-xs sm:text-sm ${ACTIVE_TAB_CLASS[p.key]}`}
-// // // //                   >
-// // // //                     <p.icon className="mr-1 h-3.5 w-3.5" />
-// // // //                     {p.name}
-// // // //                   </TabsTrigger>
-// // // //                 ))}
-// // // //               </TabsList>
+// // // //               <div>
+// // // //                 <div className="font-semibold">{product.name}</div>
 
-// // // //               {PRODUCTS.map((p) => (
-// // // //                 <TabsContent key={p.key} value={p.key} className="mt-5">
-// // // //                   <div className="grid gap-5 md:grid-cols-2">
-// // // //                     {/* LEFT: Product-specific form */}
-// // // //                     <div className="order-1 space-y-4 md:order-1">
-// // // //                       <div
-// // // //                         className={`flex items-center gap-3 rounded-2xl bg-gradient-to-r ${p.color} p-4 text-white`}
-// // // //                       >
-// // // //                         <p.icon className="h-7 w-7" />
+// // // //                 <div className="text-xs capitalize text-white/80">
+// // // //                   {product.category} eligibility check
+// // // //                 </div>
+// // // //               </div>
+// // // //             </div>
 
-// // // //                         <div>
-// // // //                           <div className="font-semibold">{p.name}</div>
+// // // //             <div className="space-y-4">
+// // // //               {product.fields.includes("loanAmount") && (
+// // // //                 <div>
+// // // //                   <Label>Loan Amount (₹)</Label>
+// // // //                   <Input
+// // // //                     type="number"
+// // // //                     value={extras[product.key].loanAmount ?? 0}
+// // // //                     onChange={(e) =>
+// // // //                       updateExtra("loanAmount", +e.target.value)
+// // // //                     }
+// // // //                     className="mt-1"
+// // // //                   />
+// // // //                 </div>
+// // // //               )}
 
-// // // //                           <div className="text-xs capitalize text-white/80">
-// // // //                             {p.category} eligibility check
-// // // //                           </div>
-// // // //                         </div>
-// // // //                       </div>
+// // // //               {product.fields.includes("loanTenure") && (
+// // // //                 <div>
+// // // //                   <Label>Tenure (years)</Label>
+// // // //                   <Input
+// // // //                     type="number"
+// // // //                     value={extras[product.key].loanTenure ?? 0}
+// // // //                     onChange={(e) =>
+// // // //                       updateExtra("loanTenure", +e.target.value)
+// // // //                     }
+// // // //                     className="mt-1"
+// // // //                   />
+// // // //                 </div>
+// // // //               )}
 
-// // // //                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-// // // //                         {p.fields.includes("loanAmount") && (
-// // // //                           <div>
-// // // //                             <Label>Loan Amount (₹)</Label>
-// // // //                             <Input
-// // // //                               type="number"
-// // // //                               value={extras[p.key].loanAmount ?? 0}
-// // // //                               onChange={(e) =>
-// // // //                                 updateExtra("loanAmount", +e.target.value)
-// // // //                               }
-// // // //                             />
-// // // //                           </div>
-// // // //                         )}
+// // // //               {product.fields.includes("propertyValue") && (
+// // // //                 <div>
+// // // //                   <Label>Property Value (₹)</Label>
+// // // //                   <Input
+// // // //                     type="number"
+// // // //                     value={extras[product.key].propertyValue ?? 0}
+// // // //                     onChange={(e) =>
+// // // //                       updateExtra("propertyValue", +e.target.value)
+// // // //                     }
+// // // //                     className="mt-1"
+// // // //                   />
+// // // //                 </div>
+// // // //               )}
 
-// // // //                         {p.fields.includes("loanTenure") && (
-// // // //                           <div>
-// // // //                             <Label>Tenure (years)</Label>
-// // // //                             <Input
-// // // //                               type="number"
-// // // //                               value={extras[p.key].loanTenure ?? 0}
-// // // //                               onChange={(e) =>
-// // // //                                 updateExtra("loanTenure", +e.target.value)
-// // // //                               }
-// // // //                             />
-// // // //                           </div>
-// // // //                         )}
+// // // //               {product.fields.includes("vehicleValue") && (
+// // // //                 <div>
+// // // //                   <Label>Vehicle Value (₹)</Label>
+// // // //                   <Input
+// // // //                     type="number"
+// // // //                     value={extras[product.key].vehicleValue ?? 0}
+// // // //                     onChange={(e) =>
+// // // //                       updateExtra("vehicleValue", +e.target.value)
+// // // //                     }
+// // // //                     className="mt-1"
+// // // //                   />
+// // // //                 </div>
+// // // //               )}
 
-// // // //                         {p.fields.includes("propertyValue") && (
-// // // //                           <div>
-// // // //                             <Label>Property Value (₹)</Label>
-// // // //                             <Input
-// // // //                               type="number"
-// // // //                               value={extras[p.key].propertyValue ?? 0}
-// // // //                               onChange={(e) =>
-// // // //                                 updateExtra("propertyValue", +e.target.value)
-// // // //                               }
-// // // //                             />
-// // // //                           </div>
-// // // //                         )}
+// // // //               {product.fields.includes("collegeFees") && (
+// // // //                 <div>
+// // // //                   <Label>Total College Fees (₹)</Label>
+// // // //                   <Input
+// // // //                     type="number"
+// // // //                     value={extras[product.key].collegeFees ?? 0}
+// // // //                     onChange={(e) =>
+// // // //                       updateExtra("collegeFees", +e.target.value)
+// // // //                     }
+// // // //                     className="mt-1"
+// // // //                   />
+// // // //                 </div>
+// // // //               )}
 
-// // // //                         {p.fields.includes("vehicleValue") && (
-// // // //                           <div>
-// // // //                             <Label>Vehicle Value (₹)</Label>
-// // // //                             <Input
-// // // //                               type="number"
-// // // //                               value={extras[p.key].vehicleValue ?? 0}
-// // // //                               onChange={(e) =>
-// // // //                                 updateExtra("vehicleValue", +e.target.value)
-// // // //                               }
-// // // //                             />
-// // // //                           </div>
-// // // //                         )}
+// // // //               {product.fields.includes("businessTurnover") && (
+// // // //                 <div>
+// // // //                   <Label>Annual Turnover (₹)</Label>
+// // // //                   <Input
+// // // //                     type="number"
+// // // //                     value={extras[product.key].businessTurnover ?? 0}
+// // // //                     onChange={(e) =>
+// // // //                       updateExtra("businessTurnover", +e.target.value)
+// // // //                     }
+// // // //                     className="mt-1"
+// // // //                   />
+// // // //                 </div>
+// // // //               )}
 
-// // // //                         {p.fields.includes("collegeFees") && (
-// // // //                           <div>
-// // // //                             <Label>Total College Fees (₹)</Label>
-// // // //                             <Input
-// // // //                               type="number"
-// // // //                               value={extras[p.key].collegeFees ?? 0}
-// // // //                               onChange={(e) =>
-// // // //                                 updateExtra("collegeFees", +e.target.value)
-// // // //                               }
-// // // //                             />
-// // // //                           </div>
-// // // //                         )}
+// // // //               {product.fields.includes("sumAssured") && (
+// // // //                 <div>
+// // // //                   <Label>Sum Assured (₹)</Label>
+// // // //                   <Input
+// // // //                     type="number"
+// // // //                     value={extras[product.key].sumAssured ?? 0}
+// // // //                     onChange={(e) =>
+// // // //                       updateExtra("sumAssured", +e.target.value)
+// // // //                     }
+// // // //                     className="mt-1"
+// // // //                   />
+// // // //                 </div>
+// // // //               )}
 
-// // // //                         {p.fields.includes("businessTurnover") && (
-// // // //                           <div>
-// // // //                             <Label>Annual Turnover (₹)</Label>
-// // // //                             <Input
-// // // //                               type="number"
-// // // //                               value={extras[p.key].businessTurnover ?? 0}
-// // // //                               onChange={(e) =>
-// // // //                                 updateExtra(
-// // // //                                   "businessTurnover",
-// // // //                                   +e.target.value,
-// // // //                                 )
-// // // //                               }
-// // // //                             />
-// // // //                           </div>
-// // // //                         )}
+// // // //               {product.fields.includes("members") && (
+// // // //                 <div>
+// // // //                   <Label>Members to Cover</Label>
+// // // //                   <Input
+// // // //                     type="number"
+// // // //                     value={extras[product.key].members ?? 1}
+// // // //                     onChange={(e) => updateExtra("members", +e.target.value)}
+// // // //                     className="mt-1"
+// // // //                   />
+// // // //                 </div>
+// // // //               )}
 
-// // // //                         {p.fields.includes("sumAssured") && (
-// // // //                           <div>
-// // // //                             <Label>Sum Assured (₹)</Label>
-// // // //                             <Input
-// // // //                               type="number"
-// // // //                               value={extras[p.key].sumAssured ?? 0}
-// // // //                               onChange={(e) =>
-// // // //                                 updateExtra("sumAssured", +e.target.value)
-// // // //                               }
-// // // //                             />
-// // // //                           </div>
-// // // //                         )}
+// // // //               {product.fields.includes("sipAmount") && (
+// // // //                 <div>
+// // // //                   <Label>Monthly SIP (₹)</Label>
+// // // //                   <Input
+// // // //                     type="number"
+// // // //                     value={extras[product.key].sipAmount ?? 0}
+// // // //                     onChange={(e) => updateExtra("sipAmount", +e.target.value)}
+// // // //                     className="mt-1"
+// // // //                   />
+// // // //                 </div>
+// // // //               )}
 
-// // // //                         {p.fields.includes("members") && (
-// // // //                           <div>
-// // // //                             <Label>Members to Cover</Label>
-// // // //                             <Input
-// // // //                               type="number"
-// // // //                               value={extras[p.key].members ?? 1}
-// // // //                               onChange={(e) =>
-// // // //                                 updateExtra("members", +e.target.value)
-// // // //                               }
-// // // //                             />
-// // // //                           </div>
-// // // //                         )}
+// // // //               <Button
+// // // //                 onClick={() => setSubmitted(true)}
+// // // //                 className="mt-2 w-full rounded-full bg-gradient-to-r from-[#17357e] to-blue-600 text-white"
+// // // //               >
+// // // //                 Check Eligibility
+// // // //               </Button>
+// // // //             </div>
+// // // //           </div>
 
-// // // //                         {p.fields.includes("sipAmount") && (
-// // // //                           <div>
-// // // //                             <Label>Monthly SIP (₹)</Label>
-// // // //                             <Input
-// // // //                               type="number"
-// // // //                               value={extras[p.key].sipAmount ?? 0}
-// // // //                               onChange={(e) =>
-// // // //                                 updateExtra("sipAmount", +e.target.value)
-// // // //                               }
-// // // //                             />
-// // // //                           </div>
-// // // //                         )}
-// // // //                       </div>
+// // // //           {/* 4. RESULT */}
+// // // //           <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+// // // //             <div className="mb-4 flex items-center gap-2">
+// // // //               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 text-purple-700">
+// // // //                 <ClipboardCheck className="h-5 w-5" />
+// // // //               </div>
 
-// // // //                       <Button
-// // // //                         onClick={() => setSubmitted(true)}
-// // // //                         className="w-full rounded-full bg-gradient-to-r from-[#17357e] to-blue-600 text-white"
-// // // //                       >
-// // // //                         Check Eligibility
-// // // //                       </Button>
-// // // //                     </div>
+// // // //               <div>
+// // // //                 <h3 className="text-lg font-bold text-slate-900">Result</h3>
+// // // //                 <p className="text-xs text-slate-500">
+// // // //                   Eligibility output
+// // // //                 </p>
+// // // //               </div>
+// // // //             </div>
 
-// // // //                     {/* RIGHT: Result panel */}
-// // // //                     <div className="order-2 md:order-2">
-// // // //                       {!submitted ? (
-// // // //                         <div className="flex h-full min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
-// // // //                           <p.icon className="mb-3 h-10 w-10 text-slate-400" />
+// // // //             {!submitted ? (
+// // // //               <div className="flex min-h-[320px] flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
+// // // //                 <ProductIcon className="mb-3 h-12 w-12 text-slate-400" />
 
-// // // //                           <div className="font-semibold text-slate-700">
-// // // //                             {p.name}
-// // // //                           </div>
+// // // //                 <div className="font-semibold text-slate-700">
+// // // //                   {product.name}
+// // // //                 </div>
 
-// // // //                           <div className="mt-1 text-xs text-slate-500">
-// // // //                             Fill the details and click "Check Eligibility" to
-// // // //                             see your result here.
-// // // //                           </div>
-// // // //                         </div>
-// // // //                       ) : (
-// // // //                         <div
-// // // //                           className={`h-full rounded-2xl border p-5 ${
-// // // //                             result.eligible
-// // // //                               ? "border-green-200 bg-green-50"
-// // // //                               : "border-red-200 bg-red-50"
-// // // //                           }`}
-// // // //                         >
-// // // //                           <div className="mb-3 flex items-center justify-between">
-// // // //                             <div className="flex items-center gap-2">
-// // // //                               {result.eligible ? (
-// // // //                                 <CheckCircle2 className="h-6 w-6 text-green-600" />
-// // // //                               ) : (
-// // // //                                 <XCircle className="h-6 w-6 text-red-600" />
-// // // //                               )}
+// // // //                 <div className="mt-1 max-w-[240px] text-xs leading-5 text-slate-500">
+// // // //                   Fill form and amount details, then click Check Eligibility to
+// // // //                   see result here.
+// // // //                 </div>
+// // // //               </div>
+// // // //             ) : (
+// // // //               <div
+// // // //                 className={`min-h-[320px] rounded-2xl border p-5 ${
+// // // //                   result.eligible
+// // // //                     ? "border-green-200 bg-green-50"
+// // // //                     : "border-red-200 bg-red-50"
+// // // //                 }`}
+// // // //               >
+// // // //                 <div className="mb-4 flex items-center justify-between gap-3">
+// // // //                   <div className="flex items-center gap-2">
+// // // //                     {result.eligible ? (
+// // // //                       <CheckCircle2 className="h-6 w-6 text-green-600" />
+// // // //                     ) : (
+// // // //                       <XCircle className="h-6 w-6 text-red-600" />
+// // // //                     )}
 
-// // // //                               <div
-// // // //                                 className={`font-semibold ${
-// // // //                                   result.eligible
-// // // //                                     ? "text-green-800"
-// // // //                                     : "text-red-800"
-// // // //                                 }`}
-// // // //                               >
-// // // //                                 {result.eligible
-// // // //                                   ? "You are Eligible!"
-// // // //                                   : "Not Eligible"}
-// // // //                               </div>
-// // // //                             </div>
-
-// // // //                             <div className="text-xs font-semibold text-slate-700">
-// // // //                               Score: {result.score}/100
-// // // //                             </div>
-// // // //                           </div>
-
-// // // //                           <div className="grid grid-cols-1 gap-2 text-sm">
-// // // //                             {result.maxAmount !== undefined && (
-// // // //                               <div className="rounded-xl bg-white p-3">
-// // // //                                 <div className="text-xs text-slate-500">
-// // // //                                   Max Eligible Amount
-// // // //                                 </div>
-
-// // // //                                 <div className="font-semibold text-slate-900">
-// // // //                                   {formatINR(result.maxAmount)}
-// // // //                                 </div>
-// // // //                               </div>
-// // // //                             )}
-
-// // // //                             {result.estimatedEmi !== undefined && (
-// // // //                               <div className="rounded-xl bg-white p-3">
-// // // //                                 <div className="text-xs text-slate-500">
-// // // //                                   Estimated EMI
-// // // //                                 </div>
-
-// // // //                                 <div className="font-semibold text-slate-900">
-// // // //                                   {formatINR(result.estimatedEmi)}/mo
-// // // //                                 </div>
-// // // //                               </div>
-// // // //                             )}
-
-// // // //                             {result.premium !== undefined && (
-// // // //                               <div className="rounded-xl bg-white p-3">
-// // // //                                 <div className="text-xs text-slate-500">
-// // // //                                   Estimated Premium
-// // // //                                 </div>
-
-// // // //                                 <div className="font-semibold text-slate-900">
-// // // //                                   {formatINR(result.premium)}/yr
-// // // //                                 </div>
-// // // //                               </div>
-// // // //                             )}
-// // // //                           </div>
-
-// // // //                           {result.positives.length > 0 && (
-// // // //                             <ul className="mt-3 space-y-1 text-sm text-green-800">
-// // // //                               {result.positives.map((r, i) => (
-// // // //                                 <li key={i} className="flex gap-2">
-// // // //                                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
-// // // //                                   {r}
-// // // //                                 </li>
-// // // //                               ))}
-// // // //                             </ul>
-// // // //                           )}
-
-// // // //                           {result.reasons.length > 0 && (
-// // // //                             <ul className="mt-3 space-y-1 text-sm text-red-800">
-// // // //                               {result.reasons.map((r, i) => (
-// // // //                                 <li key={i} className="flex gap-2">
-// // // //                                   <XCircle className="mt-0.5 h-4 w-4 shrink-0" />
-// // // //                                   {r}
-// // // //                                 </li>
-// // // //                               ))}
-// // // //                             </ul>
-// // // //                           )}
-
-// // // //                           <Dialog>
-// // // //                             <DialogTrigger asChild>
-// // // //                               <Button className="mt-4 w-full rounded-full bg-[#17357e] text-white">
-// // // //                                 {result.eligible
-// // // //                                   ? "Apply Now"
-// // // //                                   : "Talk to an Expert"}
-// // // //                               </Button>
-// // // //                             </DialogTrigger>
-
-// // // //                             <DialogContent className="max-w-lg rounded-3xl">
-// // // //                               <DialogHeader>
-// // // //                                 <DialogTitle>
-// // // //                                   {p.name} — Application
-// // // //                                 </DialogTitle>
-// // // //                               </DialogHeader>
-
-// // // //                               <LeadForm
-// // // //                                 productType={
-// // // //                                   p.category === "loan"
-// // // //                                     ? "loan"
-// // // //                                     : p.category === "insurance"
-// // // //                                       ? "insurance"
-// // // //                                       : "mutual_fund"
-// // // //                                 }
-// // // //                                 productName={p.name}
-// // // //                               />
-// // // //                             </DialogContent>
-// // // //                           </Dialog>
-// // // //                         </div>
-// // // //                       )}
+// // // //                     <div
+// // // //                       className={`font-semibold ${
+// // // //                         result.eligible ? "text-green-800" : "text-red-800"
+// // // //                       }`}
+// // // //                     >
+// // // //                       {result.eligible ? "You are Eligible!" : "Not Eligible"}
 // // // //                     </div>
 // // // //                   </div>
-// // // //                 </TabsContent>
-// // // //               ))}
-// // // //             </Tabs>
+
+// // // //                   <div className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+// // // //                     Score: {result.score}/100
+// // // //                   </div>
+// // // //                 </div>
+
+// // // //                 <div className="grid grid-cols-1 gap-2 text-sm">
+// // // //                   {result.maxAmount !== undefined && (
+// // // //                     <div className="rounded-xl bg-white p-3">
+// // // //                       <div className="text-xs text-slate-500">
+// // // //                         Max Eligible Amount
+// // // //                       </div>
+
+// // // //                       <div className="font-semibold text-slate-900">
+// // // //                         {formatINR(result.maxAmount)}
+// // // //                       </div>
+// // // //                     </div>
+// // // //                   )}
+
+// // // //                   {result.estimatedEmi !== undefined && (
+// // // //                     <div className="rounded-xl bg-white p-3">
+// // // //                       <div className="text-xs text-slate-500">
+// // // //                         Estimated EMI
+// // // //                       </div>
+
+// // // //                       <div className="font-semibold text-slate-900">
+// // // //                         {formatINR(result.estimatedEmi)}/mo
+// // // //                       </div>
+// // // //                     </div>
+// // // //                   )}
+
+// // // //                   {result.premium !== undefined && (
+// // // //                     <div className="rounded-xl bg-white p-3">
+// // // //                       <div className="text-xs text-slate-500">
+// // // //                         Estimated Premium
+// // // //                       </div>
+
+// // // //                       <div className="font-semibold text-slate-900">
+// // // //                         {formatINR(result.premium)}/yr
+// // // //                       </div>
+// // // //                     </div>
+// // // //                   )}
+// // // //                 </div>
+
+// // // //                 {result.positives.length > 0 && (
+// // // //                   <ul className="mt-4 space-y-1 text-sm text-green-800">
+// // // //                     {result.positives.map((r, i) => (
+// // // //                       <li key={i} className="flex gap-2">
+// // // //                         <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+// // // //                         {r}
+// // // //                       </li>
+// // // //                     ))}
+// // // //                   </ul>
+// // // //                 )}
+
+// // // //                 {result.reasons.length > 0 && (
+// // // //                   <ul className="mt-4 space-y-1 text-sm text-red-800">
+// // // //                     {result.reasons.map((r, i) => (
+// // // //                       <li key={i} className="flex gap-2">
+// // // //                         <XCircle className="mt-0.5 h-4 w-4 shrink-0" />
+// // // //                         {r}
+// // // //                       </li>
+// // // //                     ))}
+// // // //                   </ul>
+// // // //                 )}
+
+// // // //                 <Dialog>
+// // // //                   <DialogTrigger asChild>
+// // // //                     <Button className="mt-5 w-full rounded-full bg-[#17357e] text-white">
+// // // //                       {result.eligible ? "Apply Now" : "Talk to an Expert"}
+// // // //                     </Button>
+// // // //                   </DialogTrigger>
+
+// // // //                   <DialogContent className="max-w-lg rounded-3xl">
+// // // //                     <DialogHeader>
+// // // //                       <DialogTitle>{product.name} — Application</DialogTitle>
+// // // //                     </DialogHeader>
+
+// // // //                     <LeadForm
+// // // //                       productType={
+// // // //                         product.category === "loan"
+// // // //                           ? "loan"
+// // // //                           : product.category === "insurance"
+// // // //                             ? "insurance"
+// // // //                             : "mutual_fund"
+// // // //                       }
+// // // //                       productName={product.name}
+// // // //                     />
+// // // //                   </DialogContent>
+// // // //                 </Dialog>
+// // // //               </div>
+// // // //             )}
 // // // //           </div>
 // // // //         </div>
 // // // //       </div>
@@ -3281,7 +4248,7 @@
 // //         </div>
 
 // //         <div className="grid gap-5 xl:grid-cols-[0.9fr_1.2fr_1fr_1fr]">
-// //           {/* 1. PRODUCT */}
+// //           {/* PRODUCT */}
 // //           <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
 // //             <div className="mb-4 flex items-center gap-2">
 // //               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
@@ -3337,7 +4304,7 @@
 // //             </div>
 // //           </div>
 
-// //           {/* 2. FORM */}
+// //           {/* FORM */}
 // //           <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
 // //             <div className="mb-4 flex items-center gap-2">
 // //               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
@@ -3365,7 +4332,7 @@
 // //                 />
 // //               </div>
 
-// //               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+// //               <div className="grid grid-cols-2 gap-3">
 // //                 <div>
 // //                   <Label>Age</Label>
 // //                   <Input
@@ -3419,7 +4386,7 @@
 // //                 </Select>
 // //               </div>
 
-// //               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+// //               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
 // //                 <div>
 // //                   <Label>Monthly Income (₹)</Label>
 // //                   <Input
@@ -3452,7 +4419,7 @@
 // //                 </div>
 // //               </div>
 
-// //               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+// //               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
 // //                 <div>
 // //                   <Label>CIBIL Score</Label>
 // //                   <Input
@@ -3483,7 +4450,7 @@
 // //             </div>
 // //           </div>
 
-// //           {/* 3. AMOUNT */}
+// //           {/* AMOUNT */}
 // //           <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
 // //             <div className="mb-4 flex items-center gap-2">
 // //               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
@@ -3644,7 +4611,7 @@
 // //             </div>
 // //           </div>
 
-// //           {/* 4. RESULT */}
+// //           {/* RESULT */}
 // //           <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
 // //             <div className="mb-4 flex items-center gap-2">
 // //               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 text-purple-700">
@@ -3653,9 +4620,7 @@
 
 // //               <div>
 // //                 <h3 className="text-lg font-bold text-slate-900">Result</h3>
-// //                 <p className="text-xs text-slate-500">
-// //                   Eligibility output
-// //                 </p>
+// //                 <p className="text-xs text-slate-500">Eligibility output</p>
 // //               </div>
 // //             </div>
 
@@ -4386,7 +5351,7 @@
 //                 </Select>
 //               </div>
 
-//               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+//               <div className="grid grid-cols-1 gap-3">
 //                 <div>
 //                   <Label>Monthly Income (₹)</Label>
 //                   <Input
@@ -4419,7 +5384,7 @@
 //                 </div>
 //               </div>
 
-//               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+//               <div className="grid grid-cols-1 gap-3">
 //                 <div>
 //                   <Label>CIBIL Score</Label>
 //                   <Input
@@ -4760,6 +5725,7 @@
 //   );
 // }
 import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -4793,6 +5759,7 @@ import {
   IndianRupee,
   ClipboardCheck,
   UserRound,
+  ArrowRight,
 } from "lucide-react";
 
 type EmploymentType = "salaried" | "self_employed" | "business" | "student";
@@ -5573,6 +6540,35 @@ export function EligibilityChecker() {
               >
                 Check Eligibility
               </Button>
+
+              <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-4">
+                <p className="text-sm font-semibold text-slate-900">
+                  Need expert help?
+                </p>
+
+                <p className="mt-1 text-xs leading-5 text-slate-500">
+                  Talk to our advisor or know more about our team before
+                  applying.
+                </p>
+
+                <div className="mt-4 grid gap-3">
+                  <Link to="/contact" className="w-full">
+                    <Button className="w-full rounded-full bg-gradient-to-r from-[#17357e] to-blue-600 text-white">
+                      Free Consultation
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+
+                  <Link to="/about" className="w-full">
+                    <Button
+                      variant="outline"
+                      className="w-full rounded-full border-[#17357e]/25 bg-white text-[#17357e] hover:bg-blue-50"
+                    >
+                      Meet Our Team
+                    </Button>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
 
