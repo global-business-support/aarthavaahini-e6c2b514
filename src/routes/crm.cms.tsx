@@ -21,7 +21,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/crm/cms")({ component: CmsPage });
 
-type Tab = "banners" | "products" | "testimonials" | "dashboard";
+type Tab = "banners" | "products" | "testimonials";
 
 function CmsPage() {
   const [tab, setTab] = useState<Tab>("banners");
