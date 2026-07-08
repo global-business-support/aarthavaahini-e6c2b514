@@ -15,7 +15,7 @@ export function WhatsAppFab() {
   };
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-28 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-5 sm:right-5">
       {open && (
         <div className="w-72 animate-fade-in rounded-2xl border border-green-200 bg-white p-4 shadow-2xl">
           <div className="mb-2 flex items-center justify-between">
