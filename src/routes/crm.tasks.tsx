@@ -1010,18 +1010,39 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
 
   return (
     <form onSubmit={submit} className="space-y-4">
-      <div>
-        <Label>Title *</Label>
-        <Input
-          required
-          value={form.title}
-          onChange={(event) =>
-            setForm((prev) => ({ ...prev, title: event.target.value }))
-          }
-          className="mt-1 border-sky-200 focus-visible:ring-sky-400"
-          placeholder="Call customer for follow-up"
-        />
+      <div className="grid grid-cols-[110px_1fr] gap-3">
+        <div>
+          <Label>Title *</Label>
+          <select
+            value={form.salutation}
+            onChange={(event) =>
+              setForm((prev) => ({ ...prev, salutation: event.target.value }))
+            }
+            className={inputClass}
+          >
+            <option value="Mr">Mr</option>
+            <option value="Mrs">Mrs</option>
+            <option value="Miss">Miss</option>
+          </select>
+        </div>
+        <div>
+          <Label>Full Name *</Label>
+          <Input
+            required
+            value={form.full_name}
+            onChange={(event) => {
+              const v = event.target.value
+                .replace(/[^A-Za-z.\s]/g, "")
+                .replace(/\s+/g, " ")
+                .replace(/\b\w/g, (c) => c.toUpperCase());
+              setForm((prev) => ({ ...prev, full_name: v }));
+            }}
+            className="mt-1 border-sky-200 focus-visible:ring-sky-400"
+            placeholder="Rahul Sharma"
+          />
+        </div>
       </div>
+
 
       <div>
         <Label>Description</Label>
@@ -1092,6 +1113,7 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
           <Label>Due Date</Label>
           <Input
             type="datetime-local"
+            min={nowLocal()}
             value={form.due_date}
             onChange={(event) =>
               setForm((prev) => ({ ...prev, due_date: event.target.value }))
@@ -1099,6 +1121,7 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
             className="mt-1 border-sky-200 focus-visible:ring-sky-400"
           />
         </div>
+
 
         <div className="sm:col-span-2">
           <Label>Assign To (Employee / Partner)</Label>
