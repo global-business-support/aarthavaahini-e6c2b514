@@ -157,6 +157,7 @@ const items = [
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { normalizeImageUrl } from "@/lib/validation";
 
 export function Testimonials() {
   const [data, setData] = useState(items);
@@ -176,7 +177,7 @@ export function Testimonials() {
             text: r.text,
             rating: r.rating,
             image:
-              r.image_url ??
+              normalizeImageUrl(r.image_url) ||
               "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80",
           })),
         );
