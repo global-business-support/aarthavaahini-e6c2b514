@@ -9,13 +9,13 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { CheckCircle2, Gauge, Loader2 } from "lucide-react";
+import { sanitizeName, sanitizePan, sanitizePhone10, validateLead, NAME_TITLES } from "@/lib/validation";
 
 export const Route = createFileRoute("/cibil")({
   head: () => ({ meta: [{ title: "Free CIBIL Score Check — Aarthvaahini" }]}),
   component: CibilPage,
 });
 
-const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
 function scoreFromPan(pan: string): number {
   let h = 0;
   for (let i = 0; i < pan.length; i++) h = (h * 31 + pan.charCodeAt(i)) >>> 0;
@@ -25,16 +25,15 @@ function scoreFromPan(pan: string): number {
 function CibilPage() {
   const [loading, setLoading] = useState(false);
   const [score, setScore] = useState<number | null>(null);
-  const [form, setForm] = useState({ full_name: "", pan: "", phone: "" });
+  const [form, setForm] = useState({ title: "Mr", full_name: "", pan: "", phone: "" });
 
   const check = async (e: React.FormEvent) => {
     e.preventDefault();
-    const name = form.full_name.trim();
-    const pan = form.pan.trim().toUpperCase();
-    const phone = form.phone.trim();
-    if (name.length < 2) return toast.error("Please enter your full name");
-    if (!PAN_REGEX.test(pan)) return toast.error("Enter a valid PAN (e.g. ABCDE1234F)");
-    if (phone.length < 10) return toast.error("Enter a valid 10-digit mobile");
+    const err = validateLead({ name: form.full_name, phone: form.phone, pan: form.pan });
+    if (err) return toast.error(err);
+    const pan = form.pan.toUpperCase();
+    const name = `${form.title} ${form.full_name.trim()}`;
+    const phone = `+91${sanitizePhone10(form.phone)}`;
     setLoading(true);
     await new Promise((r) => setTimeout(r, 1200));
     const s = scoreFromPan(pan);
@@ -47,6 +46,7 @@ function CibilPage() {
     });
     setLoading(false);
   };
+
 
   const band = score == null ? "" : score >= 780 ? "Excellent" : score >= 720 ? "Very Good" : score >= 680 ? "Good" : "Fair";
   const bandColor = score == null ? "" : score >= 720 ? "text-success" : score >= 680 ? "text-amber-600" : "text-orange-600";
