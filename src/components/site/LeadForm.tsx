@@ -405,6 +405,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2, Send } from "lucide-react";
 import { loans, insurance, mutualFunds } from "@/data/products";
+import { sanitizeName, sanitizePhone10, validateLead, NAME_TITLES } from "@/lib/validation";
 
 type Props = {
   productType:
@@ -486,6 +487,7 @@ export function LeadForm({
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
+    title: "Mr",
     name: "",
     email: "",
     phone: "",
@@ -531,15 +533,8 @@ export function LeadForm({
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.name.trim()) {
-      toast.error("Full name is required");
-      return;
-    }
-
-    if (!form.phone.trim()) {
-      toast.error("Phone number is required");
-      return;
-    }
+    const err = validateLead({ name: form.name, phone: form.phone, email: form.email || undefined });
+    if (err) { toast.error(err); return; }
 
     setLoading(true);
 
@@ -550,11 +545,12 @@ export function LeadForm({
       form.product ||
       null;
 
+    const fullName = `${form.title} ${form.name.trim()}`;
     const { error } = await supabase.from("leads").insert({
-      full_name: form.name.trim(),
-      lead_name: form.name.trim(),
+      full_name: fullName,
+      lead_name: fullName,
       email: form.email.trim() || null,
-      phone: form.phone.trim(),
+      phone: `+91${sanitizePhone10(form.phone)}`,
       amount: form.amount ? Number(form.amount) : null,
       loan_amount: form.amount ? Number(form.amount) : null,
       loan_type: form.loan_type || null,
@@ -576,6 +572,7 @@ export function LeadForm({
     toast.success("Lead Submitted Successfully!");
 
     setForm({
+      title: "Mr",
       name: "",
       email: "",
       phone: "",
@@ -606,15 +603,27 @@ export function LeadForm({
         <div className="sm:col-span-2">
           <Label className={labelClass}>Full Name</Label>
 
-          <Input
-            value={form.name}
-            onChange={(e) =>
-              setForm((prev) => ({ ...prev, name: e.target.value }))
-            }
-            placeholder="Enter your full name"
-            required
-            className={inputClass}
-          />
+          <div className="flex gap-2">
+            <select
+              value={form.title}
+              onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
+              className={`${selectClass} w-24 flex-none`}
+              aria-label="Title"
+            >
+              {NAME_TITLES.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+            <Input
+              value={form.name}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, name: sanitizeName(e.target.value) }))
+              }
+              placeholder="Enter Your Full Name"
+              required
+              className={inputClass}
+            />
+          </div>
         </div>
 
         <div>
@@ -634,15 +643,22 @@ export function LeadForm({
         <div>
           <Label className={labelClass}>Phone</Label>
 
-          <Input
-            value={form.phone}
-            onChange={(e) =>
-              setForm((prev) => ({ ...prev, phone: e.target.value }))
-            }
-            placeholder="+91 9xxxxxxxxx"
-            required
-            className={inputClass}
-          />
+          <div className="flex">
+            <span className="inline-flex h-11 items-center rounded-l-xl border border-r-0 border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-600">
+              +91
+            </span>
+            <Input
+              inputMode="numeric"
+              value={form.phone}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, phone: sanitizePhone10(e.target.value) }))
+              }
+              placeholder="9xxxxxxxxx"
+              required
+              maxLength={10}
+              className={`${inputClass} rounded-l-none`}
+            />
+          </div>
         </div>
 
         {isLoanFlow && (

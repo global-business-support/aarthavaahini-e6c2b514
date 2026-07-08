@@ -162,7 +162,7 @@ export function Testimonials() {
   const [data, setData] = useState(items);
 
   useEffect(() => {
-    (async () => {
+    const load = async () => {
       const { data: rows } = await supabase
         .from("testimonials")
         .select("*")
@@ -181,8 +181,15 @@ export function Testimonials() {
           })),
         );
       }
-    })();
+    };
+    load();
+    const channel = supabase
+      .channel("site-testimonials-sync")
+      .on("postgres_changes", { event: "*", schema: "public", table: "testimonials" }, () => load())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, []);
+
 
   return (
 

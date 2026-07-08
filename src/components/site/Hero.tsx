@@ -969,6 +969,7 @@ import businessLoanImg from "@/assets/products/business-loan.png";
 import insuranceCardImg from "@/assets/products/insurance.png";
 import mutualFundsImg from "@/assets/products/mutual-funds.png";
 import homeLoanImg from "@/assets/products/home-loan.png";
+import { supabase } from "@/integrations/supabase/client";
 
 type Slide = {
   image: string;
@@ -982,7 +983,7 @@ type PromoCard = {
   bg: string;
 };
 
-const slides: Slide[] = [
+const defaultSlides: Slide[] = [
   {
     image: advisor33,
     objectPosition: "left top",
@@ -997,7 +998,7 @@ const slides: Slide[] = [
   },
 ];
 
-const promoCards: PromoCard[] = [
+const defaultPromoCards: PromoCard[] = [
   {
     title: "Personal Loan",
     image: personalLoanImg,
@@ -1030,6 +1031,7 @@ const promoCards: PromoCard[] = [
   },
 ];
 
+
 export function Hero() {
   const [current, setCurrent] = useState(0);
   const [activeCard, setActiveCard] = useState(0);
@@ -1040,6 +1042,40 @@ export function Hero() {
   const [productTouchStart, setProductTouchStart] = useState<number | null>(
     null,
   );
+
+  const [slides, setSlides] = useState<Slide[]>(defaultSlides);
+  const [promoCards, setPromoCards] = useState<PromoCard[]>(defaultPromoCards);
+
+  useEffect(() => {
+    const loadCms = async () => {
+      const [heroRes, cardRes] = await Promise.all([
+        supabase.from("hero_slides").select("*").eq("is_active", true).order("position", { ascending: true }),
+        supabase.from("product_cards").select("*").eq("is_active", true).order("position", { ascending: true }),
+      ]);
+      if (heroRes.data && heroRes.data.length > 0) {
+        setSlides(heroRes.data.map((r: any) => ({
+          image: r.image_url,
+          objectPosition: "left top",
+        })));
+      }
+      if (cardRes.data && cardRes.data.length > 0) {
+        setPromoCards(cardRes.data.map((r: any) => ({
+          title: r.title,
+          image: r.image_url ?? personalLoanImg,
+          applyLink: r.button1_link || r.button2_link || "/contact",
+          bg: r.bg_color ? "" : "bg-[#dbeafe]",
+        })));
+      }
+    };
+    loadCms();
+    const channel = supabase
+      .channel("site-cms-sync")
+      .on("postgres_changes", { event: "*", schema: "public", table: "hero_slides" }, loadCms)
+      .on("postgres_changes", { event: "*", schema: "public", table: "product_cards" }, loadCms)
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
+
 
   useEffect(() => {
     if (isHeroPaused) return;
