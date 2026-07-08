@@ -3,9 +3,19 @@
 
 export const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
 
-/** Keep only letters & single spaces. No digits/special chars. */
+/** Keep only letters, spaces and dots. No digits/other special chars. */
 export function sanitizeName(v: string): string {
-  return v.replace(/[^A-Za-z\s]/g, "").replace(/\s+/g, " ").slice(0, 60);
+  return v.replace(/[^A-Za-z.\s]/g, "").replace(/\s+/g, " ").slice(0, 60);
+}
+
+/** Convert Google Drive share/view URLs into direct-render image URLs. */
+export function normalizeImageUrl(url: string | null | undefined): string {
+  if (!url) return "";
+  const m =
+    url.match(/drive\.google\.com\/file\/d\/([^/]+)/) ||
+    url.match(/[?&]id=([^&]+)/);
+  if (m && m[1]) return `https://lh3.googleusercontent.com/d/${m[1]}=w1920`;
+  return url;
 }
 
 /** 10 digits only. Strip everything else. */
@@ -34,7 +44,7 @@ export function validateLead(o: {
   if (o.name !== undefined) {
     const n = o.name.trim();
     if (n.length < 2) return "Please enter your full name";
-    if (!/^[A-Za-z\s]+$/.test(n)) return "Name can only contain letters";
+    if (!/^[A-Za-z.\s]+$/.test(n)) return "Name can only contain letters";
   }
   if (o.phone !== undefined) {
     const p = sanitizePhone10(o.phone);
