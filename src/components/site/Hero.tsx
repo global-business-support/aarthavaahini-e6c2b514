@@ -982,7 +982,7 @@ type PromoCard = {
   bg: string;
 };
 
-const slides: Slide[] = [
+const defaultSlides: Slide[] = [
   {
     image: advisor33,
     objectPosition: "left top",
@@ -997,7 +997,7 @@ const slides: Slide[] = [
   },
 ];
 
-const promoCards: PromoCard[] = [
+const defaultPromoCards: PromoCard[] = [
   {
     title: "Personal Loan",
     image: personalLoanImg,
@@ -1029,6 +1029,7 @@ const promoCards: PromoCard[] = [
     bg: "bg-[#fff2cc]",
   },
 ];
+
 
 export function Hero() {
   const [current, setCurrent] = useState(0);
