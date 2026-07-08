@@ -858,7 +858,8 @@ function TasksPage() {
 
 function NewTaskForm({ onSaved }: { onSaved: () => void }) {
   const initialTask = {
-    title: "",
+    salutation: "Mr",
+    full_name: "",
     description: "",
     task_type: "Follow Up",
     priority: "medium",
@@ -868,6 +869,7 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
     customer_id: "",
     loan_case_id: "",
   };
+
 
   const [form, setForm] = useState(initialTask);
   const [saving, setSaving] = useState(false);
@@ -945,11 +947,24 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
   const inputClass =
     "h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100";
 
+  const nowLocal = () => {
+    const d = new Date();
+    d.setSeconds(0, 0);
+    const off = d.getTimezoneOffset();
+    return new Date(d.getTime() - off * 60000).toISOString().slice(0, 16);
+  };
+
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!form.title.trim()) {
-      toast.error("Task title is required");
+    const name = form.full_name.trim();
+    if (!name) {
+      toast.error("Full name is required");
+      return;
+    }
+
+    if (form.due_date && form.due_date < nowLocal()) {
+      toast.error("Due date cannot be in the past");
       return;
     }
 
@@ -965,8 +980,10 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
       if (kind === "partner") assigned_partner_id = id;
     }
 
+    const title = `${form.salutation}. ${name}`;
+
     const { error } = await supabase.from("tasks").insert({
-      title: form.title.trim(),
+      title,
       description: form.description.trim() || null,
       task_type: form.task_type || null,
       priority: form.priority,
@@ -989,6 +1006,7 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
     setForm(initialTask);
     onSaved();
   };
+
 
   return (
     <form onSubmit={submit} className="space-y-4">
