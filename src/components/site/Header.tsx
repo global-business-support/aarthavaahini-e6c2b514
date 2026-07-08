@@ -293,9 +293,16 @@ export function Header() {
       </header>
 
       {/* BOTTOM NAV */}
-      {showBottomNav && (
+      {showBottomNav && !barHidden && (
         <div className="fixed bottom-6 left-1/2 z-[9999] flex w-[94vw] max-w-[620px] -translate-x-1/2 justify-center sm:bottom-6">
-          <div className="flex w-full items-center justify-between gap-2 rounded-full border border-white/20 bg-white/95 px-3 py-3 shadow-2xl backdrop-blur-xl sm:gap-6 sm:px-8 sm:py-4">
+          <div className="relative flex w-full items-center justify-between gap-2 rounded-full border border-white/20 bg-white/95 px-3 py-3 shadow-2xl backdrop-blur-xl sm:gap-6 sm:px-8 sm:py-4">
+            <button
+              onClick={() => setBarHidden(true)}
+              aria-label="Hide navigation bar"
+              className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#17357e] text-white shadow-lg ring-2 ring-white sm:hidden"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
             <a
               href="/#hero"
               className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#17357e] transition hover:text-blue-600 sm:flex-row sm:gap-2 sm:text-base"
@@ -329,6 +336,16 @@ export function Header() {
             </Link>
           </div>
         </div>
+      )}
+
+      {showBottomNav && barHidden && (
+        <button
+          onClick={() => setBarHidden(false)}
+          aria-label="Show navigation bar"
+          className="fixed bottom-4 left-1/2 z-[9999] flex -translate-x-1/2 items-center gap-1 rounded-full border border-white/20 bg-white/95 px-3 py-1.5 text-[11px] font-semibold text-[#17357e] shadow-xl backdrop-blur-xl sm:hidden"
+        >
+          <Menu className="h-3.5 w-3.5" /> Menu
+        </button>
       )}
     </>
   );
