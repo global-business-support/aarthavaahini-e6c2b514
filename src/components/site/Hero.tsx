@@ -970,6 +970,7 @@ import insuranceCardImg from "@/assets/products/insurance.png";
 import mutualFundsImg from "@/assets/products/mutual-funds.png";
 import homeLoanImg from "@/assets/products/home-loan.png";
 import { supabase } from "@/integrations/supabase/client";
+import { normalizeImageUrl } from "@/lib/validation";
 
 type Slide = {
   image: string;
