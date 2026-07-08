@@ -858,7 +858,8 @@ function TasksPage() {
 
 function NewTaskForm({ onSaved }: { onSaved: () => void }) {
   const initialTask = {
-    title: "",
+    salutation: "Mr",
+    full_name: "",
     description: "",
     task_type: "Follow Up",
     priority: "medium",
@@ -868,6 +869,7 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
     customer_id: "",
     loan_case_id: "",
   };
+
 
   const [form, setForm] = useState(initialTask);
   const [saving, setSaving] = useState(false);
@@ -945,11 +947,24 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
   const inputClass =
     "h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100";
 
+  const nowLocal = () => {
+    const d = new Date();
+    d.setSeconds(0, 0);
+    const off = d.getTimezoneOffset();
+    return new Date(d.getTime() - off * 60000).toISOString().slice(0, 16);
+  };
+
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!form.title.trim()) {
-      toast.error("Task title is required");
+    const name = form.full_name.trim();
+    if (!name) {
+      toast.error("Full name is required");
+      return;
+    }
+
+    if (form.due_date && form.due_date < nowLocal()) {
+      toast.error("Due date cannot be in the past");
       return;
     }
 
@@ -965,8 +980,10 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
       if (kind === "partner") assigned_partner_id = id;
     }
 
+    const title = `${form.salutation}. ${name}`;
+
     const { error } = await supabase.from("tasks").insert({
-      title: form.title.trim(),
+      title,
       description: form.description.trim() || null,
       task_type: form.task_type || null,
       priority: form.priority,
@@ -990,20 +1007,42 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
     onSaved();
   };
 
+
   return (
     <form onSubmit={submit} className="space-y-4">
-      <div>
-        <Label>Title *</Label>
-        <Input
-          required
-          value={form.title}
-          onChange={(event) =>
-            setForm((prev) => ({ ...prev, title: event.target.value }))
-          }
-          className="mt-1 border-sky-200 focus-visible:ring-sky-400"
-          placeholder="Call customer for follow-up"
-        />
+      <div className="grid grid-cols-[110px_1fr] gap-3">
+        <div>
+          <Label>Title *</Label>
+          <select
+            value={form.salutation}
+            onChange={(event) =>
+              setForm((prev) => ({ ...prev, salutation: event.target.value }))
+            }
+            className={inputClass}
+          >
+            <option value="Mr">Mr</option>
+            <option value="Mrs">Mrs</option>
+            <option value="Miss">Miss</option>
+          </select>
+        </div>
+        <div>
+          <Label>Full Name *</Label>
+          <Input
+            required
+            value={form.full_name}
+            onChange={(event) => {
+              const v = event.target.value
+                .replace(/[^A-Za-z.\s]/g, "")
+                .replace(/\s+/g, " ")
+                .replace(/\b\w/g, (c) => c.toUpperCase());
+              setForm((prev) => ({ ...prev, full_name: v }));
+            }}
+            className="mt-1 border-sky-200 focus-visible:ring-sky-400"
+            placeholder="Rahul Sharma"
+          />
+        </div>
       </div>
+
 
       <div>
         <Label>Description</Label>
@@ -1074,6 +1113,7 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
           <Label>Due Date</Label>
           <Input
             type="datetime-local"
+            min={nowLocal()}
             value={form.due_date}
             onChange={(event) =>
               setForm((prev) => ({ ...prev, due_date: event.target.value }))
@@ -1081,6 +1121,7 @@ function NewTaskForm({ onSaved }: { onSaved: () => void }) {
             className="mt-1 border-sky-200 focus-visible:ring-sky-400"
           />
         </div>
+
 
         <div className="sm:col-span-2">
           <Label>Assign To (Employee / Partner)</Label>
