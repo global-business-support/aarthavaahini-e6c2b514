@@ -32,6 +32,7 @@ export function Header() {
 
   const [mobileMenu, setMobileMenu] = useState(false);
   const [showBottomNav, setShowBottomNav] = useState(false);
+  const [barHidden, setBarHidden] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
