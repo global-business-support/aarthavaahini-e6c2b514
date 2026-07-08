@@ -970,6 +970,7 @@ import insuranceCardImg from "@/assets/products/insurance.png";
 import mutualFundsImg from "@/assets/products/mutual-funds.png";
 import homeLoanImg from "@/assets/products/home-loan.png";
 import { supabase } from "@/integrations/supabase/client";
+import { normalizeImageUrl } from "@/lib/validation";
 
 type Slide = {
   image: string;
@@ -1054,14 +1055,14 @@ export function Hero() {
       ]);
       if (heroRes.data && heroRes.data.length > 0) {
         setSlides(heroRes.data.map((r: any) => ({
-          image: r.image_url,
+          image: normalizeImageUrl(r.image_url),
           objectPosition: "left top",
         })));
       }
       if (cardRes.data && cardRes.data.length > 0) {
         setPromoCards(cardRes.data.map((r: any) => ({
           title: r.title,
-          image: r.image_url ?? personalLoanImg,
+          image: normalizeImageUrl(r.image_url) || personalLoanImg,
           applyLink: r.button1_link || r.button2_link || "/contact",
           bg: r.bg_color ? "" : "bg-[#dbeafe]",
         })));
