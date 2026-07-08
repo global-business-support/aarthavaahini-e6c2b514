@@ -63,10 +63,37 @@ function CibilPage() {
             <h1 className="mt-4 font-display text-4xl font-bold">Check your <span className="text-gradient">CIBIL Score</span></h1>
             <p className="mt-3 text-muted-foreground"></p>Check your credit score in just 30 seconds.
             <form onSubmit={check} className="mt-6 space-y-4">
-              <div><Label>Full Name (as per PAN)</Label><Input className="mt-1.5 h-11" required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} /></div>
+              <div>
+                <Label>Full Name (as per PAN)</Label>
+                <div className="mt-1.5 flex gap-2">
+                  <select
+                    value={form.title}
+                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    className="h-11 w-24 rounded-md border border-input bg-background px-2 text-sm"
+                    aria-label="Title"
+                  >
+                    {NAME_TITLES.map((t) => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                  <Input className="h-11" required value={form.full_name}
+                    onChange={(e) => setForm({ ...form, full_name: sanitizeName(e.target.value) })} />
+                </div>
+              </div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <div><Label>PAN</Label><Input className="mt-1.5 h-11" placeholder="ABCDE1234F" value={form.pan} onChange={(e) => setForm({ ...form, pan: e.target.value.toUpperCase() })} /></div>
-                <div><Label>Mobile</Label><Input className="mt-1.5 h-11" required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
+                <div>
+                  <Label>PAN</Label>
+                  <Input className="mt-1.5 h-11 uppercase" placeholder="ABCDE1234F" maxLength={10}
+                    value={form.pan}
+                    onChange={(e) => setForm({ ...form, pan: sanitizePan(e.target.value) })} />
+                </div>
+                <div>
+                  <Label>Mobile</Label>
+                  <div className="mt-1.5 flex">
+                    <span className="inline-flex h-11 items-center rounded-l-md border border-r-0 border-input bg-muted px-3 text-sm">+91</span>
+                    <Input className="h-11 rounded-l-none" required inputMode="numeric" maxLength={10}
+                      placeholder="9xxxxxxxxx" value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: sanitizePhone10(e.target.value) })} />
+                  </div>
+                </div>
               </div>
               <Button type="submit" disabled={loading} size="lg" className="w-full bg-gradient-primary text-primary-foreground shadow-glow">
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Get My Score — Free
