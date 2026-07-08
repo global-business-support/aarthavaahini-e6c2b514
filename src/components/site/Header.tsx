@@ -293,7 +293,7 @@ export function Header() {
 
       {/* BOTTOM NAV */}
       {showBottomNav && (
-        <div className="fixed bottom-4 left-1/2 z-[9999] flex w-[94vw] max-w-[620px] -translate-x-1/2 justify-center sm:bottom-6">
+        <div className="fixed bottom-6 left-1/2 z-[9999] flex w-[94vw] max-w-[620px] -translate-x-1/2 justify-center sm:bottom-6">
           <div className="flex w-full items-center justify-between gap-2 rounded-full border border-white/20 bg-white/95 px-3 py-3 shadow-2xl backdrop-blur-xl sm:gap-6 sm:px-8 sm:py-4">
             <a
               href="/#hero"
