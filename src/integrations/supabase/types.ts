@@ -764,6 +764,7 @@ export type Database = {
           priority: string
           related_customer_id: string | null
           related_lead_id: string | null
+          related_loan_case_id: string | null
           status: string
           task_type: string | null
           title: string
@@ -779,6 +780,7 @@ export type Database = {
           priority?: string
           related_customer_id?: string | null
           related_lead_id?: string | null
+          related_loan_case_id?: string | null
           status?: string
           task_type?: string | null
           title: string
@@ -794,6 +796,7 @@ export type Database = {
           priority?: string
           related_customer_id?: string | null
           related_lead_id?: string | null
+          related_loan_case_id?: string | null
           status?: string
           task_type?: string | null
           title?: string
@@ -804,6 +807,13 @@ export type Database = {
             columns: ["assigned_partner_id"]
             isOneToOne: false
             referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_related_loan_case_id_fkey"
+            columns: ["related_loan_case_id"]
+            isOneToOne: false
+            referencedRelation: "loan_cases"
             referencedColumns: ["id"]
           },
         ]

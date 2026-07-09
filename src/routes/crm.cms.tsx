@@ -21,7 +21,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/crm/cms")({ component: CmsPage });
 
-type Tab = "banners" | "products" | "testimonials" | "dashboard";
+type Tab = "banners" | "products" | "testimonials";
 
 function CmsPage() {
   const [tab, setTab] = useState<Tab>("banners");
@@ -31,8 +31,8 @@ function CmsPage() {
       <div>
         <h1 className="text-2xl font-bold text-foreground">Site Content (CMS)</h1>
         <p className="text-sm text-muted-foreground">
-          Manage hero banners, homepage product cards, testimonials and CRM
-          dashboard card labels. Changes show up immediately on the public site.
+          Manage hero banners, homepage product cards and testimonials.
+          Changes show up immediately on the public site.
         </p>
       </div>
 
@@ -41,7 +41,6 @@ function CmsPage() {
           <TabsTrigger value="banners">Hero Banners</TabsTrigger>
           <TabsTrigger value="products">Product Cards</TabsTrigger>
           <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
-          <TabsTrigger value="dashboard">Dashboard Cards</TabsTrigger>
         </TabsList>
 
         <TabsContent value="banners">
@@ -52,9 +51,6 @@ function CmsPage() {
         </TabsContent>
         <TabsContent value="testimonials">
           <TestimonialsEditor />
-        </TabsContent>
-        <TabsContent value="dashboard">
-          <DashboardEditor />
         </TabsContent>
       </Tabs>
     </div>
