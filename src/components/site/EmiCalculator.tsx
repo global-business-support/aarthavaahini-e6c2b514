@@ -1695,9 +1695,6 @@ export function EmiCalculator() {
               >
                 Download Graph PNG
               </button>
-              >
-                Download Graph PNG
-              </button>
             </div>
 
             {/* Year-wise chart */}
