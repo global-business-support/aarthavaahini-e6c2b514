@@ -4,7 +4,6 @@
 // import { Button } from "@/components/ui/button";
 // import { Input } from "@/components/ui/input";
 // import { Label } from "@/components/ui/label";
-// import { Badge } from "@/components/ui/badge";
 // import {
 //   Dialog,
 //   DialogContent,
@@ -44,7 +43,6 @@
 // import { cn } from "@/lib/utils";
 // import { CustomerProfileDialog } from "@/components/crm/CustomerProfileDialog";
 // import { INDIA_STATES, citiesForState } from "@/data/india-cities";
-
 
 // export const Route = createFileRoute("/crm/leads")({
 //   component: LeadsPage,
@@ -268,8 +266,6 @@
 //   const [rejectLead, setRejectLead] = useState<Lead | null>(null);
 //   const [profileLead, setProfileLead] = useState<string | null>(null);
 
-
-
 //   const rowSelectClass =
 //     "h-10 w-[190px] rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100";
 
@@ -318,12 +314,24 @@
 
 //   useEffect(() => {
 //     load();
+
 //     const channel = supabase
 //       .channel("crm-leads-sync")
-//       .on("postgres_changes", { event: "*", schema: "public", table: "leads" }, () => load())
-//       .on("postgres_changes", { event: "*", schema: "public", table: "customers" }, () => load())
+//       .on(
+//         "postgres_changes",
+//         { event: "*", schema: "public", table: "leads" },
+//         () => load(),
+//       )
+//       .on(
+//         "postgres_changes",
+//         { event: "*", schema: "public", table: "customers" },
+//         () => load(),
+//       )
 //       .subscribe();
-//     return () => { channel.unsubscribe(); };
+
+//     return () => {
+//       channel.unsubscribe();
+//     };
 //   }, []);
 
 //   const filtered = leads
@@ -334,9 +342,7 @@
 //       const matchesText =
 //         !term ||
 //         (l.lead_name ?? l.full_name ?? "").toLowerCase().includes(term) ||
-//         l.phone.includes(term) ||
-//         (l.email ?? "").toLowerCase().includes(term) ||
-//         (l.pan ?? "").toLowerCase().includes(term);
+//         l.phone.includes(term);
 
 //       const matchesStage = stageFilter === "all" || stage === stageFilter;
 
@@ -356,12 +362,17 @@
 //         (!!user && l.assigned_to === user.id);
 
 //       return (
-//         matchesText && matchesStage && matchesAssignee && matchesBank && partnerVisible
+//         matchesText &&
+//         matchesStage &&
+//         matchesAssignee &&
+//         matchesBank &&
+//         partnerVisible
 //       );
 //     })
 //     .sort((a, b) => {
 //       const nameA = (a.lead_name ?? a.full_name ?? "").toLowerCase();
 //       const nameB = (b.lead_name ?? b.full_name ?? "").toLowerCase();
+
 //       if (sortBy === "name_asc") return nameA.localeCompare(nameB);
 //       if (sortBy === "name_desc") return nameB.localeCompare(nameA);
 //       if (sortBy === "amount_desc")
@@ -371,10 +382,14 @@
 //       if (sortBy === "cibil_desc")
 //         return (b.cibil_score ?? 0) - (a.cibil_score ?? 0);
 //       if (sortBy === "oldest")
-//         return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-//       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-//     });
+//         return (
+//           new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+//         );
 
+//       return (
+//         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+//       );
+//     });
 
 //   const stageCounts = LEAD_STAGES.reduce<Record<Stage, number>>(
 //     (acc, s) => {
@@ -494,17 +509,21 @@
 //       docs: Record<string, boolean>;
 //     },
 //   ) => {
-//     // 1. Update lead status
 //     const { error: leadErr } = await supabase
 //       .from("leads")
 //       .update({ status: "Approved" })
 //       .eq("id", lead.id);
+
 //     if (leadErr) return toast.error(leadErr.message);
 
-//     // 2. Create or fetch customer
 //     let customerId: string | null = null;
+
 //     const { data: existing } = await supabase
-//       .from("customers").select("id").eq("lead_id", lead.id).maybeSingle();
+//       .from("customers")
+//       .select("id")
+//       .eq("lead_id", lead.id)
+//       .maybeSingle();
+
 //     if (existing) {
 //       customerId = existing.id;
 //     } else {
@@ -526,18 +545,18 @@
 //         })
 //         .select("id")
 //         .single();
+
 //       if (cErr) return toast.error(cErr.message);
 //       customerId = ins.id;
 //     }
 
-//     // 3. Link to lead
 //     if (customerId) {
-//       await supabase.from("leads")
+//       await supabase
+//         .from("leads")
 //         .update({ converted_customer_id: customerId })
 //         .eq("id", lead.id);
 //     }
 
-//     // 4. Create loan_case
 //     const { error: lcErr } = await supabase.from("loan_cases").insert({
 //       customer_id: customerId,
 //       lead_id: lead.id,
@@ -552,9 +571,13 @@
 //       notes: payload.notes || null,
 //       documents_checklist: payload.docs,
 //     });
+
 //     if (lcErr) return toast.error(lcErr.message);
 
-//     setLeads((prev) => prev.map((l) => (l.id === lead.id ? { ...l, status: "Approved" } : l)));
+//     setLeads((prev) =>
+//       prev.map((l) => (l.id === lead.id ? { ...l, status: "Approved" } : l)),
+//     );
+
 //     toast.success("Approved → Customer & Loan Case created");
 //     setApproveLead(null);
 //   };
@@ -564,8 +587,13 @@
 //       .from("leads")
 //       .update({ status: "Rejected", rejection_reason: reason })
 //       .eq("id", lead.id);
+
 //     if (error) return toast.error(error.message);
-//     setLeads((prev) => prev.map((l) => (l.id === lead.id ? { ...l, status: "Rejected" } : l)));
+
+//     setLeads((prev) =>
+//       prev.map((l) => (l.id === lead.id ? { ...l, status: "Rejected" } : l)),
+//     );
+
 //     toast.success("Lead rejected");
 //     setRejectLead(null);
 //   };
@@ -585,6 +613,7 @@
 //               <div className="text-sm font-semibold leading-tight">
 //                 Leads Pipeline
 //               </div>
+
 //               <div className="text-[11px] text-white/80">
 //                 {leads.length} total · {filtered.length} shown · WhatsApp ready
 //               </div>
@@ -625,7 +654,9 @@
 //               onClick={() => setStageFilter(active ? "all" : s)}
 //               className={cn(
 //                 "flex items-center justify-between rounded-xl border bg-white px-3 py-2 text-left text-xs shadow-sm transition-all hover:-translate-y-0.5 hover:shadow",
-//                 active ? "ring-2 ring-offset-1 " + st.trigger : "border-slate-200",
+//                 active
+//                   ? "ring-2 ring-offset-1 " + st.trigger
+//                   : "border-slate-200",
 //               )}
 //             >
 //               <div className="flex items-center gap-2">
@@ -652,7 +683,7 @@
 //             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
 
 //             <Input
-//               placeholder="Search name, phone, email, PAN…"
+//               placeholder="Search name, phone…"
 //               value={filter}
 //               onChange={(e) => setFilter(e.target.value)}
 //               className="pl-9"
@@ -694,12 +725,17 @@
 //             <SelectTrigger className="w-[190px] bg-white">
 //               <SelectValue placeholder="Bank" />
 //             </SelectTrigger>
-//             <SelectContent className="bg-white max-h-72">
+
+//             <SelectContent className="max-h-72 bg-white">
 //               <SelectItem value="all">All banks</SelectItem>
 //               <SelectItem value="none">— Not set —</SelectItem>
-//               {[...BANK_OPTIONS].sort((a, b) => a.localeCompare(b)).map((b) => (
-//                 <SelectItem key={b} value={b}>{b}</SelectItem>
-//               ))}
+//               {[...BANK_OPTIONS]
+//                 .sort((a, b) => a.localeCompare(b))
+//                 .map((b) => (
+//                   <SelectItem key={b} value={b}>
+//                     {b}
+//                   </SelectItem>
+//                 ))}
 //             </SelectContent>
 //           </Select>
 
@@ -707,18 +743,22 @@
 //             <SelectTrigger className="w-[180px] bg-white">
 //               <SelectValue placeholder="Sort" />
 //             </SelectTrigger>
+
 //             <SelectContent className="bg-white">
 //               <SelectItem value="recent">Newest first</SelectItem>
 //               <SelectItem value="oldest">Oldest first</SelectItem>
 //               <SelectItem value="name_asc">Name A → Z</SelectItem>
 //               <SelectItem value="name_desc">Name Z → A</SelectItem>
-//               <SelectItem value="amount_desc">Loan amount high → low</SelectItem>
-//               <SelectItem value="amount_asc">Loan amount low → high</SelectItem>
+//               <SelectItem value="amount_desc">
+//                 Loan amount high → low
+//               </SelectItem>
+//               <SelectItem value="amount_asc">
+//                 Loan amount low → high
+//               </SelectItem>
 //               <SelectItem value="cibil_desc">CIBIL high → low</SelectItem>
 //             </SelectContent>
 //           </Select>
 //         </div>
-
 //       </Card>
 
 //       <Card className="overflow-hidden">
@@ -766,11 +806,11 @@
 //                       >
 //                         {l.lead_name ?? l.full_name ?? "—"}
 //                       </button>
+
 //                       {l.email && (
 //                         <div className="text-xs text-slate-500">{l.email}</div>
 //                       )}
 //                     </TableCell>
-
 
 //                     <TableCell className="text-sm">{l.phone}</TableCell>
 
@@ -778,6 +818,7 @@
 //                       <div className="text-sm font-medium text-slate-800">
 //                         {l.loan_type ?? (l.product_type ?? "").replace(/_/g, " ")}
 //                       </div>
+
 //                       {l.loan_sub_type && (
 //                         <div className="text-xs text-slate-500">
 //                           {l.loan_sub_type}
@@ -923,7 +964,6 @@
 //       />
 
 //       <Dialog open={!!noteLead} onOpenChange={(v) => !v && setNoteLead(null)}>
-
 //         <DialogContent className="max-w-lg bg-white">
 //           <DialogHeader>
 //             <DialogTitle>
@@ -940,6 +980,7 @@
 //         onClose={() => setApproveLead(null)}
 //         onConfirm={confirmApprove}
 //       />
+
 //       <RejectLeadDialog
 //         lead={rejectLead}
 //         onClose={() => setRejectLead(null)}
@@ -1075,10 +1116,16 @@
 //         <select
 //           className="h-9 w-full rounded-md border border-indigo-200 bg-white px-3 text-sm"
 //           value={f.state}
-//           onChange={(e) => setF((prev) => ({ ...prev, state: e.target.value, city: "" }))}
+//           onChange={(e) =>
+//             setF((prev) => ({ ...prev, state: e.target.value, city: "" }))
+//           }
 //         >
 //           <option value="">Select state</option>
-//           {INDIA_STATES.map((s) => (<option key={s} value={s}>{s}</option>))}
+//           {INDIA_STATES.map((s) => (
+//             <option key={s} value={s}>
+//               {s}
+//             </option>
+//           ))}
 //         </select>
 //       </Field>
 
@@ -1089,8 +1136,14 @@
 //           onChange={(e) => setF((prev) => ({ ...prev, city: e.target.value }))}
 //           disabled={!f.state}
 //         >
-//           <option value="">{f.state ? "Select city" : "Select state first"}</option>
-//           {citiesForState(f.state).map((c) => (<option key={c} value={c}>{c}</option>))}
+//           <option value="">
+//             {f.state ? "Select city" : "Select state first"}
+//           </option>
+//           {citiesForState(f.state).map((c) => (
+//             <option key={c} value={c}>
+//               {c}
+//             </option>
+//           ))}
 //         </select>
 //       </Field>
 
@@ -1314,6 +1367,7 @@
 //               <div className="whitespace-pre-wrap text-slate-800">
 //                 {n.notes}
 //               </div>
+
 //               <div className="mt-1 text-[10px] uppercase tracking-wide text-slate-500">
 //                 {new Date(n.created_at).toLocaleString("en-IN")}
 //               </div>
@@ -1339,6 +1393,7 @@
 //     </div>
 //   );
 // }
+
 // const DOC_LIST = [
 //   "PAN Card",
 //   "Aadhaar Card",
@@ -1358,16 +1413,19 @@
 // }: {
 //   lead: Lead | null;
 //   onClose: () => void;
-//   onConfirm: (lead: Lead, p: {
-//     loan_type: string;
-//     requested_amount: number | null;
-//     sanction_amount: number | null;
-//     tenure_months: number | null;
-//     interest_rate: number | null;
-//     bank_name: string;
-//     notes: string;
-//     docs: Record<string, boolean>;
-//   }) => Promise<unknown>;
+//   onConfirm: (
+//     lead: Lead,
+//     p: {
+//       loan_type: string;
+//       requested_amount: number | null;
+//       sanction_amount: number | null;
+//       tenure_months: number | null;
+//       interest_rate: number | null;
+//       bank_name: string;
+//       notes: string;
+//       docs: Record<string, boolean>;
+//     },
+//   ) => Promise<unknown>;
 // }) {
 //   const [saving, setSaving] = useState(false);
 //   const [f, setF] = useState({
@@ -1400,10 +1458,14 @@
 
 //   const submit = async (e: React.FormEvent) => {
 //     e.preventDefault();
+
 //     setSaving(true);
+
 //     await onConfirm(lead, {
 //       loan_type: f.loan_type,
-//       requested_amount: f.requested_amount ? Number(f.requested_amount) : null,
+//       requested_amount: f.requested_amount
+//         ? Number(f.requested_amount)
+//         : null,
 //       sanction_amount: f.sanction_amount ? Number(f.sanction_amount) : null,
 //       tenure_months: f.tenure_months ? Number(f.tenure_months) : null,
 //       interest_rate: f.interest_rate ? Number(f.interest_rate) : null,
@@ -1411,83 +1473,160 @@
 //       notes: f.notes,
 //       docs: f.docs,
 //     });
+
 //     setSaving(false);
 //   };
 
-//   const inputCls = "h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100";
+//   const inputCls =
+//     "h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100";
 
 //   return (
 //     <Dialog open={!!lead} onOpenChange={(v) => !v && onClose()}>
-//       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
+//       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto bg-white">
 //         <DialogHeader>
 //           <DialogTitle className="text-emerald-700">
 //             Approve Lead — {lead.lead_name ?? lead.full_name}
 //           </DialogTitle>
 //         </DialogHeader>
+
 //         <form onSubmit={submit} className="space-y-4">
 //           <div className="rounded-lg bg-emerald-50 p-3 text-xs text-emerald-800">
 //             Customer + Loan Case auto-create honge approve karte hi.
 //           </div>
+
 //           <div className="grid grid-cols-2 gap-3">
 //             <div>
 //               <Label>Loan Type *</Label>
-//               <select required className={`${inputCls} mt-1`} value={f.loan_type}
-//                 onChange={(e) => setF({ ...f, loan_type: e.target.value })}>
-//                 {LOAN_TYPES.map((t) => <option key={t}>{t}</option>)}
+
+//               <select
+//                 required
+//                 className={`${inputCls} mt-1`}
+//                 value={f.loan_type}
+//                 onChange={(e) => setF({ ...f, loan_type: e.target.value })}
+//               >
+//                 {LOAN_TYPES.map((t) => (
+//                   <option key={t}>{t}</option>
+//                 ))}
 //               </select>
 //             </div>
+
 //             <div>
 //               <Label>Bank / Lender</Label>
-//               <select className={`${inputCls} mt-1`} value={f.bank_name}
-//                 onChange={(e) => setF({ ...f, bank_name: e.target.value })}>
+
+//               <select
+//                 className={`${inputCls} mt-1`}
+//                 value={f.bank_name}
+//                 onChange={(e) => setF({ ...f, bank_name: e.target.value })}
+//               >
 //                 <option value="">— Select —</option>
-//                 {BANK_OPTIONS.map((b) => <option key={b}>{b}</option>)}
+//                 {BANK_OPTIONS.map((b) => (
+//                   <option key={b}>{b}</option>
+//                 ))}
 //               </select>
 //             </div>
+
 //             <div>
 //               <Label>Requested Amount (₹)</Label>
-//               <Input type="number" className="mt-1" value={f.requested_amount}
-//                 onChange={(e) => setF({ ...f, requested_amount: e.target.value })} />
+
+//               <Input
+//                 type="number"
+//                 className="mt-1"
+//                 value={f.requested_amount}
+//                 onChange={(e) =>
+//                   setF({ ...f, requested_amount: e.target.value })
+//                 }
+//               />
 //             </div>
+
 //             <div>
 //               <Label>Sanctioned Amount (₹)</Label>
-//               <Input type="number" className="mt-1" value={f.sanction_amount}
-//                 onChange={(e) => setF({ ...f, sanction_amount: e.target.value })}
-//                 placeholder="If sanctioned" />
+
+//               <Input
+//                 type="number"
+//                 className="mt-1"
+//                 value={f.sanction_amount}
+//                 onChange={(e) =>
+//                   setF({ ...f, sanction_amount: e.target.value })
+//                 }
+//                 placeholder="If sanctioned"
+//               />
 //             </div>
+
 //             <div>
 //               <Label>Tenure (months)</Label>
-//               <Input type="number" className="mt-1" value={f.tenure_months}
-//                 onChange={(e) => setF({ ...f, tenure_months: e.target.value })} />
+
+//               <Input
+//                 type="number"
+//                 className="mt-1"
+//                 value={f.tenure_months}
+//                 onChange={(e) =>
+//                   setF({ ...f, tenure_months: e.target.value })
+//                 }
+//               />
 //             </div>
+
 //             <div>
 //               <Label>Interest Rate (%)</Label>
-//               <Input type="number" step="0.01" className="mt-1" value={f.interest_rate}
-//                 onChange={(e) => setF({ ...f, interest_rate: e.target.value })} />
+
+//               <Input
+//                 type="number"
+//                 step="0.01"
+//                 className="mt-1"
+//                 value={f.interest_rate}
+//                 onChange={(e) =>
+//                   setF({ ...f, interest_rate: e.target.value })
+//                 }
+//               />
 //             </div>
 //           </div>
+
 //           <div>
 //             <Label>Notes</Label>
-//             <Textarea rows={2} className="mt-1" value={f.notes}
+
+//             <Textarea
+//               rows={2}
+//               className="mt-1"
+//               value={f.notes}
 //               onChange={(e) => setF({ ...f, notes: e.target.value })}
-//               placeholder="Any remarks for this approval…" />
+//               placeholder="Any remarks for this approval…"
+//             />
 //           </div>
+
 //           <div>
-//             <Label className="mb-2 block">Documents Received Checklist</Label>
+//             <Label className="mb-2 block">
+//               Documents Received Checklist
+//             </Label>
+
 //             <div className="grid grid-cols-2 gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
 //               {DOC_LIST.map((d) => (
 //                 <label key={d} className="flex items-center gap-2 text-sm">
-//                   <input type="checkbox" className="h-4 w-4 accent-emerald-600"
+//                   <input
+//                     type="checkbox"
+//                     className="h-4 w-4 accent-emerald-600"
 //                     checked={!!f.docs[d]}
-//                     onChange={(e) => setF({ ...f, docs: { ...f.docs, [d]: e.target.checked } })} />
+//                     onChange={(e) =>
+//                       setF({
+//                         ...f,
+//                         docs: { ...f.docs, [d]: e.target.checked },
+//                       })
+//                     }
+//                   />
 //                   {d}
 //                 </label>
 //               ))}
 //             </div>
 //           </div>
+
 //           <div className="flex justify-end gap-2">
-//             <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-//             <Button type="submit" disabled={saving} className="bg-emerald-600 text-white hover:bg-emerald-700">
+//             <Button type="button" variant="outline" onClick={onClose}>
+//               Cancel
+//             </Button>
+
+//             <Button
+//               type="submit"
+//               disabled={saving}
+//               className="bg-emerald-600 text-white hover:bg-emerald-700"
+//             >
 //               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
 //               Approve & Create Customer
 //             </Button>
@@ -1510,13 +1649,17 @@
 //   const [reason, setReason] = useState("");
 //   const [saving, setSaving] = useState(false);
 
-//   useEffect(() => { if (lead) setReason(""); }, [lead]);
+//   useEffect(() => {
+//     if (lead) setReason("");
+//   }, [lead]);
 
 //   if (!lead) return null;
 
 //   const submit = async (e: React.FormEvent) => {
 //     e.preventDefault();
+
 //     if (!reason.trim()) return toast.error("Reason required");
+
 //     setSaving(true);
 //     await onConfirm(lead, reason.trim());
 //     setSaving(false);
@@ -1530,16 +1673,31 @@
 //             Reject Lead — {lead.lead_name ?? lead.full_name}
 //           </DialogTitle>
 //         </DialogHeader>
+
 //         <form onSubmit={submit} className="space-y-4">
 //           <div>
-//             <Label>Rejection Reason *</Label>
-//             <Textarea required rows={4} className="mt-1" value={reason}
+//             <Label>Rejected Reason *</Label>
+
+//             <Textarea
+//               required
+//               rows={4}
+//               className="mt-1"
+//               value={reason}
 //               onChange={(e) => setReason(e.target.value)}
-//               placeholder="E.g. Low CIBIL score, insufficient income, document mismatch…" />
+//               placeholder="E.g. Low CIBIL score, insufficient income, document mismatch…"
+//             />
 //           </div>
+
 //           <div className="flex justify-end gap-2">
-//             <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-//             <Button type="submit" disabled={saving} className="bg-rose-600 text-white hover:bg-rose-700">
+//             <Button type="button" variant="outline" onClick={onClose}>
+//               Cancel
+//             </Button>
+
+//             <Button
+//               type="submit"
+//               disabled={saving}
+//               className="bg-rose-600 text-white hover:bg-rose-700"
+//             >
 //               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
 //               Reject Lead
 //             </Button>
@@ -1784,6 +1942,34 @@ type Staff = {
   role: string;
 };
 
+function cleanAmountValue(value: unknown) {
+  if (value === null || value === undefined) return "";
+
+  const raw = String(value).trim();
+
+  if (!raw) return "";
+
+  if (raw.toLowerCase().includes("e")) return "";
+
+  const cleaned = raw.replace(/[₹,\s]/g, "").replace(/[^\d.]/g, "");
+  const num = Number(cleaned);
+
+  if (!Number.isFinite(num) || num <= 0) return "";
+
+  return Math.round(num).toString();
+}
+
+function amountToNumber(value: unknown) {
+  const cleaned = cleanAmountValue(value);
+  return cleaned ? Number(cleaned) : null;
+}
+
+function formatAmount(value: unknown) {
+  const cleaned = cleanAmountValue(value);
+  if (!cleaned) return "—";
+  return `₹${Number(cleaned).toLocaleString("en-IN")}`;
+}
+
 function normaliseStage(s: string): Stage {
   if ((LEAD_STAGES as readonly string[]).includes(s)) return s as Stage;
   if (s === "Contacted") return "New";
@@ -1977,9 +2163,7 @@ function LeadsPage() {
     }
 
     setLeads((prev) =>
-      prev.map((l) =>
-        l.id === lead.id ? { ...l, bank_name: bankName } : l,
-      ),
+      prev.map((l) => (l.id === lead.id ? { ...l, bank_name: bankName } : l)),
     );
 
     toast.success(bankName ? `Bank → ${bankName}` : "Bank cleared");
@@ -2033,7 +2217,7 @@ function LeadsPage() {
           lead_id: lead.id,
           loan_type: lead.loan_type,
           loan_sub_type: lead.loan_sub_type,
-          loan_amount: lead.loan_amount,
+          loan_amount: amountToNumber(lead.loan_amount),
           cibil_score: lead.cibil_score,
           bank_name: lead.bank_name,
           stage: "Docs Pending",
@@ -2060,9 +2244,16 @@ function LeadsPage() {
       docs: Record<string, boolean>;
     },
   ) => {
+    const finalAmount = payload.sanction_amount ?? payload.requested_amount;
+
     const { error: leadErr } = await supabase
       .from("leads")
-      .update({ status: "Approved" })
+      .update({
+        status: "Approved",
+        loan_amount: payload.requested_amount,
+        bank_name: payload.bank_name || null,
+        loan_type: payload.loan_type,
+      })
       .eq("id", lead.id);
 
     if (leadErr) return toast.error(leadErr.message);
@@ -2088,9 +2279,9 @@ function LeadsPage() {
           address: [lead.city, lead.state].filter(Boolean).join(", ") || null,
           lead_id: lead.id,
           loan_type: payload.loan_type,
-          loan_amount: payload.sanction_amount ?? payload.requested_amount,
+          loan_amount: finalAmount,
           cibil_score: lead.cibil_score,
-          bank_name: payload.bank_name,
+          bank_name: payload.bank_name || null,
           stage: "Approved",
           note: payload.notes || null,
         })
@@ -2112,7 +2303,7 @@ function LeadsPage() {
       customer_id: customerId,
       lead_id: lead.id,
       loan_type: payload.loan_type,
-      loan_amount: payload.sanction_amount ?? payload.requested_amount,
+      loan_amount: finalAmount,
       requested_amount: payload.requested_amount,
       sanction_amount: payload.sanction_amount,
       tenure_months: payload.tenure_months,
@@ -2126,7 +2317,17 @@ function LeadsPage() {
     if (lcErr) return toast.error(lcErr.message);
 
     setLeads((prev) =>
-      prev.map((l) => (l.id === lead.id ? { ...l, status: "Approved" } : l)),
+      prev.map((l) =>
+        l.id === lead.id
+          ? {
+              ...l,
+              status: "Approved",
+              loan_amount: payload.requested_amount,
+              bank_name: payload.bank_name || null,
+              loan_type: payload.loan_type,
+            }
+          : l,
+      ),
     );
 
     toast.success("Approved → Customer & Loan Case created");
@@ -2367,7 +2568,8 @@ function LeadsPage() {
 
                     <TableCell>
                       <div className="text-sm font-medium text-slate-800">
-                        {l.loan_type ?? (l.product_type ?? "").replace(/_/g, " ")}
+                        {l.loan_type ??
+                          (l.product_type ?? "").replace(/_/g, " ")}
                       </div>
 
                       {l.loan_sub_type && (
@@ -2378,9 +2580,7 @@ function LeadsPage() {
                     </TableCell>
 
                     <TableCell className="text-sm">
-                      {l.loan_amount
-                        ? `₹${Number(l.loan_amount).toLocaleString("en-IN")}`
-                        : "—"}
+                      {formatAmount(l.loan_amount)}
                     </TableCell>
 
                     <TableCell>
@@ -2401,7 +2601,9 @@ function LeadsPage() {
                           st.trigger,
                         )}
                       >
-                        <span className={cn("h-1.5 w-1.5 rounded-full", st.dot)} />
+                        <span
+                          className={cn("h-1.5 w-1.5 rounded-full", st.dot)}
+                        />
                         {stage}
                       </span>
                     </TableCell>
@@ -2580,6 +2782,8 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
       return;
     }
 
+    const loanAmount = amountToNumber(f.loan_amount);
+
     setSaving(true);
 
     const { error } = await supabase.from("leads").insert({
@@ -2596,8 +2800,8 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
       status: "New",
       loan_type: f.loan_type || null,
       loan_sub_type: f.loan_sub_type || null,
-      loan_amount: f.loan_amount ? Number(f.loan_amount) : null,
-      amount: f.loan_amount ? Number(f.loan_amount) : null,
+      loan_amount: loanAmount,
+      amount: loanAmount,
       cibil_score: f.cibil_score ? Number(f.cibil_score) : null,
       product_name: f.loan_sub_type || f.loan_type || null,
       bank_name: f.bank_name || null,
@@ -2779,12 +2983,16 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
 
       <Field label="Loan Amount (₹)">
         <Input
-          type="number"
+          type="text"
+          inputMode="numeric"
           className="border-emerald-200 focus-visible:ring-emerald-400"
           placeholder="500000"
           value={f.loan_amount}
           onChange={(e) =>
-            setF((prev) => ({ ...prev, loan_amount: e.target.value }))
+            setF((prev) => ({
+              ...prev,
+              loan_amount: cleanAmountValue(e.target.value),
+            }))
           }
         />
       </Field>
@@ -2994,7 +3202,7 @@ function ApproveLeadDialog({
     if (lead) {
       setF({
         loan_type: lead.loan_type ?? "Home Loan",
-        requested_amount: lead.loan_amount ? String(lead.loan_amount) : "",
+        requested_amount: cleanAmountValue(lead.loan_amount),
         sanction_amount: "",
         tenure_months: "240",
         interest_rate: "8.5",
@@ -3014,10 +3222,8 @@ function ApproveLeadDialog({
 
     await onConfirm(lead, {
       loan_type: f.loan_type,
-      requested_amount: f.requested_amount
-        ? Number(f.requested_amount)
-        : null,
-      sanction_amount: f.sanction_amount ? Number(f.sanction_amount) : null,
+      requested_amount: amountToNumber(f.requested_amount),
+      sanction_amount: amountToNumber(f.sanction_amount),
       tenure_months: f.tenure_months ? Number(f.tenure_months) : null,
       interest_rate: f.interest_rate ? Number(f.interest_rate) : null,
       bank_name: f.bank_name,
@@ -3080,12 +3286,17 @@ function ApproveLeadDialog({
               <Label>Requested Amount (₹)</Label>
 
               <Input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 className="mt-1"
                 value={f.requested_amount}
                 onChange={(e) =>
-                  setF({ ...f, requested_amount: e.target.value })
+                  setF({
+                    ...f,
+                    requested_amount: cleanAmountValue(e.target.value),
+                  })
                 }
+                placeholder="Requested amount"
               />
             </div>
 
@@ -3093,11 +3304,15 @@ function ApproveLeadDialog({
               <Label>Sanctioned Amount (₹)</Label>
 
               <Input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 className="mt-1"
                 value={f.sanction_amount}
                 onChange={(e) =>
-                  setF({ ...f, sanction_amount: e.target.value })
+                  setF({
+                    ...f,
+                    sanction_amount: cleanAmountValue(e.target.value),
+                  })
                 }
                 placeholder="If sanctioned"
               />
@@ -3144,9 +3359,7 @@ function ApproveLeadDialog({
           </div>
 
           <div>
-            <Label className="mb-2 block">
-              Documents Received Checklist
-            </Label>
+            <Label className="mb-2 block">Documents Received Checklist</Label>
 
             <div className="grid grid-cols-2 gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
               {DOC_LIST.map((d) => (
