@@ -880,6 +880,99 @@ export function EmiCalculator() {
     image.src = url;
   };
 
+  const downloadExcel = () => {
+    const rateAnnual = (finalRate * 12 * 100).toFixed(2);
+    const summaryRows = `
+      <tr><th>Loan Amount</th><td>${Math.round(finalAmount)}</td></tr>
+      <tr><th>Interest Rate (p.a.)</th><td>${rateAnnual}%</td></tr>
+      <tr><th>Tenure (Months)</th><td>${finalMonths}</td></tr>
+      <tr><th>Monthly EMI</th><td>${Math.round(finalEmi)}</td></tr>
+      <tr><th>Total Interest</th><td>${Math.round(totalInterest)}</td></tr>
+      <tr><th>Total Payable</th><td>${Math.round(totalPayable)}</td></tr>
+    `;
+    const scheduleRows = schedule
+      .map(
+        (r) => `
+          <tr>
+            <td>${r.m}</td>
+            <td>${Math.round(r.emi)}</td>
+            <td>${Math.round(r.interest)}</td>
+            <td>${Math.round(r.principal)}</td>
+            <td>${Math.round(r.balance)}</td>
+          </tr>`,
+      )
+      .join("");
+    const yearlyRows = yearly
+      .map(
+        (y) => `
+          <tr>
+            <td>${y.year}</td>
+            <td>${Math.round(y.principal)}</td>
+            <td>${Math.round(y.interest)}</td>
+            <td>${Math.round(y.balance)}</td>
+          </tr>`,
+      )
+      .join("");
+
+    const html = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office"
+            xmlns:x="urn:schemas-microsoft-com:office:excel"
+            xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta charset="UTF-8" />
+          <!--[if gte mso 9]>
+          <xml>
+            <x:ExcelWorkbook>
+              <x:ExcelWorksheets>
+                <x:ExcelWorksheet><x:Name>Summary</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+                <x:ExcelWorksheet><x:Name>Schedule</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+                <x:ExcelWorksheet><x:Name>Yearly</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+              </x:ExcelWorksheets>
+            </x:ExcelWorkbook>
+          </xml>
+          <![endif]-->
+          <style>
+            table { border-collapse: collapse; font-family: Arial, sans-serif; }
+            th, td { border: 1px solid #999; padding: 6px 10px; }
+            th { background: #17357e; color: #fff; text-align: left; }
+            .title { font-size: 16px; font-weight: bold; color: #07142f; padding: 8px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="title">Loan Summary</div>
+          <table>${summaryRows}</table>
+          <br/><br/>
+          <div class="title">Month-wise Amortization Schedule</div>
+          <table>
+            <thead>
+              <tr><th>Month</th><th>EMI (₹)</th><th>Interest (₹)</th><th>Principal (₹)</th><th>Balance (₹)</th></tr>
+            </thead>
+            <tbody>${scheduleRows}</tbody>
+          </table>
+          <br/><br/>
+          <div class="title">Year-wise Breakup</div>
+          <table>
+            <thead>
+              <tr><th>Year</th><th>Principal (₹)</th><th>Interest (₹)</th><th>Balance (₹)</th></tr>
+            </thead>
+            <tbody>${yearlyRows}</tbody>
+          </table>
+        </body>
+      </html>`;
+
+    const blob = new Blob([`\uFEFF${html}`], {
+      type: "application/vnd.ms-excel;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "loan-amortization-report.xls";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const downloadPDF = () => {
     const graphSvg = document.getElementById("loan-yearly-chart-svg");
     const graphHtml = graphSvg
