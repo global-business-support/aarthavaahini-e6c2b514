@@ -1682,8 +1682,19 @@ export function EmiCalculator() {
 
               <button
                 type="button"
+                onClick={downloadExcel}
+                className="rounded-xl border border-emerald-100 bg-white px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm transition hover:bg-emerald-50"
+              >
+                Download Excel
+              </button>
+
+              <button
+                type="button"
                 onClick={downloadGraphPNG}
                 className="rounded-xl border border-blue-100 bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50"
+              >
+                Download Graph PNG
+              </button>
               >
                 Download Graph PNG
               </button>
