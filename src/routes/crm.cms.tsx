@@ -347,7 +347,8 @@ function ProductCardsEditor() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold">Product Cards ({rows.length})</h2>
         <Button
-          onClick={() = className="bg-gradient-to-r from-sky-600 via-blue-600 to-cyan-600 text-white shadow-md hover:opacity-90"> {
+          className="bg-gradient-to-r from-sky-600 via-blue-600 to-cyan-600 text-white shadow-md hover:opacity-90"
+          onClick={() => {
             setEditing({
               id: "",
               position: rows.length,
@@ -572,7 +573,8 @@ function TestimonialsEditor() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold">Testimonials ({rows.length})</h2>
         <Button
-          onClick={() = className="bg-gradient-to-r from-sky-600 via-blue-600 to-cyan-600 text-white shadow-md hover:opacity-90"> {
+          className="bg-gradient-to-r from-sky-600 via-blue-600 to-cyan-600 text-white shadow-md hover:opacity-90"
+          onClick={() => {
             setEditing({
               id: "",
               position: rows.length,
