@@ -76,12 +76,13 @@ export const createEmployee = createServerFn({ method: "POST" })
       full_name: z.string().trim().min(1).max(120),
       phone: z.string().trim().min(7).max(20),
       role: z.enum(STAFF_ROLES),
+      password: z.string().trim().min(8).max(72).optional(),
     }).parse(input),
   )
   .handler(async ({ context, data }) => {
     await getAdminUserId(context.token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const password = generatePassword(12);
+    const password = data.password && data.password.length >= 8 ? data.password : generatePassword(12);
 
     const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
       email: data.email,
