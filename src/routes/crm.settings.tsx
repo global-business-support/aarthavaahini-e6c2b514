@@ -71,7 +71,9 @@ function SettingsPage() {
     }
     setAdminBusy(true);
     try {
-      const r = await create({ data: { ...adminForm, role: "admin" } as any });
+      const payload: any = { ...adminForm, role: "admin" };
+      if (!payload.password || payload.password.length < 8) delete payload.password;
+      const r = await create({ data: payload });
       setCreds({
         email: r.employee.email,
         password: r.password,
@@ -79,7 +81,7 @@ function SettingsPage() {
         name: r.employee.full_name ?? "",
       });
       setAdminOpen(false);
-      setAdminForm({ email: "", full_name: "", phone: "" });
+      setAdminForm({ email: "", full_name: "", phone: "", password: "" });
       toast.success("Admin created — login is ready");
     } catch (e: any) {
       toast.error(e.message);
