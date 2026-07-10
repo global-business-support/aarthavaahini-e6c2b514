@@ -318,14 +318,14 @@ function BannersEditor() {
                 </div>
                 <div className="flex items-end gap-4">
                   <label className="flex items-center gap-2 text-sm">
-                    <Switch
+                    <Switch className={SWITCH_ON}
                       checked={editing.show_text}
                       onCheckedChange={(v) => setEditing({ ...editing, show_text: v })}
                     />
                     Show text
                   </label>
                   <label className="flex items-center gap-2 text-sm">
-                    <Switch
+                    <Switch className={SWITCH_ON}
                       checked={editing.is_active}
                       onCheckedChange={(v) => setEditing({ ...editing, is_active: v })}
                     />
@@ -555,7 +555,7 @@ function ProductCardsEditor() {
                 </div>
               </div>
               <label className="flex items-center gap-2 text-sm">
-                <Switch
+                <Switch className={SWITCH_ON}
                   checked={editing.is_active}
                   onCheckedChange={(v) => setEditing({ ...editing, is_active: v })}
                 />
@@ -752,14 +752,14 @@ function TestimonialsEditor() {
                 </div>
                 <div className="flex flex-col gap-2 pt-5">
                   <label className="flex items-center gap-2 text-sm">
-                    <Switch
+                    <Switch className={SWITCH_ON}
                       checked={editing.is_verified}
                       onCheckedChange={(v) => setEditing({ ...editing, is_verified: v })}
                     />
                     Verified
                   </label>
                   <label className="flex items-center gap-2 text-sm">
-                    <Switch
+                    <Switch className={SWITCH_ON}
                       checked={editing.is_active}
                       onCheckedChange={(v) => setEditing({ ...editing, is_active: v })}
                     />
@@ -845,7 +845,7 @@ function DashboardEditor() {
               placeholder="Trend"
             />
             <label className="flex items-center gap-2 text-sm">
-              <Switch
+              <Switch className={SWITCH_ON}
                 defaultChecked={r.is_active}
                 onCheckedChange={(v) => update(r.id, { is_active: v })}
               />
