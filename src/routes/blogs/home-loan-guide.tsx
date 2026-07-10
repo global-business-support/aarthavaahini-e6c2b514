@@ -4,6 +4,28 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 
 export const Route = createFileRoute("/blogs/home-loan-guide")({
+  head: () => ({
+    meta: [
+      { title: "Complete Home Loan Guide for First-Time Buyers | Aarthvaahini" },
+      { name: "description", content: "Eligibility, documents, interest rates and step-by-step process for first-time home loan buyers in India." },
+      { property: "og:title", content: "Home Loan Guide for First-Time Buyers" },
+      { property: "og:description", content: "Everything a first-time buyer needs to know about home loans in India." },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: "https://aarthvaahini.com/blogs/home-loan-guide" },
+    ],
+    links: [{ rel: "canonical", href: "https://aarthvaahini.com/blogs/home-loan-guide" }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: "Complete Home Loan Guide for First-Time Buyers",
+        author: { "@type": "Organization", name: "Aarthvaahini" },
+        publisher: { "@type": "Organization", name: "Aarthvaahini" },
+        mainEntityOfPage: "https://aarthvaahini.com/blogs/home-loan-guide",
+      }),
+    }],
+  }),
   component: RouteComponent,
 });
 

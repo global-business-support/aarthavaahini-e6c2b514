@@ -12,7 +12,18 @@ import { CheckCircle2, Gauge, Loader2 } from "lucide-react";
 import { sanitizeName, sanitizePan, sanitizePhone10, validateLead, NAME_TITLES } from "@/lib/validation";
 
 export const Route = createFileRoute("/cibil")({
-  head: () => ({ meta: [{ title: "Free CIBIL Score Check — Aarthvaahini" }]}),
+  head: () => ({
+    meta: [
+      { title: "Free CIBIL Score Check in 30 Seconds — Aarthvaahini" },
+      { name: "description", content: "Check your CIBIL score instantly for free. No score impact, personalised loan offers based on your credit health." },
+      { name: "keywords", content: "CIBIL score check, free credit score, credit report, loan eligibility, improve CIBIL" },
+      { property: "og:title", content: "Free CIBIL Score Check — Aarthvaahini" },
+      { property: "og:description", content: "Instant, free, no-impact CIBIL score with personalised loan offers." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://aarthvaahini.com/cibil" },
+    ],
+    links: [{ rel: "canonical", href: "https://aarthvaahini.com/cibil" }],
+  }),
   component: CibilPage,
 });
 

@@ -4,6 +4,7 @@ import { Footer } from "@/components/site/Footer";
 import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/dashboard")({
+  head: () => ({ meta: [{ title: "Dashboard — Aarthvaahini" }, { name: "robots", content: "noindex, nofollow" }] }),
   component: DashboardPage,
 });
 

@@ -11,8 +11,14 @@ export const Route = createFileRoute("/mutual-funds")({
   head: () => ({
     meta: [
       { title: "Mutual Funds — SIP, ELSS, Debt, NPS | Aarthvaahini" },
-      { name: "description", content: "Start SIP from ₹500. ELSS tax saver, debt funds, NPS, SGB and PMS — SEBI-registered advisors." },
+      { name: "description", content: "Start SIP from ₹500. Invest in ELSS tax-saver, equity, debt, NPS, SGB and PMS with SEBI-registered advisors. Historical 14% CAGR*." },
+      { name: "keywords", content: "mutual funds, SIP, ELSS, tax saver mutual fund, debt funds, equity funds, NPS, PMS, SGB, wealth creation, India" },
+      { property: "og:title", content: "Mutual Funds & SIP from ₹500 | Aarthvaahini" },
+      { property: "og:description", content: "Grow wealth with SIP, ELSS, debt funds, PMS and NPS — guided by SEBI-registered advisors." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://aarthvaahini.com/mutual-funds" },
     ],
+    links: [{ rel: "canonical", href: "https://aarthvaahini.com/mutual-funds" }],
   }),
   component: () => (
     <div className="min-h-screen bg-background relative">

@@ -220,13 +220,14 @@ import {
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact Us — Aarthvaahini" },
-      {
-        name: "description",
-        content:
-          "Get in touch with Aarthvaahini for loans, insurance, mutual funds, private equity and alternative investment queries.",
-      },
+      { title: "Contact Us — Aarthvaahini | Loans, Insurance & Investment Advisor" },
+      { name: "description", content: "Get in touch with Aarthvaahini for loans, insurance, mutual funds, private equity and alternative investment queries. Advisor available on call & WhatsApp." },
+      { property: "og:title", content: "Contact Aarthvaahini — Talk to a Financial Advisor" },
+      { property: "og:description", content: "Call, WhatsApp or email us for personalised loan, insurance and investment guidance." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://aarthvaahini.com/contact" },
     ],
+    links: [{ rel: "canonical", href: "https://aarthvaahini.com/contact" }],
   }),
   component: ContactPage,
 });
