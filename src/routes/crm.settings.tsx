@@ -23,6 +23,7 @@ export const Route = createFileRoute("/crm/settings")({ component: SettingsPage 
 
 function SettingsPage() {
   const { user, primaryRole, isAdmin } = useCrmAuth();
+  const isSuperAdmin = (user?.email ?? "").toLowerCase() === "jeet0731@gmail.com";
   const nav = useNavigate();
   const create = useServerFn(createEmployee);
 
