@@ -57,38 +57,46 @@ type NavItem = {
   label: string;
   icon: typeof LayoutDashboard;
   exact?: boolean;
+  /** Minimum role required. Default = any staff. */
+  access?: "admin" | "manager" | "staff";
 };
 
 const NAV: NavItem[] = [
   { to: "/crm", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/crm/leads", label: "Leads", icon: Users },
   { to: "/crm/customers", label: "Customers", icon: UserCircle2 },
-  { to: "/crm/rejected", label: "Rejected Leads", icon: XCircle },
-  { to: "/crm/employees", label: "Employees", icon: UserPlus },
-  { to: "/crm/partners", label: "Partners", icon: Handshake },
-  { to: "/crm/banks", label: "Banks", icon: Banknote },
+  { to: "/crm/rejected", label: "Rejected Leads", icon: XCircle, access: "manager" },
+  { to: "/crm/employees", label: "Employees", icon: UserPlus, access: "admin" },
+  { to: "/crm/partners", label: "Partners", icon: Handshake, access: "manager" },
+  { to: "/crm/banks", label: "Banks", icon: Banknote, access: "manager" },
   { to: "/crm/loans", label: "Loans", icon: Banknote },
   { to: "/crm/insurance", label: "Insurance", icon: ShieldCheck },
   { to: "/crm/mutual-funds", label: "Mutual Funds", icon: TrendingUp },
   { to: "/crm/documents", label: "Documents", icon: FolderOpen },
   { to: "/crm/tasks", label: "Tasks", icon: CheckSquare },
   { to: "/crm/schedule", label: "Schedule", icon: CalendarClock },
-  { to: "/crm/activity", label: "Activity", icon: Activity },
-  { to: "/crm/reports", label: "Reports & MIS", icon: FileText },
-  { to: "/crm/whatsapp", label: "WhatsApp", icon: MessageCircle },
-  { to: "/crm/cms", label: "Site Content", icon: ImageIcon },
-  { to: "/crm/settings", label: "Settings", icon: Settings },
+  { to: "/crm/activity", label: "Activity", icon: Activity, access: "manager" },
+  { to: "/crm/reports", label: "Reports & MIS", icon: FileText, access: "manager" },
+  { to: "/crm/whatsapp", label: "WhatsApp", icon: MessageCircle, access: "manager" },
+  { to: "/crm/cms", label: "Site Content", icon: ImageIcon, access: "admin" },
+  { to: "/crm/settings", label: "Settings", icon: Settings, access: "admin" },
 ];
 
 
 export function CrmLayout() {
-  const { user, isStaff, isPartner, primaryRole, loading } = useCrmAuth();
+  const { user, isStaff, isAdmin, isManager, isPartner, primaryRole, loading } = useCrmAuth();
   const nav = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
     return window.localStorage.getItem("crm-sidebar-collapsed") === "1";
+  });
+
+  const visibleNav = NAV.filter((n) => {
+    if (n.access === "admin") return isAdmin;
+    if (n.access === "manager") return isAdmin || isManager;
+    return true;
   });
 
   useEffect(() => {
@@ -124,7 +132,7 @@ export function CrmLayout() {
   };
 
   const activeLabel =
-    NAV.find((n) => (n.exact ? pathname === n.to : pathname === n.to || pathname.startsWith(n.to + "/")))?.label ?? "CRM";
+    visibleNav.find((n) => (n.exact ? pathname === n.to : pathname === n.to || pathname.startsWith(n.to + "/")))?.label ?? "CRM";
 
   const initials = (user.email ?? "U").split("@")[0].slice(0, 2).toUpperCase();
 
@@ -176,7 +184,7 @@ export function CrmLayout() {
                 Main Menu
               </div>
             )}
-            {NAV.map((item) => {
+            {visibleNav.map((item) => {
               const Icon = item.icon;
               const active = item.exact
                 ? pathname === item.to

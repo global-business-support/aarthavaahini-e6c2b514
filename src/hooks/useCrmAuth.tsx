@@ -50,7 +50,6 @@ export function useCrmAuth() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_evt, session) => {
         setUser(session?.user ?? null);
-        // defer to avoid deadlocks
         setTimeout(() => loadRoles(session?.user ?? null), 0);
       },
     );
@@ -68,7 +67,28 @@ export function useCrmAuth() {
 
   const isStaff = roles.length > 0;
   const isAdmin = roles.includes("admin");
+  const isManager = roles.includes("manager");
   const primaryRole = roles[0] ?? null;
 
-  return { user, roles, isStaff, isAdmin, isPartner, primaryRole, loading };
+  // Access matrix
+  // Admin  → full access (edit + delete + admin pages)
+  // Manager → view + edit, no delete, no admin-only pages
+  // Employee (other staff) → view + create/edit own assigned records, no delete
+  const canEdit = isAdmin || isManager || isStaff;
+  const canDelete = isAdmin;
+  const canAccessAdminPages = isAdmin;
+
+  return {
+    user,
+    roles,
+    isStaff,
+    isAdmin,
+    isManager,
+    isPartner,
+    primaryRole,
+    loading,
+    canEdit,
+    canDelete,
+    canAccessAdminPages,
+  };
 }
