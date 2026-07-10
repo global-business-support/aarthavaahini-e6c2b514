@@ -782,6 +782,17 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/blogs")({
+  head: () => ({
+    meta: [
+      { title: "Financial Blog — Loans, Insurance & Mutual Funds Tips | Aarthvaahini" },
+      { name: "description", content: "Expert articles on home loans, CIBIL score, SIP, tax-saving mutual funds, insurance and personal finance for Indian investors." },
+      { property: "og:title", content: "Aarthvaahini Blog — Personal Finance for India" },
+      { property: "og:description", content: "Guides on loans, insurance, mutual funds and wealth building." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://aarthvaahini.com/blogs" },
+    ],
+    links: [{ rel: "canonical", href: "https://aarthvaahini.com/blogs" }],
+  }),
   component: BlogsPage,
 });
 
