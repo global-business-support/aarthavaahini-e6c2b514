@@ -588,6 +588,17 @@ import vikasImg from "@/assets/directors/vikas-asawa.png";
 import akshatImg from "@/assets/directors/akshat-chouhan.png";
 
 export const Route = createFileRoute("/directors")({
+  head: () => ({
+    meta: [
+      { title: "Board of Directors — Aarthvaahini Financial Services" },
+      { name: "description", content: "Meet the directors leading Aarthvaahini — decades of expertise in banking, wealth, corporate lending and capital markets." },
+      { property: "og:title", content: "Our Directors — Aarthvaahini" },
+      { property: "og:description", content: "Leadership with 100+ combined years in finance, banking and wealth advisory." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://aarthvaahini.com/directors" },
+    ],
+    links: [{ rel: "canonical", href: "https://aarthvaahini.com/directors" }],
+  }),
   component: DirectorsPage,
 });
 
