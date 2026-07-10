@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /crm
+Disallow: /admin
+Disallow: /partner
+Disallow: /dashboard
+Disallow: /login
+
+Sitemap: https://aarthvaahini.com/sitemap.xml
