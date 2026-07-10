@@ -33,7 +33,8 @@ function SettingsPage() {
   // Add-admin dialog state
   const [adminOpen, setAdminOpen] = useState(false);
   const [adminBusy, setAdminBusy] = useState(false);
-  const [adminForm, setAdminForm] = useState({ email: "", full_name: "", phone: "" });
+  const [adminForm, setAdminForm] = useState({ email: "", full_name: "", phone: "", password: "" });
+  const [showPwd, setShowPwd] = useState(false);
   const [creds, setCreds] = useState<{ email: string; password: string; phone: string; name: string } | null>(null);
   const [copied, setCopied] = useState(false);
 
