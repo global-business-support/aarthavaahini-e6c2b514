@@ -12,7 +12,13 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Login / Register — Aarthvaahini" }] }),
+  head: () => ({
+    meta: [
+      { title: "Login / Register — Aarthvaahini" },
+      { name: "description", content: "Log in to your Aarthvaahini account to track applications, manage documents and view offers." },
+      { name: "robots", content: "noindex, follow" },
+    ],
+  }),
   component: LoginPage,
 });
 

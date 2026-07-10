@@ -904,26 +904,13 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "About Us — Aarthvaahini Financial Services" },
-      {
-        name: "description",
-        content:
-          "Aarthvaahini Financial Services is a full-service advisory firm — wealth management, capital raising, insurance and corporate finance with 50+ institutional partners.",
-      },
-      {
-        property: "og:title",
-        content: "About Us — Aarthvaahini Financial Services",
-      },
-      {
-        property: "og:url",
-        content: "https://aarthavaahini.lovable.app/about",
-      },
+      { name: "description", content: "Aarthvaahini Financial Services is a full-service advisory firm — wealth management, capital raising, insurance and corporate finance with 50+ institutional partners." },
+      { property: "og:title", content: "About Us — Aarthvaahini Financial Services" },
+      { property: "og:description", content: "Full-service advisory — wealth, insurance, capital raising & corporate finance with 50+ institutional partners." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://aarthvaahini.com/about" },
     ],
-    links: [
-      {
-        rel: "canonical",
-        href: "https://aarthavaahini.lovable.app/about",
-      },
-    ],
+    links: [{ rel: "canonical", href: "https://aarthvaahini.com/about" }],
   }),
   component: AboutPage,
 });

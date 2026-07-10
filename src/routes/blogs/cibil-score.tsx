@@ -4,6 +4,28 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 
 export const Route = createFileRoute("/blogs/cibil-score")({
+  head: () => ({
+    meta: [
+      { title: "How to Improve Your CIBIL Score in 30 Days | Aarthvaahini" },
+      { name: "description", content: "Practical steps to boost your CIBIL score fast — pay EMIs on time, control credit utilisation and fix errors on your report." },
+      { property: "og:title", content: "Improve Your CIBIL Score in 30 Days" },
+      { property: "og:description", content: "Actionable tips to raise your credit score and unlock better loan offers." },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: "https://aarthvaahini.com/blogs/cibil-score" },
+    ],
+    links: [{ rel: "canonical", href: "https://aarthvaahini.com/blogs/cibil-score" }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: "How to Improve Your CIBIL Score in 30 Days",
+        author: { "@type": "Organization", name: "Aarthvaahini" },
+        publisher: { "@type": "Organization", name: "Aarthvaahini" },
+        mainEntityOfPage: "https://aarthvaahini.com/blogs/cibil-score",
+      }),
+    }],
+  }),
   component: RouteComponent,
 });
 

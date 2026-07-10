@@ -4,6 +4,28 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 
 export const Route = createFileRoute("/blogs/sip-guide")({
+  head: () => ({
+    meta: [
+      { title: "Why SIP is the Smartest Investment for Beginners | Aarthvaahini" },
+      { name: "description", content: "Start SIP from ₹500 — how systematic investment plans build long-term wealth with compounding and rupee cost averaging." },
+      { property: "og:title", content: "Why SIP is the Smartest Investment for Beginners" },
+      { property: "og:description", content: "The beginner's guide to SIPs, compounding and building wealth with mutual funds." },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: "https://aarthvaahini.com/blogs/sip-guide" },
+    ],
+    links: [{ rel: "canonical", href: "https://aarthvaahini.com/blogs/sip-guide" }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: "Why SIP is the Smartest Investment for Beginners",
+        author: { "@type": "Organization", name: "Aarthvaahini" },
+        publisher: { "@type": "Organization", name: "Aarthvaahini" },
+        mainEntityOfPage: "https://aarthvaahini.com/blogs/sip-guide",
+      }),
+    }],
+  }),
   component: RouteComponent,
 });
 
