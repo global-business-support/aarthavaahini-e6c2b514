@@ -10,8 +10,14 @@ export const Route = createFileRoute("/insurance")({
   head: () => ({
     meta: [
       { title: "Insurance — Term, Health, Motor, Travel | Aarthvaahini" },
-      { name: "description", content: "Protect your family with term life, health, motor, travel, home and child insurance from top insurers." },
+      { name: "description", content: "Protect your family with term life, health, motor, travel, home and child insurance from India's top insurers. Save tax under 80C & 10(10D)." },
+      { name: "keywords", content: "term insurance, health insurance, motor insurance, travel insurance, home insurance, life insurance, tax saving, 80C" },
+      { property: "og:title", content: "Insurance — Term, Health, Motor & Travel | Aarthvaahini" },
+      { property: "og:description", content: "₹1 Cr term cover from just ₹500/month. Compare plans from top insurers with an unbiased advisor." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://aarthvaahini.com/insurance" },
     ],
+    links: [{ rel: "canonical", href: "https://aarthvaahini.com/insurance" }],
   }),
   component: () => (
     <div className="min-h-screen bg-background relative">
