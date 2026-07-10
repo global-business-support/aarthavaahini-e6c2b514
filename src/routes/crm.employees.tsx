@@ -1,218 +1,389 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from "@/components/ui/table";
-import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Plus, UserPlus, Pencil, Trash2 } from "lucide-react";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useCrmAuth } from "@/hooks/useCrmAuth";
+import {
+  listEmployees,
+  createEmployee,
+  deleteEmployee,
+  resetEmployeePassword,
+} from "@/lib/employees.functions";
 import { toast } from "sonner";
+import {
+  Loader2, UserPlus, Trash2, KeyRound, Copy, Check, Users,
+  Mail, Phone, MessageCircle, ShieldCheck,
+} from "lucide-react";
 
-export const Route = createFileRoute("/crm/employees")({ component: EmployeesPage });
+export const Route = createFileRoute("/crm/employees")({
+  head: () => ({ meta: [{ title: "Employees — CRM" }] }),
+  component: EmployeesPage,
+});
 
-type Employee = {
+type Emp = {
   id: string;
-  name: string;
   email: string | null;
+  full_name: string | null;
   phone: string | null;
-  role: string | null;
-  department: string | null;
-  status: string;
-  notes: string | null;
-  created_at: string;
+  roles: string[];
 };
 
-const ROLES = ["Sales Executive", "Operations", "Manager", "Tele-caller", "Field Agent", "Insurance Executive", "MF Executive", "Admin"];
-const DEPTS = ["Sales", "Operations", "Insurance", "Mutual Funds", "Loans", "Admin"];
+const ROLE_OPTIONS = [
+  { value: "admin", label: "Admin", desc: "Full access — everything" },
+  { value: "manager", label: "Manager", desc: "View + edit, no delete, no admin pages" },
+  { value: "sales_executive", label: "Sales Executive", desc: "Leads & customers" },
+  { value: "operations", label: "Operations", desc: "Loans, documents, banks" },
+  { value: "insurance_executive", label: "Insurance Executive", desc: "Insurance module" },
+  { value: "mf_executive", label: "Mutual Fund Executive", desc: "MF module" },
+];
+
+const ROLE_TONES: Record<string, string> = {
+  admin: "bg-rose-100 text-rose-700 border-rose-200",
+  manager: "bg-violet-100 text-violet-700 border-violet-200",
+  sales_executive: "bg-sky-100 text-sky-700 border-sky-200",
+  operations: "bg-amber-100 text-amber-700 border-amber-200",
+  insurance_executive: "bg-emerald-100 text-emerald-700 border-emerald-200",
+  mf_executive: "bg-indigo-100 text-indigo-700 border-indigo-200",
+};
 
 function EmployeesPage() {
-  const [rows, setRows] = useState<Employee[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { isAdmin, loading } = useCrmAuth();
+  const list = useServerFn(listEmployees);
+  const create = useServerFn(createEmployee);
+  const del = useServerFn(deleteEmployee);
+  const reset = useServerFn(resetEmployeePassword);
+
+  const [emps, setEmps] = useState<Emp[]>([]);
+  const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<Employee | null>(null);
+  const [form, setForm] = useState({
+    email: "",
+    full_name: "",
+    phone: "",
+    role: "sales_executive",
+  });
+  const [creds, setCreds] = useState<{
+    email: string;
+    password: string;
+    phone: string;
+    name: string;
+  } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const load = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("employees").select("*").order("created_at", { ascending: false });
-    if (error) toast.error(error.message);
-    setRows((data ?? []) as Employee[]);
-    setLoading(false);
+    setBusy(true);
+    try {
+      const r = await list();
+      setEmps(r.employees as Emp[]);
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+    setBusy(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    if (isAdmin) load();
+  }, [isAdmin]);
 
-  const del = async (id: string) => {
-    if (!confirm("Delete this employee?")) return;
-    const { error } = await supabase.from("employees").delete().eq("id", id);
-    if (error) return toast.error(error.message);
-    toast.success("Deleted");
-    load();
+  if (loading) {
+    return (
+      <div className="flex h-60 items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-sky-500" />
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <Card className="p-10 text-center">
+        <ShieldCheck className="mx-auto h-10 w-10 text-rose-400" />
+        <h1 className="mt-3 text-lg font-bold text-slate-900">Admins Only</h1>
+        <p className="mt-1 text-sm text-slate-500">
+          Only admins can manage team members and assign CRM roles.
+        </p>
+      </Card>
+    );
+  }
+
+  const submit = async () => {
+    if (!form.email || !form.full_name || !form.phone) {
+      toast.error("Fill all fields");
+      return;
+    }
+    setBusy(true);
+    try {
+      const r = await create({ data: form as any });
+      setCreds({
+        email: r.employee.email,
+        password: r.password,
+        phone: r.employee.phone ?? "",
+        name: r.employee.full_name ?? "",
+      });
+      setOpen(false);
+      setForm({ email: "", full_name: "", phone: "", role: "sales_executive" });
+      await load();
+      toast.success("Employee created — login is ready");
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+    setBusy(false);
   };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this employee permanently? This will revoke their CRM access.")) return;
+    try {
+      await del({ data: { user_id: id } });
+      toast.success("Deleted");
+      await load();
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  };
+
+  const handleReset = async (e: Emp) => {
+    try {
+      const r = await reset({ data: { user_id: e.id } });
+      setCreds({
+        email: e.email ?? "",
+        password: r.password,
+        phone: e.phone ?? "",
+        name: e.full_name ?? "",
+      });
+      toast.success("Password reset");
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
+
+  const credsText = creds
+    ? `Aarthvaahini CRM Login\nName: ${creds.name}\nLogin URL: ${typeof window !== "undefined" ? window.location.origin : ""}/crm/login\nEmail: ${creds.email}\nPassword: ${creds.password}\n\nPlease change your password after first login.`
+    : "";
+
+  const waLink = creds && creds.phone
+    ? `https://wa.me/${creds.phone.replace(/\D/g, "")}?text=${encodeURIComponent(credsText)}`
+    : null;
 
   return (
     <div className="space-y-4">
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sky-500 via-blue-500 to-cyan-500 px-4 py-4 text-white shadow-md shadow-sky-500/20">
-        <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/15 blur-2xl" />
+      {/* Hero */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-sky-500 via-blue-500 to-cyan-500 px-5 py-5 text-white shadow-lg shadow-sky-500/20">
+        <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/20 blur-3xl" />
         <div className="relative flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/20">
               <UserPlus className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-lg font-bold">Employees</h1>
-              <p className="text-xs text-white/80">Manage team members — assign them to tasks and leads.</p>
+              <h1 className="text-xl font-bold">Team Members</h1>
+              <p className="text-xs text-white/85">
+                Add employees, assign a role, and they get their own CRM login instantly.
+              </p>
             </div>
           </div>
-          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(null); }}>
+          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button className="bg-white text-sky-700 shadow-md hover:bg-sky-50">
-                <Plus className="mr-2 h-4 w-4" /> Add Employee
+                <UserPlus className="mr-2 h-4 w-4" /> Add Employee
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-xl bg-white">
+            <DialogContent className="max-w-md bg-white">
               <DialogHeader>
-                <DialogTitle>{editing ? "Edit Employee" : "Add Employee"}</DialogTitle>
+                <DialogTitle>Add New Employee</DialogTitle>
+                <DialogDescription>
+                  A CRM login will be created automatically with an auto-generated password.
+                </DialogDescription>
               </DialogHeader>
-              <EmployeeForm
-                editing={editing}
-                onSaved={() => { setOpen(false); setEditing(null); load(); }}
-              />
+              <div className="grid gap-3">
+                <div>
+                  <Label>Full Name</Label>
+                  <Input
+                    value={form.full_name}
+                    onChange={(e) => setForm({ ...form, full_name: e.target.value })}
+                    placeholder="Ravi Kumar"
+                  />
+                </div>
+                <div>
+                  <Label>Email</Label>
+                  <Input
+                    type="email"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    placeholder="ravi@company.com"
+                  />
+                </div>
+                <div>
+                  <Label>Phone (with country code)</Label>
+                  <Input
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    placeholder="+919876543210"
+                  />
+                </div>
+                <div>
+                  <Label>Role</Label>
+                  <Select value={form.role} onValueChange={(v) => setForm({ ...form, role: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {ROLE_OPTIONS.map((r) => (
+                        <SelectItem key={r.value} value={r.value}>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{r.label}</span>
+                            <span className="text-[11px] text-slate-500">{r.desc}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                <Button
+                  onClick={submit}
+                  disabled={busy}
+                  className="bg-gradient-to-r from-sky-600 to-blue-600 text-white hover:opacity-90"
+                >
+                  {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Create Login
+                </Button>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
       </div>
 
-      <Card className="overflow-hidden">
-        {loading ? (
-          <div className="flex h-40 items-center justify-center"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
-        ) : rows.length === 0 ? (
-          <div className="p-10 text-center text-sm text-slate-500">No employees yet. Add your first team member.</div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Department</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((r) => (
-                <TableRow key={r.id} className="hover:bg-sky-50/60">
-                  <TableCell className="font-medium">{r.name}</TableCell>
-                  <TableCell>{r.role ?? "—"}</TableCell>
-                  <TableCell>{r.department ?? "—"}</TableCell>
-                  <TableCell>{r.phone ?? "—"}</TableCell>
-                  <TableCell>{r.email ?? "—"}</TableCell>
-                  <TableCell>
-                    <Badge className={r.status === "active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-700"}>
-                      {r.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="flex gap-1">
-                    <Button size="icon" variant="ghost" onClick={() => { setEditing(r); setOpen(true); }}>
-                      <Pencil className="h-3.5 w-3.5" />
+      <Card className="overflow-hidden border-slate-200/70 p-0">
+        <div className="flex items-center gap-2 border-b border-slate-100 bg-sky-50/60 p-4">
+          <Users className="h-4 w-4 text-sky-600" />
+          <h2 className="text-sm font-semibold text-slate-800">
+            Staff with CRM Access ({emps.length})
+          </h2>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 text-left text-[11px] uppercase tracking-wider text-slate-500">
+              <tr>
+                <th className="px-4 py-3">Name</th>
+                <th className="px-4 py-3">Email</th>
+                <th className="px-4 py-3">Phone</th>
+                <th className="px-4 py-3">Role</th>
+                <th className="px-4 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {busy && emps.length === 0 && (
+                <tr><td colSpan={5} className="p-10 text-center">
+                  <Loader2 className="mx-auto h-5 w-5 animate-spin text-slate-400" />
+                </td></tr>
+              )}
+              {!busy && emps.length === 0 && (
+                <tr><td colSpan={5} className="p-10 text-center text-slate-400">
+                  No employees yet. Click "Add Employee" to create the first login.
+                </td></tr>
+              )}
+              {emps.map((e) => (
+                <tr key={e.id} className="border-t border-slate-100 hover:bg-sky-50/40">
+                  <td className="px-4 py-3 font-medium text-slate-900">{e.full_name || "—"}</td>
+                  <td className="px-4 py-3 text-slate-700">
+                    <Mail className="mr-1 inline h-3 w-3 text-slate-400" />{e.email}
+                  </td>
+                  <td className="px-4 py-3 text-slate-700">
+                    <Phone className="mr-1 inline h-3 w-3 text-slate-400" />{e.phone || "—"}
+                  </td>
+                  <td className="px-4 py-3">
+                    {e.roles.map((r) => (
+                      <Badge
+                        key={r}
+                        variant="outline"
+                        className={`mr-1 border capitalize ${ROLE_TONES[r] ?? "bg-slate-100 text-slate-700 border-slate-200"}`}
+                      >
+                        {r.replace(/_/g, " ")}
+                      </Badge>
+                    ))}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="mr-2 border-sky-200 text-sky-700 hover:bg-sky-50"
+                      onClick={() => handleReset(e)}
+                    >
+                      <KeyRound className="mr-1 h-3 w-3" />Reset
                     </Button>
-                    <Button size="icon" variant="ghost" className="text-rose-600" onClick={() => del(r.id)}>
-                      <Trash2 className="h-3.5 w-3.5" />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-rose-200 text-rose-600 hover:bg-rose-50"
+                      onClick={() => handleDelete(e.id)}
+                    >
+                      <Trash2 className="h-3 w-3" />
                     </Button>
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               ))}
-            </TableBody>
-          </Table>
-        )}
+            </tbody>
+          </table>
+        </div>
       </Card>
+
+      {/* Credentials Modal */}
+      <Dialog open={!!creds} onOpenChange={(o) => !o && setCreds(null)}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle>Login Credentials</DialogTitle>
+            <DialogDescription>
+              Save and share these now — the password will not be shown again.
+            </DialogDescription>
+          </DialogHeader>
+          {creds && (
+            <div className="space-y-3">
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+                Share these securely. Ask the employee to change their password after first login.
+              </div>
+              <pre className="overflow-x-auto rounded-lg border bg-slate-50 p-3 text-xs">{credsText}</pre>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  onClick={() => {
+                    navigator.clipboard.writeText(credsText);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 1500);
+                  }}
+                  className="bg-gradient-to-r from-sky-600 to-blue-600 text-white hover:opacity-90"
+                >
+                  {copied ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
+                  {copied ? "Copied" : "Copy"}
+                </Button>
+                {waLink && (
+                  <a href={waLink} target="_blank" rel="noreferrer">
+                    <Button className="bg-green-600 text-white hover:bg-green-700">
+                      <MessageCircle className="mr-2 h-4 w-4" /> Send via WhatsApp
+                    </Button>
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
-  );
-}
-
-function EmployeeForm({ editing, onSaved }: { editing: Employee | null; onSaved: () => void }) {
-  const [f, setF] = useState({
-    name: editing?.name ?? "",
-    email: editing?.email ?? "",
-    phone: editing?.phone ?? "",
-    role: editing?.role ?? ROLES[0],
-    department: editing?.department ?? DEPTS[0],
-    status: editing?.status ?? "active",
-    notes: editing?.notes ?? "",
-  });
-  const [saving, setSaving] = useState(false);
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!f.name.trim()) return toast.error("Name required");
-    setSaving(true);
-    const payload = { ...f, name: f.name.trim() };
-    const { error } = editing
-      ? await supabase.from("employees").update(payload).eq("id", editing.id)
-      : await supabase.from("employees").insert(payload);
-    setSaving(false);
-    if (error) return toast.error(error.message);
-    toast.success(editing ? "Updated" : "Employee added");
-    onSaved();
-  };
-
-  const inputCls = "h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100";
-
-  return (
-    <form onSubmit={submit} className="space-y-3">
-      <div>
-        <Label>Name *</Label>
-        <Input className="mt-1" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} required />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div><Label>Phone</Label><Input className="mt-1" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} /></div>
-        <div><Label>Email</Label><Input className="mt-1" type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} /></div>
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <Label>Role</Label>
-          <select className={`${inputCls} mt-1`} value={f.role} onChange={(e) => setF({ ...f, role: e.target.value })}>
-            {ROLES.map((r) => <option key={r}>{r}</option>)}
-          </select>
-        </div>
-        <div>
-          <Label>Department</Label>
-          <select className={`${inputCls} mt-1`} value={f.department} onChange={(e) => setF({ ...f, department: e.target.value })}>
-            {DEPTS.map((d) => <option key={d}>{d}</option>)}
-          </select>
-        </div>
-      </div>
-      <div>
-        <Label>Status</Label>
-        <select className={`${inputCls} mt-1`} value={f.status} onChange={(e) => setF({ ...f, status: e.target.value })}>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-      </div>
-      <div>
-        <Label>Notes</Label>
-        <Textarea className="mt-1" rows={2} value={f.notes} onChange={(e) => setF({ ...f, notes: e.target.value })} />
-      </div>
-      <div className="flex justify-end">
-        <Button type="submit" disabled={saving} className="bg-gradient-to-r from-sky-600 to-blue-600 text-white">
-          {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {editing ? "Save Changes" : "Add Employee"}
-        </Button>
-      </div>
-    </form>
   );
 }

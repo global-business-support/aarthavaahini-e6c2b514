@@ -142,6 +142,7 @@ function BannersEditor() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold">Hero Banners ({rows.length})</h2>
         <Button
+          className="bg-gradient-to-r from-sky-600 via-blue-600 to-cyan-600 text-white shadow-md hover:opacity-90"
           onClick={() => {
             setEditing({
               id: "",
@@ -280,7 +281,7 @@ function BannersEditor() {
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={() => editing && save(editing)}>Save</Button>
+            <Button className="bg-gradient-to-r from-sky-600 via-blue-600 to-cyan-600 text-white shadow-md hover:opacity-90" onClick={() => editing && save(editing)}>Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -346,6 +347,7 @@ function ProductCardsEditor() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold">Product Cards ({rows.length})</h2>
         <Button
+          className="bg-gradient-to-r from-sky-600 via-blue-600 to-cyan-600 text-white shadow-md hover:opacity-90"
           onClick={() => {
             setEditing({
               id: "",
@@ -507,7 +509,7 @@ function ProductCardsEditor() {
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={() => editing && save(editing)}>Save</Button>
+            <Button className="bg-gradient-to-r from-sky-600 via-blue-600 to-cyan-600 text-white shadow-md hover:opacity-90" onClick={() => editing && save(editing)}>Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -571,6 +573,7 @@ function TestimonialsEditor() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold">Testimonials ({rows.length})</h2>
         <Button
+          className="bg-gradient-to-r from-sky-600 via-blue-600 to-cyan-600 text-white shadow-md hover:opacity-90"
           onClick={() => {
             setEditing({
               id: "",
@@ -712,7 +715,7 @@ function TestimonialsEditor() {
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={() => editing && save(editing)}>Save</Button>
+            <Button className="bg-gradient-to-r from-sky-600 via-blue-600 to-cyan-600 text-white shadow-md hover:opacity-90" onClick={() => editing && save(editing)}>Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
