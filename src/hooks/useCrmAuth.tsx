@@ -9,6 +9,8 @@ const STAFF_ROLES = [
   "operations",
   "insurance_executive",
   "mf_executive",
+  "accountant",
+  "back_office_executive",
 ] as const;
 
 export type StaffRole = (typeof STAFF_ROLES)[number];

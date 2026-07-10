@@ -1,23 +1,41 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+  DialogTrigger, DialogFooter, DialogDescription,
+} from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useCrmAuth } from "@/hooks/useCrmAuth";
+import { createEmployee } from "@/lib/employees.functions";
 import { toast } from "sonner";
-import { Settings as SettingsIcon, Loader2, Save, LogOut } from "lucide-react";
+import {
+  Settings as SettingsIcon, Loader2, Save, LogOut,
+  ShieldPlus, Copy, Check, MessageCircle,
+} from "lucide-react";
 
 export const Route = createFileRoute("/crm/settings")({ component: SettingsPage });
 
 function SettingsPage() {
-  const { user, primaryRole } = useCrmAuth();
+  const { user, primaryRole, isAdmin } = useCrmAuth();
   const nav = useNavigate();
+  const create = useServerFn(createEmployee);
+
   const [profile, setProfile] = useState({ full_name: "", phone: "" });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  // Add-admin dialog state
+  const [adminOpen, setAdminOpen] = useState(false);
+  const [adminBusy, setAdminBusy] = useState(false);
+  const [adminForm, setAdminForm] = useState({ email: "", full_name: "", phone: "" });
+  const [creds, setCreds] = useState<{ email: string; password: string; phone: string; name: string } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -45,6 +63,36 @@ function SettingsPage() {
     nav({ to: "/crm/login" });
   };
 
+  const addAdmin = async () => {
+    if (!adminForm.email || !adminForm.full_name || !adminForm.phone) {
+      toast.error("Fill all fields");
+      return;
+    }
+    setAdminBusy(true);
+    try {
+      const r = await create({ data: { ...adminForm, role: "admin" } as any });
+      setCreds({
+        email: r.employee.email,
+        password: r.password,
+        phone: r.employee.phone ?? "",
+        name: r.employee.full_name ?? "",
+      });
+      setAdminOpen(false);
+      setAdminForm({ email: "", full_name: "", phone: "" });
+      toast.success("Admin created — login is ready");
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+    setAdminBusy(false);
+  };
+
+  const credsText = creds
+    ? `Aarthvaahini CRM Admin Login\nName: ${creds.name}\nLogin URL: ${typeof window !== "undefined" ? window.location.origin : ""}/crm/login\nEmail: ${creds.email}\nPassword: ${creds.password}\n\nPlease change your password after first login.`
+    : "";
+  const waLink = creds && creds.phone
+    ? `https://wa.me/${creds.phone.replace(/\D/g, "")}?text=${encodeURIComponent(credsText)}`
+    : null;
+
   return (
     <div className="space-y-4">
       <div className="rounded-xl bg-gradient-to-r from-sky-500 via-blue-500 to-cyan-500 px-4 py-3 text-white shadow-md">
@@ -70,6 +118,54 @@ function SettingsPage() {
           </div>
         </div>
       </Card>
+
+      {isAdmin && (
+        <Card className="p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-semibold text-slate-900">Admins</h2>
+              <p className="mt-1 text-xs text-slate-500">
+                Create a new admin login. The password shows only once — save or share it right away.
+              </p>
+            </div>
+            <Dialog open={adminOpen} onOpenChange={setAdminOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:opacity-90">
+                  <ShieldPlus className="mr-2 h-4 w-4" /> Add Admin
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md bg-white">
+                <DialogHeader>
+                  <DialogTitle>Add New Admin</DialogTitle>
+                  <DialogDescription>
+                    An admin CRM login will be created. A strong password is auto-generated and shown once.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-3">
+                  <div>
+                    <Label>Full Name</Label>
+                    <Input value={adminForm.full_name} onChange={(e) => setAdminForm({ ...adminForm, full_name: e.target.value })} placeholder="e.g. Priya Sharma" />
+                  </div>
+                  <div>
+                    <Label>Email</Label>
+                    <Input type="email" value={adminForm.email} onChange={(e) => setAdminForm({ ...adminForm, email: e.target.value })} placeholder="priya@company.com" />
+                  </div>
+                  <div>
+                    <Label>Phone (with country code)</Label>
+                    <Input value={adminForm.phone} onChange={(e) => setAdminForm({ ...adminForm, phone: e.target.value })} placeholder="+919876543210" />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setAdminOpen(false)}>Cancel</Button>
+                  <Button onClick={addAdmin} disabled={adminBusy} className="bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:opacity-90">
+                    {adminBusy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Create Admin
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </Card>
+      )}
 
       <Card className="p-5">
         <h2 className="text-sm font-semibold text-slate-900">Profile</h2>
@@ -102,6 +198,44 @@ function SettingsPage() {
           <LogOut className="mr-2 h-4 w-4" /> Sign out
         </Button>
       </Card>
+
+      {/* Credentials Modal */}
+      <Dialog open={!!creds} onOpenChange={(o) => !o && setCreds(null)}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle>Admin Login Credentials</DialogTitle>
+            <DialogDescription>Save and share these now — the password will not be shown again.</DialogDescription>
+          </DialogHeader>
+          {creds && (
+            <div className="space-y-3">
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+                Share securely. Ask the admin to change their password after first login.
+              </div>
+              <pre className="overflow-x-auto rounded-lg border bg-slate-50 p-3 text-xs">{credsText}</pre>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  onClick={() => {
+                    navigator.clipboard.writeText(credsText);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 1500);
+                  }}
+                  className="bg-gradient-to-r from-sky-600 to-blue-600 text-white hover:opacity-90"
+                >
+                  {copied ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
+                  {copied ? "Copied" : "Copy"}
+                </Button>
+                {waLink && (
+                  <a href={waLink} target="_blank" rel="noreferrer">
+                    <Button className="bg-green-600 text-white hover:bg-green-700">
+                      <MessageCircle className="mr-2 h-4 w-4" /> Send via WhatsApp
+                    </Button>
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
