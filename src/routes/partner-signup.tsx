@@ -24,6 +24,7 @@ export const Route = createFileRoute("/partner-signup")({
       {
         property: "og:description",
         content: "Partner with us and grow your financial services business.",
+      },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://aarthvaahini.com/partner-signup" },
     ],
