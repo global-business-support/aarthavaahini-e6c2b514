@@ -157,6 +157,23 @@ function SettingsPage() {
                     <Label>Phone (with country code)</Label>
                     <Input value={adminForm.phone} onChange={(e) => setAdminForm({ ...adminForm, phone: e.target.value })} placeholder="+919876543210" />
                   </div>
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <Label>Password (optional)</Label>
+                      <button type="button" className="text-[11px] font-medium text-sky-600 hover:underline" onClick={() => setShowPwd((s) => !s)}>
+                        {showPwd ? "Hide" : "Show"}
+                      </button>
+                    </div>
+                    <Input
+                      type={showPwd ? "text" : "password"}
+                      value={adminForm.password}
+                      onChange={(e) => setAdminForm({ ...adminForm, password: e.target.value })}
+                      placeholder="Leave blank to auto-generate (min 8 chars)"
+                    />
+                    <p className="mt-1 text-[11px] text-slate-500">
+                      Set your own password to hand out, or leave blank for a strong auto-generated one.
+                    </p>
+                  </div>
                 </div>
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setAdminOpen(false)}>Cancel</Button>
