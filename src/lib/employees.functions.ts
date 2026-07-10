@@ -2,7 +2,16 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const STAFF_ROLES = ["admin", "manager", "sales_executive", "operations", "insurance_executive", "mf_executive"] as const;
+const STAFF_ROLES = [
+  "admin",
+  "manager",
+  "sales_executive",
+  "operations",
+  "insurance_executive",
+  "mf_executive",
+  "accountant",
+  "back_office_executive",
+] as const;
 type StaffRole = typeof STAFF_ROLES[number];
 
 async function getAdminUserId(token: string): Promise<string> {
