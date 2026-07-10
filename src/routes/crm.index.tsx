@@ -105,6 +105,39 @@ function DashboardPage() {
   >({});
 
   const loadDashboard = useCallback(async () => {
+    // Only the super admin sees aggregated data; every other admin/user
+    // starts with a fresh, zeroed dashboard.
+    const { data: sessionData } = await supabase.auth.getSession();
+    const email = (sessionData.session?.user?.email ?? "").toLowerCase();
+    const isSuperAdmin = email === "jeet0731@gmail.com";
+
+    if (!isSuperAdmin) {
+      setStats({
+        totalLeads: 0,
+        totalCustomers: 0,
+        followupsDue: 0,
+        loanPipeline: 0,
+        insurancePipeline: 0,
+        mfPipeline: 0,
+        revenue: 0,
+        pendingTasks: 0,
+        slaAlerts: 0,
+      });
+      setRecentLeads([]);
+      const emptyBuckets: { day: string; leads: number }[] = [];
+      for (let i = 29; i >= 0; i--) {
+        const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+        emptyBuckets.push({
+          day: date.toLocaleDateString("en-IN", { day: "numeric", month: "short" }),
+          leads: 0,
+        });
+      }
+      setLeadTrend(emptyBuckets);
+      setCustomerStages([]);
+      setLoanByStage([]);
+      return;
+    }
+
     const now = new Date().toISOString();
 
     const since = new Date(
