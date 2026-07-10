@@ -16,8 +16,10 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, Upload, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+
+const SWITCH_ON = "data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-slate-300";
 
 export const Route = createFileRoute("/crm/cms")({ component: CmsPage });
 
