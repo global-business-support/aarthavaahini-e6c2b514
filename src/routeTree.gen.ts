@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PartnerSignupRouteImport } from './routes/partner-signup'
 import { Route as PartnerRouteImport } from './routes/partner'
 import { Route as MutualFundsRouteImport } from './routes/mutual-funds'
@@ -52,6 +53,11 @@ import { Route as BlogsCibilScoreRouteImport } from './routes/blogs/cibil-score'
 import { Route as AdminWhatsappRouteImport } from './routes/admin.whatsapp'
 import { Route as AdminEmployeesRouteImport } from './routes/admin.employees'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PartnerSignupRoute = PartnerSignupRouteImport.update({
   id: '/partner-signup',
   path: '/partner-signup',
@@ -279,6 +285,7 @@ export interface FileRoutesByFullPath {
   '/mutual-funds': typeof MutualFundsRoute
   '/partner': typeof PartnerRouteWithChildren
   '/partner-signup': typeof PartnerSignupRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/whatsapp': typeof AdminWhatsappRoute
   '/blogs/cibil-score': typeof BlogsCibilScoreRoute
@@ -321,6 +328,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/mutual-funds': typeof MutualFundsRoute
   '/partner-signup': typeof PartnerSignupRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/whatsapp': typeof AdminWhatsappRoute
   '/blogs/cibil-score': typeof BlogsCibilScoreRoute
@@ -366,6 +374,7 @@ export interface FileRoutesById {
   '/mutual-funds': typeof MutualFundsRoute
   '/partner': typeof PartnerRouteWithChildren
   '/partner-signup': typeof PartnerSignupRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/whatsapp': typeof AdminWhatsappRoute
   '/blogs/cibil-score': typeof BlogsCibilScoreRoute
@@ -412,6 +421,7 @@ export interface FileRouteTypes {
     | '/mutual-funds'
     | '/partner'
     | '/partner-signup'
+    | '/sitemap.xml'
     | '/admin/employees'
     | '/admin/whatsapp'
     | '/blogs/cibil-score'
@@ -454,6 +464,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/mutual-funds'
     | '/partner-signup'
+    | '/sitemap.xml'
     | '/admin/employees'
     | '/admin/whatsapp'
     | '/blogs/cibil-score'
@@ -498,6 +509,7 @@ export interface FileRouteTypes {
     | '/mutual-funds'
     | '/partner'
     | '/partner-signup'
+    | '/sitemap.xml'
     | '/admin/employees'
     | '/admin/whatsapp'
     | '/blogs/cibil-score'
@@ -543,10 +555,18 @@ export interface RootRouteChildren {
   MutualFundsRoute: typeof MutualFundsRoute
   PartnerRoute: typeof PartnerRouteWithChildren
   PartnerSignupRoute: typeof PartnerSignupRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/partner-signup': {
       id: '/partner-signup'
       path: '/partner-signup'
@@ -947,17 +967,8 @@ const rootRouteChildren: RootRouteChildren = {
   MutualFundsRoute: MutualFundsRoute,
   PartnerRoute: PartnerRouteWithChildren,
   PartnerSignupRoute: PartnerSignupRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
