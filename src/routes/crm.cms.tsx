@@ -16,8 +16,10 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, Upload, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+
+const SWITCH_ON = "data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-slate-300";
 
 export const Route = createFileRoute("/crm/cms")({ component: CmsPage });
 
@@ -62,25 +64,81 @@ function CmsPage() {
 function ImageField({
   value,
   onChange,
+  accept = "image/*,video/*",
 }: {
   value: string;
   onChange: (v: string) => void;
+  accept?: string;
 }) {
+  const [uploading, setUploading] = useState(false);
+  const isVideo = /\.(mp4|webm|ogg|mov)(\?|$)/i.test(value);
+
+  const upload = async (file: File) => {
+    if (!file) return;
+    if (file.size > 50 * 1024 * 1024) {
+      toast.error("File too large (max 50MB)");
+      return;
+    }
+    setUploading(true);
+    const ext = file.name.split(".").pop() || "bin";
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error } = await supabase.storage
+      .from("cms-media")
+      .upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type });
+    if (error) {
+      toast.error(error.message);
+      setUploading(false);
+      return;
+    }
+    // Long-lived signed URL (10 years) — bucket is private per workspace policy.
+    const { data, error: sErr } = await supabase.storage
+      .from("cms-media")
+      .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
+    if (sErr || !data?.signedUrl) {
+      toast.error(sErr?.message || "Failed to sign URL");
+      setUploading(false);
+      return;
+    }
+    onChange(data.signedUrl);
+    toast.success("Uploaded");
+    setUploading(false);
+  };
+
   return (
     <div className="space-y-2">
-      <Label>Image URL</Label>
+      <Label>Media (image or video)</Label>
+      <div className="flex flex-wrap gap-2">
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-gradient-to-r from-sky-600 to-blue-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:opacity-90">
+          {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+          {uploading ? "Uploading..." : "Upload File"}
+          <input
+            type="file"
+            accept={accept}
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) upload(f);
+              e.target.value = "";
+            }}
+          />
+        </label>
+      </div>
       <Input
-        placeholder="https://… (paste an image URL, recommended ≥ 1200px wide)"
+        placeholder="…or paste an image / video URL"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
       {value && (
-        <img
-          src={value}
-          alt="preview"
-          className="h-32 w-full rounded-lg border object-cover"
-          onError={(e) => ((e.target as HTMLImageElement).style.opacity = "0.3")}
-        />
+        isVideo ? (
+          <video src={value} controls className="h-40 w-full rounded-lg border object-cover" />
+        ) : (
+          <img
+            src={value}
+            alt="preview"
+            className="h-32 w-full rounded-lg border object-cover"
+            onError={(e) => ((e.target as HTMLImageElement).style.opacity = "0.3")}
+          />
+        )
       )}
     </div>
   );
@@ -260,14 +318,14 @@ function BannersEditor() {
                 </div>
                 <div className="flex items-end gap-4">
                   <label className="flex items-center gap-2 text-sm">
-                    <Switch
+                    <Switch className={SWITCH_ON}
                       checked={editing.show_text}
                       onCheckedChange={(v) => setEditing({ ...editing, show_text: v })}
                     />
                     Show text
                   </label>
                   <label className="flex items-center gap-2 text-sm">
-                    <Switch
+                    <Switch className={SWITCH_ON}
                       checked={editing.is_active}
                       onCheckedChange={(v) => setEditing({ ...editing, is_active: v })}
                     />
@@ -497,7 +555,7 @@ function ProductCardsEditor() {
                 </div>
               </div>
               <label className="flex items-center gap-2 text-sm">
-                <Switch
+                <Switch className={SWITCH_ON}
                   checked={editing.is_active}
                   onCheckedChange={(v) => setEditing({ ...editing, is_active: v })}
                 />
@@ -694,14 +752,14 @@ function TestimonialsEditor() {
                 </div>
                 <div className="flex flex-col gap-2 pt-5">
                   <label className="flex items-center gap-2 text-sm">
-                    <Switch
+                    <Switch className={SWITCH_ON}
                       checked={editing.is_verified}
                       onCheckedChange={(v) => setEditing({ ...editing, is_verified: v })}
                     />
                     Verified
                   </label>
                   <label className="flex items-center gap-2 text-sm">
-                    <Switch
+                    <Switch className={SWITCH_ON}
                       checked={editing.is_active}
                       onCheckedChange={(v) => setEditing({ ...editing, is_active: v })}
                     />
@@ -787,7 +845,7 @@ function DashboardEditor() {
               placeholder="Trend"
             />
             <label className="flex items-center gap-2 text-sm">
-              <Switch
+              <Switch className={SWITCH_ON}
                 defaultChecked={r.is_active}
                 onCheckedChange={(v) => update(r.id, { is_active: v })}
               />

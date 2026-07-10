@@ -33,7 +33,8 @@ function SettingsPage() {
   // Add-admin dialog state
   const [adminOpen, setAdminOpen] = useState(false);
   const [adminBusy, setAdminBusy] = useState(false);
-  const [adminForm, setAdminForm] = useState({ email: "", full_name: "", phone: "" });
+  const [adminForm, setAdminForm] = useState({ email: "", full_name: "", phone: "", password: "" });
+  const [showPwd, setShowPwd] = useState(false);
   const [creds, setCreds] = useState<{ email: string; password: string; phone: string; name: string } | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -70,7 +71,9 @@ function SettingsPage() {
     }
     setAdminBusy(true);
     try {
-      const r = await create({ data: { ...adminForm, role: "admin" } as any });
+      const payload: any = { ...adminForm, role: "admin" };
+      if (!payload.password || payload.password.length < 8) delete payload.password;
+      const r = await create({ data: payload });
       setCreds({
         email: r.employee.email,
         password: r.password,
@@ -78,7 +81,7 @@ function SettingsPage() {
         name: r.employee.full_name ?? "",
       });
       setAdminOpen(false);
-      setAdminForm({ email: "", full_name: "", phone: "" });
+      setAdminForm({ email: "", full_name: "", phone: "", password: "" });
       toast.success("Admin created — login is ready");
     } catch (e: any) {
       toast.error(e.message);
@@ -153,6 +156,23 @@ function SettingsPage() {
                   <div>
                     <Label>Phone (with country code)</Label>
                     <Input value={adminForm.phone} onChange={(e) => setAdminForm({ ...adminForm, phone: e.target.value })} placeholder="+919876543210" />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <Label>Password (optional)</Label>
+                      <button type="button" className="text-[11px] font-medium text-sky-600 hover:underline" onClick={() => setShowPwd((s) => !s)}>
+                        {showPwd ? "Hide" : "Show"}
+                      </button>
+                    </div>
+                    <Input
+                      type={showPwd ? "text" : "password"}
+                      value={adminForm.password}
+                      onChange={(e) => setAdminForm({ ...adminForm, password: e.target.value })}
+                      placeholder="Leave blank to auto-generate (min 8 chars)"
+                    />
+                    <p className="mt-1 text-[11px] text-slate-500">
+                      Set your own password to hand out, or leave blank for a strong auto-generated one.
+                    </p>
                   </div>
                 </div>
                 <DialogFooter>
