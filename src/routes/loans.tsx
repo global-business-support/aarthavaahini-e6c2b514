@@ -11,8 +11,14 @@ export const Route = createFileRoute("/loans")({
   head: () => ({
     meta: [
       { title: "Loans — Home, Personal, Business, LAP | Aarthvaahini" },
-      { name: "description", content: "Apply for home, personal, business, car, education and gold loans from 50+ banks at lowest rates." },
+      { name: "description", content: "Apply for home, personal, business, car, education and gold loans from 50+ banks at lowest rates. Approval in 24 hours." },
+      { name: "keywords", content: "home loan, personal loan, business loan, car loan, education loan, gold loan, loan against property, EMI calculator, lowest interest rate" },
+      { property: "og:title", content: "Loans from 50+ Banks — Home, Personal, Business | Aarthvaahini" },
+      { property: "og:description", content: "Compare rates from 50+ banks. Fast approval, minimal paperwork, dedicated advisor." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://aarthvaahini.com/loans" },
     ],
+    links: [{ rel: "canonical", href: "https://aarthvaahini.com/loans" }],
   }),
   component: () => (
     <div className="min-h-screen bg-background relative">
