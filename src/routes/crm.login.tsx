@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import {
   Loader2,
   Lock,
@@ -30,6 +31,24 @@ function CrmLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotBusy, setForgotBusy] = useState(false);
+
+  const sendReset = async () => {
+    const em = forgotEmail.trim();
+    if (!em) return toast.error("Enter your email");
+    setForgotBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(em, {
+      redirectTo: `${window.location.origin}/crm/login`,
+    });
+    setForgotBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("Password reset link sent — check your email");
+    setForgotOpen(false);
+    setForgotEmail("");
+  };
+
 
   useEffect(() => {
     const check = async () => {
@@ -277,6 +296,16 @@ function CrmLoginPage() {
                 </div>
               </div>
 
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => { setForgotEmail(email); setForgotOpen(true); }}
+                  className="text-xs font-medium text-blue-300 hover:text-white hover:underline"
+                >
+                  Forgot password?
+                </button>
+              </div>
+
               <Button
                 type="submit"
                 disabled={loading}
@@ -294,6 +323,34 @@ function CrmLoginPage() {
           </div>
         </div>
       </div>
+
+      <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle>Reset your password</DialogTitle>
+            <DialogDescription>
+              Enter your CRM email. We'll send a secure reset link.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-2">
+            <Label>Email</Label>
+            <Input
+              type="email"
+              value={forgotEmail}
+              onChange={(e) => setForgotEmail(e.target.value)}
+              placeholder="you@company.com"
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setForgotOpen(false)}>Cancel</Button>
+            <Button onClick={sendReset} disabled={forgotBusy} className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+              {forgotBusy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Send reset link
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
