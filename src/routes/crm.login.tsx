@@ -30,6 +30,24 @@ function CrmLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotBusy, setForgotBusy] = useState(false);
+
+  const sendReset = async () => {
+    const em = forgotEmail.trim();
+    if (!em) return toast.error("Enter your email");
+    setForgotBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(em, {
+      redirectTo: `${window.location.origin}/crm/login`,
+    });
+    setForgotBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("Password reset link sent — check your email");
+    setForgotOpen(false);
+    setForgotEmail("");
+  };
+
 
   useEffect(() => {
     const check = async () => {
