@@ -12,11 +12,11 @@ import {
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useCrmAuth } from "@/hooks/useCrmAuth";
-import { createEmployee } from "@/lib/employees.functions";
+import { createEmployee, listEmployees, deleteEmployee, resetEmployeePassword } from "@/lib/employees.functions";
 import { toast } from "sonner";
 import {
   Settings as SettingsIcon, Loader2, Save, LogOut,
-  ShieldPlus, Copy, Check, MessageCircle,
+  ShieldPlus, Copy, Check, MessageCircle, Trash2, KeyRound, ShieldCheck,
 } from "lucide-react";
 
 export const Route = createFileRoute("/crm/settings")({ component: SettingsPage });
