@@ -211,6 +211,83 @@ function SettingsPage() {
         </Card>
       )}
 
+      {isSuperAdmin && (
+        <Card className="p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-rose-600" /> Admin Users
+              </h2>
+              <p className="mt-1 text-xs text-slate-500">All admin accounts on this CRM.</p>
+            </div>
+            <Button variant="outline" size="sm" onClick={loadAdmins} disabled={adminsLoading}>
+              {adminsLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Refresh"}
+            </Button>
+          </div>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-left text-xs uppercase tracking-wide text-slate-500">
+                  <th className="pb-2">Name</th>
+                  <th className="pb-2">Email</th>
+                  <th className="pb-2">Phone</th>
+                  <th className="pb-2 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {admins.length === 0 && !adminsLoading && (
+                  <tr><td colSpan={4} className="py-6 text-center text-xs text-slate-400">No admins yet.</td></tr>
+                )}
+                {admins.map((a) => {
+                  const isSuper = (a.email ?? "").toLowerCase() === "jeet0731@gmail.com";
+                  return (
+                    <tr key={a.id} className="border-b last:border-0">
+                      <td className="py-2.5 font-medium text-slate-900">
+                        {a.full_name || "—"}
+                        {isSuper && <Badge className="ml-2 bg-amber-100 text-amber-700 border-amber-200" variant="outline">Super Admin</Badge>}
+                      </td>
+                      <td className="py-2.5 text-slate-600">{a.email || "—"}</td>
+                      <td className="py-2.5 text-slate-600">{a.phone || "—"}</td>
+                      <td className="py-2.5 text-right">
+                        {!isSuper && (
+                          <div className="flex justify-end gap-1">
+                            <Button
+                              size="sm" variant="outline"
+                              onClick={async () => {
+                                try {
+                                  const r = await resetPwd({ data: { user_id: a.id } });
+                                  setCreds({ email: a.email ?? "", password: r.password, phone: a.phone ?? "", name: a.full_name ?? "" });
+                                } catch (e: any) { toast.error(e.message); }
+                              }}
+                            >
+                              <KeyRound className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button
+                              size="sm" variant="outline" className="border-rose-200 text-rose-600 hover:bg-rose-50"
+                              onClick={async () => {
+                                if (!confirm(`Delete admin ${a.email}?`)) return;
+                                try {
+                                  await remove({ data: { user_id: a.id } });
+                                  toast.success("Admin removed");
+                                  loadAdmins();
+                                } catch (e: any) { toast.error(e.message); }
+                              }}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
+
+
       <Card className="p-5">
         <h2 className="text-sm font-semibold text-slate-900">Profile</h2>
         {loading ? (
