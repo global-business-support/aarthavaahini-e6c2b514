@@ -26,6 +26,9 @@ function SettingsPage() {
   const isSuperAdmin = (user?.email ?? "").toLowerCase() === "jeet0731@gmail.com";
   const nav = useNavigate();
   const create = useServerFn(createEmployee);
+  const list = useServerFn(listEmployees);
+  const remove = useServerFn(deleteEmployee);
+  const resetPwd = useServerFn(resetEmployeePassword);
 
   const [profile, setProfile] = useState({ full_name: "", phone: "" });
   const [loading, setLoading] = useState(true);
@@ -38,6 +41,25 @@ function SettingsPage() {
   const [showPwd, setShowPwd] = useState(false);
   const [creds, setCreds] = useState<{ email: string; password: string; phone: string; name: string } | null>(null);
   const [copied, setCopied] = useState(false);
+
+  // Admin list state
+  type AdminRow = { id: string; email: string | null; full_name: string | null; phone: string | null; roles: string[] };
+  const [admins, setAdmins] = useState<AdminRow[]>([]);
+  const [adminsLoading, setAdminsLoading] = useState(false);
+
+  const loadAdmins = async () => {
+    if (!isSuperAdmin) return;
+    setAdminsLoading(true);
+    try {
+      const r = await list();
+      setAdmins((r.employees as AdminRow[]).filter((e) => e.roles.includes("admin")));
+    } catch (e: any) {
+      toast.error(e.message ?? "Failed to load admins");
+    }
+    setAdminsLoading(false);
+  };
+
+  useEffect(() => { loadAdmins(); }, [isSuperAdmin]);
 
   useEffect(() => {
     if (!user) return;
