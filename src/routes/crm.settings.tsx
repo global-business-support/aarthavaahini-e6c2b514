@@ -106,6 +106,7 @@ function SettingsPage() {
       setAdminOpen(false);
       setAdminForm({ email: "", full_name: "", phone: "", password: "" });
       toast.success("Admin created — login is ready");
+      loadAdmins();
     } catch (e: any) {
       toast.error(e.message);
     }
