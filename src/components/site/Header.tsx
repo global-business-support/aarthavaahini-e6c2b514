@@ -259,7 +259,7 @@ export function Header() {
                 className="font-medium text-[#17357e]"
                 onClick={() => setMobileMenu(false)}
               >
-                Calculator
+                Calculators
               </a>
 
               {user && (
