@@ -2781,11 +2781,13 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
       return;
     }
 
-    const wordCount = f.lead_name.trim().split(/\s+/).length;
-    if (wordCount > 30) {
-      toast.error("Full name cannot exceed 30 words");
+    const letterCount = f.lead_name.replace(/[^A-Za-z]/g, "").length;
+    if (letterCount > 30) {
+      toast.error("Full name cannot exceed 30 alphabetic characters");
       return;
     }
+
+
 
 
     if (!f.phone.trim()) {
