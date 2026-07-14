@@ -322,7 +322,7 @@ function SettingsPage() {
 
       {/* Credentials Modal */}
       <Dialog open={!!creds} onOpenChange={(o) => !o && setCreds(null)}>
-        <DialogContent className="bg-white">
+        <DialogContent className="max-w-md bg-white sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Admin Login Credentials</DialogTitle>
             <DialogDescription>Save and share these now — the password will not be shown again.</DialogDescription>
@@ -332,7 +332,7 @@ function SettingsPage() {
               <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
                 Share securely. Ask the admin to change their password after first login.
               </div>
-              <pre className="overflow-x-auto rounded-lg border bg-slate-50 p-3 text-xs">{credsText}</pre>
+              <pre className="max-w-full whitespace-pre-wrap break-words rounded-lg border bg-slate-50 p-3 text-xs font-mono text-slate-700">{credsText}</pre>
               <div className="flex flex-wrap gap-2">
                 <Button
                   onClick={() => {
