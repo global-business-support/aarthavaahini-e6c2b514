@@ -88,10 +88,15 @@ export function CrmLayout() {
   const nav = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem("crm-sidebar-collapsed") === "1";
-  });
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+    if (typeof window !== "undefined") {
+      setCollapsed(window.localStorage.getItem("crm-sidebar-collapsed") === "1");
+    }
+  }, []);
 
   const visibleNav = NAV.filter((n) => {
     if (n.access === "admin") return isAdmin;
