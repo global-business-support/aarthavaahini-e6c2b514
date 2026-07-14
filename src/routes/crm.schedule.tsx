@@ -117,7 +117,7 @@ function SchedulePage() {
       created_by: user?.id ?? null,
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { console.error("schedule insert failed", error); return toast.error(error.message); }
     toast.success("Schedule created");
     setOpen(false);
     setForm({ ...form, title: "", description: "", location: "" });
