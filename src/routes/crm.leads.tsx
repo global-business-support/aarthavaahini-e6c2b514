@@ -2845,25 +2845,31 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
       <Field label="Full Name *">
         <Input
           required
-          maxLength={200}
-          placeholder="Full name"
+          maxLength={60}
+          placeholder="Full name (max 30 letters)"
 
           className="border-sky-200 focus-visible:ring-sky-400"
           value={f.lead_name}
           onChange={(e) => {
+            // Allow only letters and single spaces; cap at 30 alphabetic chars.
             let cleaned = e.target.value
-              .replace(/[^A-Za-z.\s]/g, "")
-              .replace(/\s+/g, " ")
-              .slice(0, 200);
-            const words = cleaned.trim().split(/\s+/);
-            if (words.length > 30) {
-              cleaned = words.slice(0, 30).join(" ");
+              .replace(/[^A-Za-z\s]/g, "")
+              .replace(/\s+/g, " ");
+            let letters = 0;
+            let out = "";
+            for (const ch of cleaned) {
+              if (/[A-Za-z]/.test(ch)) {
+                if (letters >= 30) break;
+                letters++;
+              }
+              out += ch;
             }
-            setF((prev) => ({ ...prev, lead_name: cleaned }));
+            setF((prev) => ({ ...prev, lead_name: out }));
           }}
 
         />
       </Field>
+
 
 
       <Field label="Mobile *">
