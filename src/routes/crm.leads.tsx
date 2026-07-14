@@ -2818,23 +2818,38 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
 
   return (
     <form onSubmit={submit} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-      <Field label="Lead Name *">
+      <Field label="First Name *">
         <Input
           required
+          maxLength={25}
+          placeholder="First name (max 25 chars)"
           className="border-sky-200 focus-visible:ring-sky-400"
           value={f.lead_name}
-          onChange={(e) =>
-            setF((prev) => ({ ...prev, lead_name: e.target.value }))
-          }
+          onChange={(e) => {
+            // First name only: letters/dot/space, single word preferred, cap 25
+            const cleaned = e.target.value
+              .replace(/[^A-Za-z.\s]/g, "")
+              .replace(/\s+/g, " ")
+              .slice(0, 25);
+            setF((prev) => ({ ...prev, lead_name: cleaned }));
+          }}
         />
       </Field>
 
       <Field label="Mobile *">
         <Input
           required
+          inputMode="numeric"
+          maxLength={12}
+          placeholder="Up to 12 digits"
           className="border-rose-200 focus-visible:ring-rose-400"
           value={f.phone}
-          onChange={(e) => setF((prev) => ({ ...prev, phone: e.target.value }))}
+          onChange={(e) =>
+            setF((prev) => ({
+              ...prev,
+              phone: e.target.value.replace(/\D/g, "").slice(0, 12),
+            }))
+          }
         />
       </Field>
 
