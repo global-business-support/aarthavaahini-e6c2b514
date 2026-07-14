@@ -2781,6 +2781,13 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
       return;
     }
 
+    const wordCount = f.lead_name.trim().split(/\s+/).length;
+    if (wordCount > 30) {
+      toast.error("Full name cannot exceed 30 words");
+      return;
+    }
+
+
     if (!f.phone.trim()) {
       toast.error("Mobile number is required");
       return;
