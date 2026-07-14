@@ -1996,7 +1996,8 @@ function LeadsPage() {
   const [staff, setStaff] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
-  const [stageFilter, setStageFilter] = useState<string>("all");
+  const search = Route.useSearch();
+  const [stageFilter, setStageFilter] = useState<string>(search.stage ?? "all");
   const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
   const [bankFilter, setBankFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("recent");
