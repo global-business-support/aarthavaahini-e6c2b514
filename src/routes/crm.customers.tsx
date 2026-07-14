@@ -1021,7 +1021,7 @@ function CustomersPage() {
 
     toast.success(`Stage → ${stage}`);
 
-    if (stage === "Closed") {
+    if (stage === "Sanctioned" || stage === "Disburement" || stage === "Closed") {
       const { data: existing } = await supabase
         .from("loan_cases")
         .select("id")
@@ -1029,18 +1029,33 @@ function CustomersPage() {
         .maybeSingle();
 
       if (!existing) {
+        const loanStage =
+          stage === "Closed"
+            ? "Completed"
+            : stage === "Disburement"
+              ? "Disbursed"
+              : "Sanctioned";
+
         const { error: loanError } = await supabase.from("loan_cases").insert({
           customer_id: row.id,
           loan_type: row.loan_type ?? row.loan_sub_type ?? "Loan",
           loan_amount: row.loan_amount,
           requested_amount: row.loan_amount,
-          stage: "Completed",
+          sanction_amount:
+            stage === "Sanctioned" || stage === "Disburement" || stage === "Closed"
+              ? row.loan_amount
+              : null,
+          disbursement_amount:
+            stage === "Disburement" || stage === "Closed" ? row.loan_amount : null,
+          lender_name: row.bank_name,
+          stage: loanStage,
         });
 
         if (loanError) toast.error(loanError.message);
-        else toast.success("Closed → Loan case created");
+        else toast.success(`${stage} → Loan case created`);
       }
     }
+
   };
 
   const clearFilters = () => {
