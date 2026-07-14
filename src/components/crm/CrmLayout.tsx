@@ -105,10 +105,11 @@ export function CrmLayout() {
   });
 
   useEffect(() => {
+    if (!hydrated) return;
     if (typeof window !== "undefined") {
       window.localStorage.setItem("crm-sidebar-collapsed", collapsed ? "1" : "0");
     }
-  }, [collapsed]);
+  }, [collapsed, hydrated]);
 
   const isLoginRoute = pathname === "/crm/login";
 
