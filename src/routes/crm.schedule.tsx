@@ -84,8 +84,13 @@ function SchedulePage() {
     if (!isAdmin) return;
     try {
       const r = await list();
-      setEmps((r.employees ?? []) as Emp[]);
-    } catch (e: any) { toast.error(e.message); }
+      const arr = (r?.employees ?? []) as Emp[];
+      setEmps(arr);
+      if (arr.length === 0) toast.info("No employees found. Create one in Admin → Employees.");
+    } catch (e: any) {
+      console.error("loadEmps failed", e);
+      toast.error(e?.message || "Failed to load employees");
+    }
   };
 
   useEffect(() => { if (user) { load(); loadEmps(); } }, [user, isAdmin]);
