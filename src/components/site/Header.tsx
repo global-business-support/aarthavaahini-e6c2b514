@@ -78,7 +78,7 @@ export function Header() {
               to="/loans"
               className="rounded-xl px-4 py-2 text-[15px] font-semibold text-[#17357e] transition hover:bg-blue-50 xl:text-base"
             >
-              Loan
+              Loans
             </Link>
 
             <Link
