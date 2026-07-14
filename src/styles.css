@@ -458,13 +458,14 @@ body {
     padding-right: 0.875rem;
   }
 
-  h1 {
+  body:not(:has([data-app="crm"])) :where(h1) {
     font-size: clamp(1.8rem, 10vw, 2.5rem);
   }
 
-  h2 {
+  body:not(:has([data-app="crm"])) :where(h2) {
     font-size: clamp(1.45rem, 8vw, 2rem);
   }
+
 
   button,
   a {
