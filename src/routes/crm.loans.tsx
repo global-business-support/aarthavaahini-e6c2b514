@@ -255,15 +255,42 @@ function LoansPage() {
         </div>
       </div>
 
+      {/* FILTER BAR */}
+      <Card className="flex flex-wrap items-center gap-3 border-slate-200 bg-white p-3 shadow-sm">
+        <Label className="text-xs font-semibold text-slate-600">Filter by Stage</Label>
+        <select
+          value={stageFilter}
+          onChange={(e) => setStageFilter(e.target.value)}
+          className="h-9 rounded-md border border-slate-300 bg-white px-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+        >
+          <option value="all">All Stages</option>
+          {LOAN_STAGES.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+        {stageFilter !== "all" && (
+          <Button variant="ghost" size="sm" onClick={() => setStageFilter("all")}>
+            Clear
+          </Button>
+        )}
+        <div className="ml-auto text-xs text-slate-500">
+          Showing {filteredRows.length} of {rows.length}
+        </div>
+      </Card>
+
       {/* LOAN CASES TABLE */}
       <Card className="overflow-hidden rounded-2xl border-slate-200 bg-white shadow-sm">
         {loading ? (
           <div className="flex h-40 items-center justify-center">
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           </div>
-        ) : rows.length === 0 ? (
+        ) : filteredRows.length === 0 ? (
           <div className="p-10 text-center text-sm text-slate-500">
-            No active loan cases yet. Rejected cases are moved to Rejected Leads.
+            {rows.length === 0
+              ? "No active loan cases yet. Rejected cases are moved to Rejected Leads."
+              : `No loan cases in "${stageFilter}" stage.`}
           </div>
         ) : (
           <div className="w-full overflow-x-auto">
