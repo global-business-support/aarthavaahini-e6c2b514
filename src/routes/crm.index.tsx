@@ -82,6 +82,7 @@ const STAGE_COLORS = [
 ];
 
 function DashboardPage() {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<Stats | null>(null);
 
   const [recentLeads, setRecentLeads] = useState<RecentLead[]>([]);
