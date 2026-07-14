@@ -2833,23 +2833,23 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
 
   return (
     <form onSubmit={submit} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-      <Field label="First Name *">
+      <Field label="Full Name *">
         <Input
           required
-          maxLength={25}
-          placeholder="First name (max 25 chars)"
+          maxLength={60}
+          placeholder="Full name"
           className="border-sky-200 focus-visible:ring-sky-400"
           value={f.lead_name}
           onChange={(e) => {
-            // First name only: letters/dot/space, single word preferred, cap 25
             const cleaned = e.target.value
               .replace(/[^A-Za-z.\s]/g, "")
               .replace(/\s+/g, " ")
-              .slice(0, 25);
+              .slice(0, 60);
             setF((prev) => ({ ...prev, lead_name: cleaned }));
           }}
         />
       </Field>
+
 
       <Field label="Mobile *">
         <Input
@@ -2873,9 +2873,17 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
           type="email"
           className="border-cyan-200 focus-visible:ring-cyan-400"
           value={f.email}
-          onChange={(e) => setF((prev) => ({ ...prev, email: e.target.value }))}
+          placeholder="name@example.com"
+          onChange={(e) => {
+            let v = e.target.value.replace(/\s/g, "");
+            // Truncate anything typed after a top-level domain suffix
+            const m = v.match(/^(.*?\.(?:com|in|org|net|co|edu|gov|io|info|biz))/i);
+            if (m) v = m[1];
+            setF((prev) => ({ ...prev, email: v }));
+          }}
         />
       </Field>
+
 
       <Field label="PAN">
         <Input
