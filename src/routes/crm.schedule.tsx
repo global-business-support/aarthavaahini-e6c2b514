@@ -168,7 +168,7 @@ function SchedulePage() {
             </p>
           </div>
           {isAdmin && (
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (v) loadEmps(); }}>
               <DialogTrigger asChild>
                 <Button className="bg-white text-indigo-700 shadow-md hover:bg-sky-50">
                   <Plus className="mr-2 h-4 w-4" /> Assign Schedule
@@ -179,12 +179,13 @@ function SchedulePage() {
                   <DialogTitle className="bg-gradient-to-r from-sky-600 to-violet-600 bg-clip-text text-transparent">
                     Schedule Work for Employee
                   </DialogTitle>
+                  <DialogDescription>Assign a task with time, priority and location to any team member.</DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-3">
                   <div>
                     <Label>Employee</Label>
                     <Select value={form.employee_id} onValueChange={(v) => setForm({ ...form, employee_id: v })}>
-                      <SelectTrigger className="border-indigo-200"><SelectValue placeholder="Pick employee" /></SelectTrigger>
+                      <SelectTrigger className="border-indigo-200"><SelectValue placeholder={emps.length ? "Pick employee" : "Loading employees…"} /></SelectTrigger>
                       <SelectContent>
                         {emps.map((e) => (
                           <SelectItem key={e.id} value={e.id}>
