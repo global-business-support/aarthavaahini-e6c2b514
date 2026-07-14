@@ -2843,8 +2843,9 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
       <Field label="Full Name *">
         <Input
           required
-          maxLength={60}
+          maxLength={200}
           placeholder="Full name"
+
           className="border-sky-200 focus-visible:ring-sky-400"
           value={f.lead_name}
           onChange={(e) => {
