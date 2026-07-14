@@ -1200,6 +1200,8 @@ function CustomersPage() {
                   <TableHead>Bank</TableHead>
                   <TableHead>Stage</TableHead>
                   <TableHead className="min-w-[220px]">Note</TableHead>
+                  <TableHead className="w-16 text-right">Edit</TableHead>
+
                 </TableRow>
               </TableHeader>
 
