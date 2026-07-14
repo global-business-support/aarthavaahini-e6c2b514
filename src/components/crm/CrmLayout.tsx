@@ -144,7 +144,7 @@ export function CrmLayout() {
 
   return (
     <TooltipProvider delayDuration={100}>
-      <div className="flex min-h-screen w-full bg-gradient-to-br from-sky-50 via-blue-50 to-cyan-50">
+      <div data-app="crm" className="flex min-h-screen w-full bg-gradient-to-br from-sky-50 via-blue-50 to-cyan-50">
         {/* Sidebar */}
         <aside
           className={cn(

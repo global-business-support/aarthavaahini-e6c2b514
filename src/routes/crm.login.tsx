@@ -259,7 +259,7 @@ function CrmLoginPage() {
 
             <form onSubmit={signIn} className="space-y-4">
               <div>
-                <Label className="text-xs font-medium text-blue-100/80">
+                <Label htmlFor="crm-email" className="text-xs font-medium text-blue-100/80">
                   Email address
                 </Label>
 
@@ -267,7 +267,9 @@ function CrmLoginPage() {
                   <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-200/50" />
 
                   <Input
+                    id="crm-email"
                     type="email"
+                    autoComplete="email"
                     required
                     placeholder="you@company.com"
                     className="h-11 border-white/10 bg-white/5 pl-9 text-white placeholder:text-blue-200/40 focus-visible:border-blue-400 focus-visible:ring-blue-400/30"
@@ -278,7 +280,7 @@ function CrmLoginPage() {
               </div>
 
               <div>
-                <Label className="text-xs font-medium text-blue-100/80">
+                <Label htmlFor="crm-password" className="text-xs font-medium text-blue-100/80">
                   Password
                 </Label>
 
@@ -286,7 +288,9 @@ function CrmLoginPage() {
                   <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-200/50" />
 
                   <Input
+                    id="crm-password"
                     type="password"
+                    autoComplete="current-password"
                     required
                     placeholder="••••••••"
                     className="h-11 border-white/10 bg-white/5 pl-9 text-white placeholder:text-blue-200/40 focus-visible:border-blue-400 focus-visible:ring-blue-400/30"
@@ -295,6 +299,7 @@ function CrmLoginPage() {
                   />
                 </div>
               </div>
+
 
               <div className="flex justify-end">
                 <button

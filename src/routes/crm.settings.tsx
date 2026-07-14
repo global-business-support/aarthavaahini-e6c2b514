@@ -141,7 +141,7 @@ function SettingsPage() {
           </div>
           <div>
             <Label className="text-xs">Role</Label>
-            <div className="mt-1.5"><Badge variant="secondary" className="capitalize">{primaryRole?.replace(/_/g, " ") ?? "user"}</Badge></div>
+            <div className="mt-1.5"><Badge variant="secondary" className="capitalize">{isAdmin ? "Admin" : (primaryRole?.replace(/_/g, " ") ?? (isSuperAdmin ? "Admin" : "Staff"))}</Badge></div>
           </div>
         </div>
       </Card>
