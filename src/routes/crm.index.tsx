@@ -435,11 +435,11 @@ function DashboardPage() {
     },
     {
       key: "mfPipeline",
-      label: "MF Annual SIP",
+      label: "MF SIP",
       value: stats && formatINR(stats.mfPipeline),
       icon: TrendingUp,
       tone: "cyan",
-      trend: "Y/Y",
+      trend: "Monthly",
       to: "/crm/mutual-funds",
     },
     {
