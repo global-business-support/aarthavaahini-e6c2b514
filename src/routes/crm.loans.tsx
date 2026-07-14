@@ -31,6 +31,9 @@ import { Banknote, FileCheck2, Loader2, Pencil } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/crm/loans")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    stage: typeof s.stage === "string" ? s.stage : "all",
+  }),
   component: LoansPage,
 });
 
