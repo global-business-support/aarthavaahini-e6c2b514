@@ -1439,3 +1439,249 @@ function NoteCell({
     </button>
   );
 }
+function EditCustomerDialog({
+  row,
+  onClose,
+  onSaved,
+}: {
+  row: Row | null;
+  onClose: () => void;
+  onSaved: (updated: Row) => void;
+}) {
+  const [form, setForm] = useState<Row | null>(row);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setForm(row);
+  }, [row]);
+
+  if (!form) return null;
+
+  const update = <K extends keyof Row>(k: K, v: Row[K]) =>
+    setForm((prev) => (prev ? { ...prev, [k]: v } : prev));
+
+  const save = async () => {
+    if (!form) return;
+    if (!form.customer_name?.trim()) {
+      toast.error("Name is required");
+      return;
+    }
+    if (form.mobile && !/^[0-9]{10,12}$/.test(form.mobile.trim())) {
+      toast.error("Mobile must be 10-12 digits");
+      return;
+    }
+    if (form.pan && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(form.pan.trim().toUpperCase())) {
+      toast.error("PAN must be like ABCDE1234F");
+      return;
+    }
+    if (form.aadhaar && !/^[0-9]{12}$/.test(form.aadhaar.trim())) {
+      toast.error("Aadhaar must be 12 digits");
+      return;
+    }
+
+    setSaving(true);
+
+    const payload = {
+      customer_name: form.customer_name.trim(),
+      mobile: form.mobile?.trim() || null,
+      email: form.email?.trim() || null,
+      pan: form.pan?.trim().toUpperCase() || null,
+      aadhaar: form.aadhaar?.trim() || null,
+      address: form.address?.trim() || null,
+      occupation: form.occupation?.trim() || null,
+      income: form.income == null || (form.income as unknown as string) === "" ? null : Number(form.income),
+      loan_type: form.loan_type?.trim() || null,
+      loan_sub_type: form.loan_sub_type?.trim() || null,
+      loan_amount:
+        form.loan_amount == null || (form.loan_amount as unknown as string) === ""
+          ? null
+          : Number(form.loan_amount),
+      cibil_score:
+        form.cibil_score == null || (form.cibil_score as unknown as string) === ""
+          ? null
+          : Number(form.cibil_score),
+      bank_name: form.bank_name?.trim() || null,
+      stage: form.stage || "Pre-Login Follow-Up",
+      note: form.note?.trim() || null,
+    };
+
+    const { error } = await supabase.from("customers").update(payload).eq("id", form.id);
+    setSaving(false);
+
+    if (error) return toast.error(error.message);
+
+    toast.success("Customer updated");
+    onSaved({ ...form, ...payload } as Row);
+  };
+
+  const input = "h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100";
+
+  return (
+    <Dialog open={!!row} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-w-2xl bg-white">
+        <DialogHeader>
+          <DialogTitle>Edit Customer</DialogTitle>
+        </DialogHeader>
+
+        <div className="grid max-h-[65vh] gap-3 overflow-y-auto pr-1 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <Label className="text-xs">Full Name *</Label>
+            <input
+              className={input}
+              value={form.customer_name ?? ""}
+              onChange={(e) => update("customer_name", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Mobile</Label>
+            <input
+              inputMode="numeric"
+              maxLength={12}
+              className={input}
+              value={form.mobile ?? ""}
+              onChange={(e) => update("mobile", e.target.value.replace(/\D/g, "").slice(0, 12))}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Email</Label>
+            <input
+              type="email"
+              className={input}
+              value={form.email ?? ""}
+              onChange={(e) => update("email", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">PAN</Label>
+            <input
+              maxLength={10}
+              className={input}
+              value={form.pan ?? ""}
+              onChange={(e) => update("pan", e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10))}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Aadhaar</Label>
+            <input
+              inputMode="numeric"
+              maxLength={12}
+              className={input}
+              value={form.aadhaar ?? ""}
+              onChange={(e) => update("aadhaar", e.target.value.replace(/\D/g, "").slice(0, 12))}
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <Label className="text-xs">Address</Label>
+            <input
+              className={input}
+              value={form.address ?? ""}
+              onChange={(e) => update("address", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Occupation</Label>
+            <input
+              className={input}
+              value={form.occupation ?? ""}
+              onChange={(e) => update("occupation", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Monthly Income</Label>
+            <input
+              inputMode="numeric"
+              className={input}
+              value={form.income ?? ""}
+              onChange={(e) => update("income", (e.target.value.replace(/\D/g, "") || null) as any)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Loan Type</Label>
+            <input
+              className={input}
+              value={form.loan_type ?? ""}
+              onChange={(e) => update("loan_type", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Loan Sub Type</Label>
+            <input
+              className={input}
+              value={form.loan_sub_type ?? ""}
+              onChange={(e) => update("loan_sub_type", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Loan Amount</Label>
+            <input
+              inputMode="numeric"
+              className={input}
+              value={form.loan_amount ?? ""}
+              onChange={(e) => update("loan_amount", (e.target.value.replace(/\D/g, "") || null) as any)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">CIBIL Score</Label>
+            <input
+              inputMode="numeric"
+              maxLength={3}
+              className={input}
+              value={form.cibil_score ?? ""}
+              onChange={(e) => update("cibil_score", (e.target.value.replace(/\D/g, "").slice(0, 3) || null) as any)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Bank</Label>
+            <input
+              className={input}
+              value={form.bank_name ?? ""}
+              onChange={(e) => update("bank_name", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Stage</Label>
+            <select
+              className={input}
+              value={normaliseStage(form.stage)}
+              onChange={(e) => update("stage", e.target.value)}
+            >
+              {CUSTOMER_STAGES.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="sm:col-span-2">
+            <Label className="text-xs">Note</Label>
+            <Textarea
+              rows={3}
+              value={form.note ?? ""}
+              onChange={(e) => update("note", e.target.value)}
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={saving}>Cancel</Button>
+          <Button onClick={save} disabled={saving} className="bg-sky-600 text-white hover:bg-sky-700">
+            {saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
+            Save Changes
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
