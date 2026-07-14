@@ -242,7 +242,7 @@ function DashboardPage() {
       followupsDue: followups.count ?? 0,
       loanPipeline: loanPipelineAmount,
       insurancePipeline: sum(insurance.data, "premium"),
-      mfPipeline: sum(funds.data, "sip_amount") * 12,
+      mfPipeline: sum(funds.data, "sip_amount"),
       revenue: sum(disb.data, "disbursement_amount"),
       pendingTasks: tasks.count ?? 0,
       slaAlerts: sla.count ?? 0,
