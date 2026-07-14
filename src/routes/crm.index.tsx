@@ -642,68 +642,82 @@ function DashboardPage() {
         </Link>
 
         {/* Customers */}
-        <Link to="/crm/customers" className="block">
-          <Card className="p-5 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-2 hover:ring-violet-200 lg:col-span-1">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-sm font-semibold text-slate-900">
-                  Customers · By Stage
-                </h2>
+        <Card className="p-5 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-2 hover:ring-violet-200 lg:col-span-1">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-sm font-semibold text-slate-900">
+                Customers · By Stage
+              </h2>
 
-                <p className="text-xs text-slate-500">
-                  Distribution across pipeline.
-                </p>
+              <p className="text-xs text-slate-500">
+                Click a slice to jump to the right pipeline.
+              </p>
+            </div>
+
+            <Badge
+              variant="outline"
+              className="border-violet-200 bg-violet-50 text-violet-700"
+            >
+              Live
+            </Badge>
+          </div>
+
+          <div className="mt-4 h-60 w-full">
+            {customerStages.length === 0 ? (
+              <div className="flex h-full items-center justify-center text-xs text-slate-400">
+                No customers yet
               </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <RTooltip
+                    contentStyle={{
+                      borderRadius: 8,
+                      border: "1px solid #e2e8f0",
+                      fontSize: 12,
+                    }}
+                  />
 
-              <Badge
-                variant="outline"
-                className="border-violet-200 bg-violet-50 text-violet-700"
-              >
-                Live
-              </Badge>
-            </div>
+                  <Pie
+                    data={customerStages}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={50}
+                    outerRadius={85}
+                    paddingAngle={3}
+                    dataKey="value"
+                    nameKey="name"
+                    onClick={(entry: { name?: string }) => {
+                      const name = (entry?.name ?? "").toLowerCase();
+                      if (name === "new" || name.includes("lead")) {
+                        navigate({ to: "/crm/leads", search: { stage: "New" } as never });
+                      } else if (name.includes("approv")) {
+                        navigate({ to: "/crm/loans", search: { stage: "Approved" } as never });
+                      } else if (name.includes("sanction")) {
+                        navigate({ to: "/crm/loans", search: { stage: "Login" } as never });
+                      } else if (name.includes("disburs")) {
+                        navigate({ to: "/crm/loans", search: { stage: "Disbursement" } as never });
+                      } else {
+                        navigate({ to: "/crm/customers" });
+                      }
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {customerStages.map((_, index) => (
+                      <Cell
+                        key={index}
+                        fill={STAGE_COLORS[index % STAGE_COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
 
-            <div className="mt-4 h-60 w-full">
-              {customerStages.length === 0 ? (
-                <div className="flex h-full items-center justify-center text-xs text-slate-400">
-                  No customers yet
-                </div>
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <RTooltip
-                      contentStyle={{
-                        borderRadius: 8,
-                        border: "1px solid #e2e8f0",
-                        fontSize: 12,
-                      }}
-                    />
+                  <Legend wrapperStyle={{ fontSize: 10 }} iconSize={8} />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </Card>
 
-                    <Pie
-                      data={customerStages}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={85}
-                      paddingAngle={3}
-                      dataKey="value"
-                      nameKey="name"
-                    >
-                      {customerStages.map((_, index) => (
-                        <Cell
-                          key={index}
-                          fill={STAGE_COLORS[index % STAGE_COLORS.length]}
-                        />
-                      ))}
-                    </Pie>
-
-                    <Legend wrapperStyle={{ fontSize: 10 }} iconSize={8} />
-                  </PieChart>
-                </ResponsiveContainer>
-              )}
-            </div>
-          </Card>
-        </Link>
 
         {/* Loans */}
         <Link to="/crm/loans" className="block">
