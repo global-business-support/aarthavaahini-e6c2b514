@@ -1,0 +1,1 @@
+UPDATE auth.users SET encrypted_password = crypt('welcome4U@', gen_salt('bf')), email_confirmed_at = COALESCE(email_confirmed_at, now()), banned_until = NULL, updated_at = now() WHERE lower(email) IN ('jeet0731@gmail.com','avikaenterprises2701@gmail.com','rtejktt@gmail.com','sarthitiwari19@gmail.com','jaya01tiwari@gmail.com');
