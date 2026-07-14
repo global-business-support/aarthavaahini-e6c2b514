@@ -2786,6 +2786,17 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
       return;
     }
 
+    if (f.pan.trim() && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(f.pan.trim())) {
+      toast.error("PAN must be 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F)");
+      return;
+    }
+
+    if (f.aadhaar.trim() && !/^[0-9]{12}$/.test(f.aadhaar.trim())) {
+      toast.error("Aadhaar must be exactly 12 digits");
+      return;
+    }
+
+
     const loanAmount = amountToNumber(f.loan_amount);
 
     setSaving(true);
