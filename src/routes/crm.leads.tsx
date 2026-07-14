@@ -2873,9 +2873,17 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
           type="email"
           className="border-cyan-200 focus-visible:ring-cyan-400"
           value={f.email}
-          onChange={(e) => setF((prev) => ({ ...prev, email: e.target.value }))}
+          placeholder="name@example.com"
+          onChange={(e) => {
+            let v = e.target.value.replace(/\s/g, "");
+            // Truncate anything typed after a top-level domain suffix
+            const m = v.match(/^(.*?\.(?:com|in|org|net|co|edu|gov|io|info|biz))/i);
+            if (m) v = m[1];
+            setF((prev) => ({ ...prev, email: v }));
+          }}
         />
       </Field>
+
 
       <Field label="PAN">
         <Input
