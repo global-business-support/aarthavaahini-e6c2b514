@@ -315,7 +315,7 @@ function LoansPage() {
               </TableHeader>
 
               <TableBody>
-                {rows.map((row) => {
+                {filteredRows.map((row) => {
                   const docCount = row.documents_checklist
                     ? Object.values(row.documents_checklist).filter(Boolean).length
                     : 0;
