@@ -288,7 +288,9 @@ export function CrmLayout() {
       </Badge>
 
       <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white">
-        Friday, 19 Jun
+        {hydrated
+          ? new Date().toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })
+          : ""}
       </span>
     </div>
   </div>
