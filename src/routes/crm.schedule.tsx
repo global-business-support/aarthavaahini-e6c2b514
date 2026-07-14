@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -84,8 +84,13 @@ function SchedulePage() {
     if (!isAdmin) return;
     try {
       const r = await list();
-      setEmps((r.employees ?? []) as Emp[]);
-    } catch (e: any) { toast.error(e.message); }
+      const arr = (r?.employees ?? []) as Emp[];
+      setEmps(arr);
+      if (arr.length === 0) toast.info("No employees found. Create one in Admin → Employees.");
+    } catch (e: any) {
+      console.error("loadEmps failed", e);
+      toast.error(e?.message || "Failed to load employees");
+    }
   };
 
   useEffect(() => { if (user) { load(); loadEmps(); } }, [user, isAdmin]);
@@ -112,7 +117,7 @@ function SchedulePage() {
       created_by: user?.id ?? null,
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { console.error("schedule insert failed", error); return toast.error(error.message); }
     toast.success("Schedule created");
     setOpen(false);
     setForm({ ...form, title: "", description: "", location: "" });
@@ -163,7 +168,7 @@ function SchedulePage() {
             </p>
           </div>
           {isAdmin && (
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (v) loadEmps(); }}>
               <DialogTrigger asChild>
                 <Button className="bg-white text-indigo-700 shadow-md hover:bg-sky-50">
                   <Plus className="mr-2 h-4 w-4" /> Assign Schedule
@@ -174,12 +179,13 @@ function SchedulePage() {
                   <DialogTitle className="bg-gradient-to-r from-sky-600 to-violet-600 bg-clip-text text-transparent">
                     Schedule Work for Employee
                   </DialogTitle>
+                  <DialogDescription>Assign a task with time, priority and location to any team member.</DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-3">
                   <div>
                     <Label>Employee</Label>
                     <Select value={form.employee_id} onValueChange={(v) => setForm({ ...form, employee_id: v })}>
-                      <SelectTrigger className="border-indigo-200"><SelectValue placeholder="Pick employee" /></SelectTrigger>
+                      <SelectTrigger className="border-indigo-200"><SelectValue placeholder={emps.length ? "Pick employee" : "Loading employees…"} /></SelectTrigger>
                       <SelectContent>
                         {emps.map((e) => (
                           <SelectItem key={e.id} value={e.id}>
