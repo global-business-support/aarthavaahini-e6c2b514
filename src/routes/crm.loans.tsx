@@ -180,14 +180,19 @@ function LoansPage() {
     };
   }, []);
 
-  const stats = useMemo(() => {
-    const total = rows.length;
+  const filteredRows = useMemo(() => {
+    if (!stageFilter || stageFilter === "all") return rows;
+    return rows.filter((r) => (r.stage ?? "").toLowerCase() === stageFilter.toLowerCase());
+  }, [rows, stageFilter]);
 
-    const sanctioned = rows.reduce((amount, row) => {
+  const stats = useMemo(() => {
+    const total = filteredRows.length;
+
+    const sanctioned = filteredRows.reduce((amount, row) => {
       return amount + (Number(row.sanction_amount) || 0);
     }, 0);
 
-    const disbursed = rows.reduce((amount, row) => {
+    const disbursed = filteredRows.reduce((amount, row) => {
       return amount + (Number(row.disbursement_amount) || 0);
     }, 0);
 
@@ -196,7 +201,7 @@ function LoansPage() {
       sanctioned,
       disbursed,
     };
-  }, [rows]);
+  }, [filteredRows]);
 
   const handleSaved = () => {
     setEditing(null);
