@@ -2881,9 +2881,21 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
         <Input
           className="border-amber-200 focus-visible:ring-amber-400"
           value={f.pan}
-          onChange={(e) =>
-            setF((prev) => ({ ...prev, pan: e.target.value.toUpperCase() }))
-          }
+          maxLength={10}
+          placeholder="ABCDE1234F"
+          onChange={(e) => {
+            const raw = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10);
+            let out = "";
+            for (let i = 0; i < raw.length; i++) {
+              const ch = raw[i];
+              if (i < 5 || i === 9) {
+                if (/[A-Z]/.test(ch)) out += ch;
+              } else {
+                if (/[0-9]/.test(ch)) out += ch;
+              }
+            }
+            setF((prev) => ({ ...prev, pan: out }));
+          }}
         />
       </Field>
 
@@ -2891,11 +2903,15 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
         <Input
           className="border-emerald-200 focus-visible:ring-emerald-400"
           value={f.aadhaar}
+          maxLength={12}
+          inputMode="numeric"
+          placeholder="12-digit Aadhaar"
           onChange={(e) =>
-            setF((prev) => ({ ...prev, aadhaar: e.target.value }))
+            setF((prev) => ({ ...prev, aadhaar: e.target.value.replace(/\D/g, "").slice(0, 12) }))
           }
         />
       </Field>
+
 
       <Field label="State">
         <select
