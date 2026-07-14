@@ -2781,6 +2781,13 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
       return;
     }
 
+    const wordCount = f.lead_name.trim().split(/\s+/).length;
+    if (wordCount > 30) {
+      toast.error("Full name cannot exceed 30 words");
+      return;
+    }
+
+
     if (!f.phone.trim()) {
       toast.error("Mobile number is required");
       return;
@@ -2836,17 +2843,23 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
       <Field label="Full Name *">
         <Input
           required
-          maxLength={60}
+          maxLength={200}
           placeholder="Full name"
+
           className="border-sky-200 focus-visible:ring-sky-400"
           value={f.lead_name}
           onChange={(e) => {
-            const cleaned = e.target.value
+            let cleaned = e.target.value
               .replace(/[^A-Za-z.\s]/g, "")
               .replace(/\s+/g, " ")
-              .slice(0, 60);
+              .slice(0, 200);
+            const words = cleaned.trim().split(/\s+/);
+            if (words.length > 30) {
+              cleaned = words.slice(0, 30).join(" ");
+            }
             setF((prev) => ({ ...prev, lead_name: cleaned }));
           }}
+
         />
       </Field>
 
