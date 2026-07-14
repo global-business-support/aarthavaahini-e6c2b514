@@ -1305,6 +1305,18 @@ function CustomersPage() {
                           }
                         />
                       </TableCell>
+
+                      <TableCell className="text-right">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8 text-sky-600 hover:bg-sky-50"
+                          title="Edit customer"
+                          onClick={() => setEditing(row)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -1319,9 +1331,21 @@ function CustomersPage() {
         onOpenChange={(value) => !value && setActive(null)}
         customerId={active?.id ?? null}
       />
+
+      <EditCustomerDialog
+        row={editing}
+        onClose={() => setEditing(null)}
+        onSaved={(updated) => {
+          setRows((prev) =>
+            prev.map((item) => (item.id === updated.id ? { ...item, ...updated } : item)),
+          );
+          setEditing(null);
+        }}
+      />
     </div>
   );
 }
+
 
 function NoteCell({
   row,
