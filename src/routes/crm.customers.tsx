@@ -829,6 +829,8 @@ function CustomersPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState<Row | null>(null);
+  const [editing, setEditing] = useState<Row | null>(null);
+
 
   const [q, setQ] = useState("");
   const [stageFilter, setStageFilter] = useState("all");
