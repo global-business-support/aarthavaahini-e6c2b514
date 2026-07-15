@@ -90,6 +90,7 @@ export type Database = {
           bank_name: string | null
           cibil_score: number | null
           created_at: string
+          created_by: string | null
           customer_name: string
           email: string | null
           id: string
@@ -110,6 +111,7 @@ export type Database = {
           bank_name?: string | null
           cibil_score?: number | null
           created_at?: string
+          created_by?: string | null
           customer_name: string
           email?: string | null
           id?: string
@@ -130,6 +132,7 @@ export type Database = {
           bank_name?: string | null
           cibil_score?: number | null
           created_at?: string
+          created_by?: string | null
           customer_name?: string
           email?: string | null
           id?: string
@@ -195,6 +198,7 @@ export type Database = {
       }
       documents: {
         Row: {
+          created_by: string | null
           customer_id: string | null
           document_type: string
           file_url: string
@@ -202,6 +206,7 @@ export type Database = {
           uploaded_at: string
         }
         Insert: {
+          created_by?: string | null
           customer_id?: string | null
           document_type: string
           file_url: string
@@ -209,6 +214,7 @@ export type Database = {
           uploaded_at?: string
         }
         Update: {
+          created_by?: string | null
           customer_id?: string | null
           document_type?: string
           file_url?: string
@@ -349,6 +355,7 @@ export type Database = {
       insurance_cases: {
         Row: {
           created_at: string
+          created_by: string | null
           customer_id: string | null
           id: string
           insurer: string | null
@@ -359,6 +366,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           customer_id?: string | null
           id?: string
           insurer?: string | null
@@ -369,6 +377,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           customer_id?: string | null
           id?: string
           insurer?: string | null
@@ -397,6 +406,7 @@ export type Database = {
           city: string | null
           converted_customer_id: string | null
           created_at: string
+          created_by: string | null
           email: string | null
           full_name: string
           id: string
@@ -424,6 +434,7 @@ export type Database = {
           city?: string | null
           converted_customer_id?: string | null
           created_at?: string
+          created_by?: string | null
           email?: string | null
           full_name: string
           id?: string
@@ -451,6 +462,7 @@ export type Database = {
           city?: string | null
           converted_customer_id?: string | null
           created_at?: string
+          created_by?: string | null
           email?: string | null
           full_name?: string
           id?: string
@@ -489,6 +501,7 @@ export type Database = {
       loan_cases: {
         Row: {
           created_at: string
+          created_by: string | null
           customer_id: string | null
           disbursement_amount: number | null
           documents_checklist: Json | null
@@ -506,6 +519,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           customer_id?: string | null
           disbursement_amount?: number | null
           documents_checklist?: Json | null
@@ -523,6 +537,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           customer_id?: string | null
           disbursement_amount?: number | null
           documents_checklist?: Json | null
@@ -558,6 +573,7 @@ export type Database = {
       mutual_funds: {
         Row: {
           created_at: string
+          created_by: string | null
           customer_id: string | null
           fund_name: string
           id: string
@@ -567,6 +583,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           customer_id?: string | null
           fund_name: string
           id?: string
@@ -576,6 +593,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           customer_id?: string | null
           fund_name?: string
           id?: string
@@ -758,6 +776,7 @@ export type Database = {
           assigned_partner_id: string | null
           assigned_to: string | null
           created_at: string
+          created_by: string | null
           description: string | null
           due_date: string | null
           id: string
@@ -774,6 +793,7 @@ export type Database = {
           assigned_partner_id?: string | null
           assigned_to?: string | null
           created_at?: string
+          created_by?: string | null
           description?: string | null
           due_date?: string | null
           id?: string
@@ -790,6 +810,7 @@ export type Database = {
           assigned_partner_id?: string | null
           assigned_to?: string | null
           created_at?: string
+          created_by?: string | null
           description?: string | null
           due_date?: string | null
           id?: string
@@ -892,6 +913,7 @@ export type Database = {
       }
       is_partner: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      is_super_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role:
