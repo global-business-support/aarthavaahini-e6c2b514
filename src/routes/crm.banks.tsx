@@ -486,7 +486,7 @@ function BanksPage() {
                   </Label>
                   <Input
                     type="number"
-                    value={form.position}
+                    value={form.position || ""}
                     onChange={(e) =>
                       setForm({ ...form, position: Number(e.target.value) || 0 })
                     }

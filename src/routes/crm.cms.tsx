@@ -310,9 +310,9 @@ function BannersEditor() {
                   <Label>Position</Label>
                   <Input
                     type="number"
-                    value={editing.position}
+                    value={editing.position || ""}
                     onChange={(e) =>
-                      setEditing({ ...editing, position: Number(e.target.value) })
+                      setEditing({ ...editing, position: Number(e.target.value) || 0 })
                     }
                   />
                 </div>
@@ -509,9 +509,9 @@ function ProductCardsEditor() {
                   <Label>Position</Label>
                   <Input
                     type="number"
-                    value={editing.position}
+                    value={editing.position || ""}
                     onChange={(e) =>
-                      setEditing({ ...editing, position: Number(e.target.value) })
+                      setEditing({ ...editing, position: Number(e.target.value) || 0 })
                     }
                   />
                 </div>
@@ -734,9 +734,9 @@ function TestimonialsEditor() {
                     type="number"
                     min={1}
                     max={5}
-                    value={editing.rating}
+                    value={editing.rating || ""}
                     onChange={(e) =>
-                      setEditing({ ...editing, rating: Number(e.target.value) })
+                      setEditing({ ...editing, rating: Number(e.target.value) || 0 })
                     }
                   />
                 </div>
@@ -744,9 +744,9 @@ function TestimonialsEditor() {
                   <Label>Position</Label>
                   <Input
                     type="number"
-                    value={editing.position}
+                    value={editing.position || ""}
                     onChange={(e) =>
-                      setEditing({ ...editing, position: Number(e.target.value) })
+                      setEditing({ ...editing, position: Number(e.target.value) || 0 })
                     }
                   />
                 </div>
