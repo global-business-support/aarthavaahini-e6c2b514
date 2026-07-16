@@ -2217,6 +2217,9 @@ function LeadsPage() {
         .maybeSingle();
 
       if (!existing) {
+        const partnerRef = lead.lead_source
+          ? `Reference: ${lead.lead_source}${lead.lead_source.toLowerCase() === "partner" ? " (Partner)" : ""}`
+          : null;
         await supabase.from("customers").insert({
           customer_name: lead.lead_name ?? lead.full_name ?? "Unnamed",
           mobile: lead.phone,
@@ -2230,6 +2233,7 @@ function LeadsPage() {
           cibil_score: lead.cibil_score,
           bank_name: lead.bank_name,
           stage: "Docs Pending",
+          note: partnerRef,
         });
 
         toast.success("Approved → Customer created");
