@@ -244,14 +244,74 @@ function PartnersPage() {
             </p>
           </div>
 
-          <a
-            href="/partner-signup"
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-full bg-white/95 px-4 py-2 text-sm font-semibold text-sky-700 shadow-md hover:bg-white"
-          >
-            View public signup →
-          </a>
+          <div className="flex flex-wrap items-center gap-2">
+            <Dialog open={addOpen} onOpenChange={(o) => { setAddOpen(o); if (!o) resetForm(); }}>
+              <DialogTrigger asChild>
+                <Button className="bg-white text-sky-700 shadow-md hover:bg-sky-50">
+                  <Plus className="mr-1.5 h-4 w-4" /> Add Partner
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto bg-white">
+                <DialogHeader>
+                  <DialogTitle>Add Partner Manually</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>Full Name *</Label>
+                      <Input value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
+                    </div>
+                    <div>
+                      <Label>Phone *</Label>
+                      <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>Email</Label>
+                      <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                    </div>
+                    <div>
+                      <Label>City</Label>
+                      <Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>Category</Label>
+                      <Input value={form.product_name} onChange={(e) => setForm({ ...form, product_name: e.target.value })} placeholder="Loans / Insurance / MF" />
+                    </div>
+                    <div>
+                      <Label>Organisation</Label>
+                      <Input value={form.organisation} onChange={(e) => setForm({ ...form, organisation: e.target.value })} />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Experience</Label>
+                    <Input value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value })} placeholder="e.g. 5 years" />
+                  </div>
+                  <div>
+                    <Label>Notes</Label>
+                    <Textarea rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
+                  <Button onClick={addPartner} disabled={saving} className="bg-gradient-to-r from-sky-600 to-blue-600 text-white">
+                    {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Add Partner
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            <a
+              href="/partner-signup"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full bg-white/20 px-4 py-2 text-sm font-semibold text-white hover:bg-white/30"
+            >
+              Public signup →
+            </a>
+          </div>
         </div>
       </div>
 
