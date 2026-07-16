@@ -310,9 +310,9 @@ function BannersEditor() {
                   <Label>Position</Label>
                   <Input
                     type="number"
-                    value={editing.position}
+                    value={editing.position || ""}
                     onChange={(e) =>
-                      setEditing({ ...editing, position: Number(e.target.value) })
+                      setEditing({ ...editing, position: Number(e.target.value) || 0 })
                     }
                   />
                 </div>
