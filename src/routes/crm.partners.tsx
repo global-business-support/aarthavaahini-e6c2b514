@@ -92,8 +92,65 @@ function PartnersPage() {
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
   const [view, setView] = useState<PartnerLead | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    full_name: "",
+    phone: "",
+    email: "",
+    city: "",
+    product_name: "",
+    organisation: "",
+    experience: "",
+    notes: "",
+  });
 
-  const load = async () => {
+  const resetForm = () =>
+    setForm({
+      full_name: "",
+      phone: "",
+      email: "",
+      city: "",
+      product_name: "",
+      organisation: "",
+      experience: "",
+      notes: "",
+    });
+
+  const addPartner = async () => {
+    if (!form.full_name.trim() || !form.phone.trim()) {
+      toast.error("Name and phone are required");
+      return;
+    }
+    setSaving(true);
+    const message = [
+      "Partner Application (Manual)",
+      form.organisation ? `Organisation: ${form.organisation}` : "",
+      form.experience ? `Experience: ${form.experience}` : "",
+      form.notes ? `Notes: ${form.notes}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+    const { error } = await supabase.from("leads").insert({
+      full_name: form.full_name.trim(),
+      lead_name: form.full_name.trim(),
+      phone: form.phone.trim(),
+      email: form.email.trim() || null,
+      city: form.city.trim() || null,
+      product_type: "partner",
+      product_name: form.product_name.trim() || null,
+      lead_source: "Manual",
+      status: "Approved",
+      message,
+    });
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    toast.success("Partner added");
+    setAddOpen(false);
+    resetForm();
+    load();
+  };
+
     setLoading(true);
 
     const { data, error } = await supabase
