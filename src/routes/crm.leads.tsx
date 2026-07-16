@@ -2085,7 +2085,12 @@ function LeadsPage() {
         (l.lead_name ?? l.full_name ?? "").toLowerCase().includes(term) ||
         l.phone.includes(term);
 
-      const matchesStage = stageFilter === "all" || stage === stageFilter;
+      // Default view: only active leads (New / Qualified). Approved → Customers,
+      // Rejected → Rejected page, Disbursed/Closed → Loans. Filter dropdown still shows them.
+      const matchesStage =
+        stageFilter === "all"
+          ? stage === "New" || stage === "Qualified"
+          : stage === stageFilter;
 
       const matchesAssignee =
         assigneeFilter === "all" ||
