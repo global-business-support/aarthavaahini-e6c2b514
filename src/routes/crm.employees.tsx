@@ -247,13 +247,10 @@ function EmployeesPage() {
                   <Label>Role</Label>
                   <Select value={form.role} onValueChange={(v) => setForm({ ...form, role: v })}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent className="max-h-[280px] overflow-y-auto">
+                    <SelectContent className="max-h-[260px] overflow-y-auto">
                       {ROLE_OPTIONS.map((r) => (
-                        <SelectItem key={r.value} value={r.value} className="py-2">
-                          <div className="flex flex-col leading-tight">
-                            <span className="font-medium">{r.label}</span>
-                            <span className="mt-0.5 text-[11px] text-slate-500">{r.desc}</span>
-                          </div>
+                        <SelectItem key={r.value} value={r.value} className="py-2 text-sm">
+                          {r.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
