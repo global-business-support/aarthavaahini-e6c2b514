@@ -49,10 +49,14 @@ type Emp = {
 };
 
 const ROLE_OPTIONS = [
-  { value: "manager", label: "Manager", desc: "View + edit, no delete, no admin pages" },
-  { value: "accountant", label: "Accountant", desc: "Finance & reports access" },
-  { value: "sales_executive", label: "Sales Executive", desc: "Leads & customers" },
-  { value: "back_office_executive", label: "Back Office Executive", desc: "Documents & operations" },
+  { value: "admin", label: "Admin" },
+  { value: "manager", label: "Manager" },
+  { value: "accountant", label: "Accountant" },
+  { value: "sales_executive", label: "Sales Executive" },
+  { value: "back_office_executive", label: "Back Office Executive" },
+  { value: "operations", label: "Operations" },
+  { value: "insurance_executive", label: "Insurance Executive" },
+  { value: "mf_executive", label: "Mutual Fund Executive" },
 ];
 
 const ROLE_TONES: Record<string, string> = {
