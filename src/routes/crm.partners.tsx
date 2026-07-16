@@ -151,7 +151,9 @@ function PartnersPage() {
     load();
   };
 
+  const load = async () => {
     setLoading(true);
+
 
     const { data, error } = await supabase
       .from("leads")
