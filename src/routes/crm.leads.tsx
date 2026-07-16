@@ -2085,7 +2085,12 @@ function LeadsPage() {
         (l.lead_name ?? l.full_name ?? "").toLowerCase().includes(term) ||
         l.phone.includes(term);
 
-      const matchesStage = stageFilter === "all" || stage === stageFilter;
+      // Default view: only active leads (New / Qualified). Approved → Customers,
+      // Rejected → Rejected page, Disbursed/Closed → Loans. Filter dropdown still shows them.
+      const matchesStage =
+        stageFilter === "all"
+          ? stage === "New" || stage === "Qualified"
+          : stage === stageFilter;
 
       const matchesAssignee =
         assigneeFilter === "all" ||
@@ -2212,6 +2217,9 @@ function LeadsPage() {
         .maybeSingle();
 
       if (!existing) {
+        const partnerRef = lead.lead_source
+          ? `Reference: ${lead.lead_source}${lead.lead_source.toLowerCase() === "partner" ? " (Partner)" : ""}`
+          : null;
         await supabase.from("customers").insert({
           customer_name: lead.lead_name ?? lead.full_name ?? "Unnamed",
           mobile: lead.phone,
@@ -2225,6 +2233,7 @@ function LeadsPage() {
           cibil_score: lead.cibil_score,
           bank_name: lead.bank_name,
           stage: "Docs Pending",
+          note: partnerRef,
         });
 
         toast.success("Approved → Customer created");
@@ -2270,6 +2279,11 @@ function LeadsPage() {
       .eq("lead_id", lead.id)
       .maybeSingle();
 
+    const partnerRef = lead.lead_source
+      ? `Reference: ${lead.lead_source}${lead.lead_source.toLowerCase() === "partner" ? " (Partner)" : ""}`
+      : null;
+    const combinedNote = [partnerRef, payload.notes || null].filter(Boolean).join("\n") || null;
+
     if (existing) {
       customerId = existing.id;
     } else {
@@ -2287,7 +2301,7 @@ function LeadsPage() {
           cibil_score: lead.cibil_score,
           bank_name: payload.bank_name || null,
           stage: "Approved",
-          note: payload.notes || null,
+          note: combinedNote,
         })
         .select("id")
         .single();
@@ -2314,7 +2328,7 @@ function LeadsPage() {
       interest_rate: payload.interest_rate,
       lender_name: payload.bank_name || null,
       stage: payload.sanction_amount ? "Sanction" : "Under Process",
-      notes: payload.notes || null,
+      notes: combinedNote,
       documents_checklist: payload.docs,
     });
 
