@@ -181,7 +181,13 @@ function LoansPage() {
   }, []);
 
   const filteredRows = useMemo(() => {
-    if (!stageFilter || stageFilter === "all") return rows;
+    if (!stageFilter || stageFilter === "all") {
+      // Default: only in-process loans. Closed/Completed drop off the active view.
+      return rows.filter((r) => {
+        const s = (r.stage ?? "").toLowerCase();
+        return s !== "closed" && s !== "completed";
+      });
+    }
     return rows.filter((r) => (r.stage ?? "").toLowerCase() === stageFilter.toLowerCase());
   }, [rows, stageFilter]);
 
