@@ -1044,8 +1044,72 @@ export function Hero() {
     null,
   );
 
-  const [slides] = useState<Slide[]>(defaultSlides);
-  const [promoCards] = useState<PromoCard[]>(defaultPromoCards);
+  const [slides, setSlides] = useState<Slide[]>(defaultSlides);
+  const [promoCards, setPromoCards] = useState<PromoCard[]>(defaultPromoCards);
+
+  // Load CMS-managed hero slides & product cards from the DB.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("hero_slides")
+          .select("image_url,is_active,position")
+          .eq("is_active", true)
+          .order("position", { ascending: true });
+        if (!error && !cancelled && data && data.length > 0) {
+          const mapped: Slide[] = data
+            .map((r: { image_url: string | null }) => ({
+              image: normalizeImageUrl(r.image_url),
+              objectPosition: "center top",
+            }))
+            .filter((s) => !!s.image);
+          if (mapped.length > 0) {
+            setSlides(mapped);
+            setCurrent(0);
+          }
+        }
+      } catch {
+        /* fallback to defaults */
+      }
+    })();
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("product_cards")
+          .select("title,image_url,button1_link,bg_color,is_active,position")
+          .eq("is_active", true)
+          .order("position", { ascending: true });
+        if (!error && !cancelled && data && data.length > 0) {
+          const mapped: PromoCard[] = data
+            .map((r: {
+              title: string;
+              image_url: string | null;
+              button1_link: string | null;
+              bg_color: string | null;
+            }) => ({
+              title: r.title,
+              image: normalizeImageUrl(r.image_url),
+              applyLink: r.button1_link || "/contact",
+              bg: r.bg_color
+                ? `bg-[${r.bg_color}]`
+                : "bg-[#dbeafe]",
+            }))
+            .filter((c) => !!c.image);
+          if (mapped.length > 0) {
+            setPromoCards(mapped);
+            setActiveCard(0);
+          }
+        }
+      } catch {
+        /* fallback to defaults */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
 
 
   useEffect(() => {
