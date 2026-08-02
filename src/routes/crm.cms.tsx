@@ -65,13 +65,18 @@ function ImageField({
   value,
   onChange,
   accept = "image/*,video/*",
+  recommendedWidth = 1920,
+  recommendedHeight = 1080,
 }: {
   value: string;
   onChange: (v: string) => void;
   accept?: string;
+  recommendedWidth?: number;
+  recommendedHeight?: number;
 }) {
   const [uploading, setUploading] = useState(false);
   const isVideo = /\.(mp4|webm|ogg|mov)(\?|$)/i.test(value);
+
 
   const upload = async (file: File) => {
     if (!file) return;
