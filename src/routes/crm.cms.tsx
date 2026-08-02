@@ -253,13 +253,21 @@ function BannersEditor() {
               className="h-16 w-28 shrink-0 rounded object-cover"
               onError={(e) => ((e.target as HTMLImageElement).style.opacity = "0.3")}
             />
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 space-y-1">
               <p className="truncate font-medium">{r.title || "(image only)"}</p>
               <p className="truncate text-xs text-muted-foreground">{r.subtitle}</p>
               <p className="text-xs">
-                Pos {r.position} · {r.is_active ? "Active" : "Hidden"}
+                Pos {r.position} ·{" "}
+                {r.is_active ? (
+                  <span className="font-medium text-emerald-600">Live on homepage</span>
+                ) : (
+                  <span className="text-muted-foreground">Hidden</span>
+                )}
               </p>
+              <MediaInfo url={r.image_url} recommendedWidth={1920} recommendedHeight={1080} />
+              <p className="truncate text-[11px] text-muted-foreground">{r.image_url}</p>
             </div>
+
             <div className="flex gap-2">
               <Button
                 size="sm"
