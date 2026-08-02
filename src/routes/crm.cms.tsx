@@ -474,8 +474,15 @@ function ProductCardsEditor() {
               <p className="truncate font-semibold">{r.title}</p>
               <p className="truncate text-xs">{r.subtitle}</p>
               <p className="text-xs opacity-70">
-                Pos {r.position} · {r.is_active ? "Active" : "Hidden"}
+                Pos {r.position} · {r.is_active ? "Live on homepage" : "Hidden"}
               </p>
+              <MediaInfo
+                url={r.image_url}
+                recommendedWidth={1200}
+                recommendedHeight={900}
+                className="mt-1"
+              />
+
               <div className="mt-1 flex gap-1">
                 <Button
                   size="sm"
