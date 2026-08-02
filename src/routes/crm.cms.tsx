@@ -734,7 +734,10 @@ function TestimonialsEditor() {
               <ImageField
                 value={editing.image_url ?? ""}
                 onChange={(v) => setEditing({ ...editing, image_url: v })}
+                recommendedWidth={400}
+                recommendedHeight={400}
               />
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label>Name</Label>
