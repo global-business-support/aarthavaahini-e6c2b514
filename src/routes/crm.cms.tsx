@@ -508,7 +508,10 @@ function ProductCardsEditor() {
               <ImageField
                 value={editing.image_url ?? ""}
                 onChange={(v) => setEditing({ ...editing, image_url: v })}
+                recommendedWidth={1200}
+                recommendedHeight={900}
               />
+
               <div>
                 <Label>Title</Label>
                 <Input
