@@ -111,7 +111,13 @@ function ImageField({
 
   return (
     <div className="space-y-2">
-      <Label>Media (image or video)</Label>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <Label>Media (image or video)</Label>
+        <span className="text-[11px] text-muted-foreground">
+          Recommended: {recommendedWidth} × {recommendedHeight} px (
+          {formatRatio(recommendedWidth, recommendedHeight)}), JPG/PNG/WebP, &lt; 2 MB
+        </span>
+      </div>
       <div className="flex flex-wrap gap-2">
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-gradient-to-r from-sky-600 to-blue-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:opacity-90">
           {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
@@ -145,9 +151,17 @@ function ImageField({
           />
         )
       )}
+      {value && (
+        <MediaInfo
+          url={value}
+          recommendedWidth={recommendedWidth}
+          recommendedHeight={recommendedHeight}
+        />
+      )}
     </div>
   );
 }
+
 
 /* -----------------------------  Hero banners  ----------------------------- */
 
