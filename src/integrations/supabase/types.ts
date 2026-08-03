@@ -911,6 +911,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_coordinator: { Args: { _user_id: string }; Returns: boolean }
       is_partner: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       is_super_admin: { Args: { _user_id: string }; Returns: boolean }
@@ -928,6 +929,7 @@ export type Database = {
         | "partner"
         | "accountant"
         | "back_office_executive"
+        | "coordinator"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1067,6 +1069,7 @@ export const Constants = {
         "partner",
         "accountant",
         "back_office_executive",
+        "coordinator",
       ],
     },
   },
