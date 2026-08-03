@@ -650,16 +650,6 @@ export default function PartnersPage() {
             </p>
           </div>
 
-<<<<<<< HEAD
-          <a
-            href="/partner-signup"
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-full bg-white/95 px-4 py-2 text-sm font-semibold text-sky-700 shadow-md hover:bg-white transition-all"
-          >
-            View public signup →
-          </a>
-=======
           <div className="flex flex-wrap items-center gap-2">
             <Dialog open={addOpen} onOpenChange={(o) => { setAddOpen(o); if (!o) resetForm(); }}>
               <DialogTrigger asChild>
@@ -728,7 +718,6 @@ export default function PartnersPage() {
               Public signup →
             </a>
           </div>
->>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
         </div>
       </div>
 

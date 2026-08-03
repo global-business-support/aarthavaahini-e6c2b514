@@ -2352,10 +2352,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-<<<<<<< HEAD
-import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Search, Phone, Mail, UserCheck } from "lucide-react";
-=======
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
@@ -2375,7 +2371,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CustomerProfileDialog } from "@/components/crm/CustomerProfileDialog";
->>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
 
 
 export const Route = createFileRoute("/crm/customers")({
@@ -2400,13 +2395,10 @@ type Customer = {
 export function CustomersPage() {
   const [rows, setRows] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
-<<<<<<< HEAD
-=======
   const [active, setActive] = useState<Row | null>(null);
   const [editing, setEditing] = useState<Row | null>(null);
 
 
->>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
   const [q, setQ] = useState("");
 
   const loadData = async () => {
@@ -2449,18 +2441,6 @@ export function CustomersPage() {
     return "Unnamed Customer";
   };
 
-<<<<<<< HEAD
-  const filtered = rows.filter((r) => {
-    if (!q) return true;
-    const s = q.toLowerCase();
-    const name = getCustomerName(r).toLowerCase();
-    return (
-      name.includes(s) ||
-      r.phone?.includes(q) ||
-      r.email?.toLowerCase().includes(s)
-    );
-  });
-=======
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
 
@@ -2607,7 +2587,6 @@ export function CustomersPage() {
     setBankFilter("all");
     setSortBy("az");
   };
->>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
 
   return (
     <div className="space-y-4 p-4 md:p-6">
@@ -2649,14 +2628,6 @@ export function CustomersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-<<<<<<< HEAD
-                  <TableHead className="w-[200px]">Customer Name</TableHead>
-                  <TableHead className="w-[250px]">Contact</TableHead>
-                  <TableHead>City</TableHead>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Customer Status</TableHead>
-                  <TableHead>Onboarded On</TableHead>
-=======
                   <TableHead>Name</TableHead>
                   <TableHead>Mobile</TableHead>
                   <TableHead>Loan Type</TableHead>
@@ -2667,7 +2638,6 @@ export function CustomersPage() {
                   <TableHead className="min-w-[220px]">Note</TableHead>
                   <TableHead className="w-16 text-right">Edit</TableHead>
 
->>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -2728,11 +2698,6 @@ export function CustomersPage() {
           </div>
         )}
       </Card>
-<<<<<<< HEAD
-    </div>
-  );
-}
-=======
 
       <CustomerProfileDialog
         open={!!active}
@@ -3093,4 +3058,3 @@ function EditCustomerDialog({
     </Dialog>
   );
 }
->>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535

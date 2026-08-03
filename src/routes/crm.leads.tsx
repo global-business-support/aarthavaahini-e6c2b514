@@ -4569,13 +4569,6 @@ export function LeadsPage() {
   const [rows, setRows] = useState<Lead[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(true);
-<<<<<<< HEAD
-  const [q, setQ] = useState("");
-  const [productType, setProductType] = useState("all");
-  const [status, setStatus] = useState("all");
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-  const [openCreateModal, setOpenCreateModal] = useState(false);
-=======
   const [filter, setFilter] = useState("");
   const search = Route.useSearch();
   const [stageFilter, setStageFilter] = useState<string>(search.stage ?? "all");
@@ -4587,7 +4580,6 @@ export function LeadsPage() {
   const [approveLead, setApproveLead] = useState<Lead | null>(null);
   const [rejectLead, setRejectLead] = useState<Lead | null>(null);
   const [profileLead, setProfileLead] = useState<string | null>(null);
->>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
 
   const loadData = async () => {
     setLoading(true);
@@ -4621,11 +4613,6 @@ export function LeadsPage() {
     };
   }, []);
 
-<<<<<<< HEAD
-  const handleStageChange = async (id: string, stage: string) => {
-    await supabase.from("leads").update({ stage }).eq("id", id);
-    loadData();
-=======
   const filtered = leads
     .filter((l) => {
       const term = filter.toLowerCase();
@@ -4707,7 +4694,6 @@ export function LeadsPage() {
     if (!id) return "Unassigned";
     const s = staff.find((x) => x.id === id);
     return s?.full_name || s?.email || "Staff";
->>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
   };
 
   const handleSaveNotes = async (id: string, notes: string) => {
@@ -4731,9 +4717,6 @@ export function LeadsPage() {
       r.email?.toLowerCase().includes(s) ||
       r.partner_name?.toLowerCase().includes(s)
     );
-<<<<<<< HEAD
-  });
-=======
 
     toast.success(bankName ? `Bank → ${bankName}` : "Bank cleared");
   };
@@ -4927,7 +4910,6 @@ export function LeadsPage() {
     toast.success("Lead rejected");
     setRejectLead(null);
   };
->>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
 
   return (
     <div className="space-y-4 p-4 md:p-6">
@@ -5124,19 +5106,6 @@ export function LeadsPage() {
   );
 }
 
-<<<<<<< HEAD
-// Sub-component: Clean Side Drawer for Lead Notes
-function NotesDrawer({ lead, onSave }: { lead: Lead; onSave: (notes: string) => void }) {
-  const [noteText, setNoteText] = useState(lead.notes || "");
-  const [open, setOpen] = useState(false);
-
-  return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
-          <MessageSquare className="h-3.5 w-3.5 text-slate-500" />
-          Notes
-=======
 function NewLeadForm({ onSaved }: { onSaved: () => void }) {
   const initialLead = {
     lead_name: "",
@@ -5501,7 +5470,6 @@ function NewLeadForm({ onSaved }: { onSaved: () => void }) {
         >
           {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Create Lead
->>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
         </Button>
       </SheetTrigger>
       <SheetContent className="w-[400px] sm:w-[500px] bg-white p-6">
