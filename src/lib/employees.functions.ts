@@ -11,6 +11,7 @@ const STAFF_ROLES = [
   "mf_executive",
   "accountant",
   "back_office_executive",
+  "coordinator",
 ] as const;
 type StaffRole = typeof STAFF_ROLES[number];
 
