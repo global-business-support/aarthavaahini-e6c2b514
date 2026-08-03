@@ -17,7 +17,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Plus, Pencil, Trash2, Upload, Loader2 } from "lucide-react";
+import { MediaInfo, formatRatio } from "@/components/crm/MediaInfo";
 import { toast } from "sonner";
+
 
 const SWITCH_ON = "data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-slate-300";
 
@@ -65,13 +67,18 @@ function ImageField({
   value,
   onChange,
   accept = "image/*,video/*",
+  recommendedWidth = 1920,
+  recommendedHeight = 1080,
 }: {
   value: string;
   onChange: (v: string) => void;
   accept?: string;
+  recommendedWidth?: number;
+  recommendedHeight?: number;
 }) {
   const [uploading, setUploading] = useState(false);
   const isVideo = /\.(mp4|webm|ogg|mov)(\?|$)/i.test(value);
+
 
   const upload = async (file: File) => {
     if (!file) return;
@@ -106,7 +113,13 @@ function ImageField({
 
   return (
     <div className="space-y-2">
-      <Label>Media (image or video)</Label>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <Label>Media (image or video)</Label>
+        <span className="text-[11px] text-muted-foreground">
+          Recommended: {recommendedWidth} × {recommendedHeight} px (
+          {formatRatio(recommendedWidth, recommendedHeight)}), JPG/PNG/WebP, &lt; 2 MB
+        </span>
+      </div>
       <div className="flex flex-wrap gap-2">
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-gradient-to-r from-sky-600 to-blue-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:opacity-90">
           {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
@@ -140,9 +153,17 @@ function ImageField({
           />
         )
       )}
+      {value && (
+        <MediaInfo
+          url={value}
+          recommendedWidth={recommendedWidth}
+          recommendedHeight={recommendedHeight}
+        />
+      )}
     </div>
   );
 }
+
 
 /* -----------------------------  Hero banners  ----------------------------- */
 
@@ -232,13 +253,21 @@ function BannersEditor() {
               className="h-16 w-28 shrink-0 rounded object-cover"
               onError={(e) => ((e.target as HTMLImageElement).style.opacity = "0.3")}
             />
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 space-y-1">
               <p className="truncate font-medium">{r.title || "(image only)"}</p>
               <p className="truncate text-xs text-muted-foreground">{r.subtitle}</p>
               <p className="text-xs">
-                Pos {r.position} · {r.is_active ? "Active" : "Hidden"}
+                Pos {r.position} ·{" "}
+                {r.is_active ? (
+                  <span className="font-medium text-emerald-600">Live on homepage</span>
+                ) : (
+                  <span className="text-muted-foreground">Hidden</span>
+                )}
               </p>
+              <MediaInfo url={r.image_url} recommendedWidth={1920} recommendedHeight={1080} />
+              <p className="truncate text-[11px] text-muted-foreground">{r.image_url}</p>
             </div>
+
             <div className="flex gap-2">
               <Button
                 size="sm"
@@ -310,9 +339,9 @@ function BannersEditor() {
                   <Label>Position</Label>
                   <Input
                     type="number"
-                    value={editing.position}
+                    value={editing.position || ""}
                     onChange={(e) =>
-                      setEditing({ ...editing, position: Number(e.target.value) })
+                      setEditing({ ...editing, position: Number(e.target.value) || 0 })
                     }
                   />
                 </div>
@@ -445,8 +474,15 @@ function ProductCardsEditor() {
               <p className="truncate font-semibold">{r.title}</p>
               <p className="truncate text-xs">{r.subtitle}</p>
               <p className="text-xs opacity-70">
-                Pos {r.position} · {r.is_active ? "Active" : "Hidden"}
+                Pos {r.position} · {r.is_active ? "Live on homepage" : "Hidden"}
               </p>
+              <MediaInfo
+                url={r.image_url}
+                recommendedWidth={1200}
+                recommendedHeight={900}
+                className="mt-1"
+              />
+
               <div className="mt-1 flex gap-1">
                 <Button
                   size="sm"
@@ -479,7 +515,10 @@ function ProductCardsEditor() {
               <ImageField
                 value={editing.image_url ?? ""}
                 onChange={(v) => setEditing({ ...editing, image_url: v })}
+                recommendedWidth={1200}
+                recommendedHeight={900}
               />
+
               <div>
                 <Label>Title</Label>
                 <Input
@@ -509,9 +548,9 @@ function ProductCardsEditor() {
                   <Label>Position</Label>
                   <Input
                     type="number"
-                    value={editing.position}
+                    value={editing.position || ""}
                     onChange={(e) =>
-                      setEditing({ ...editing, position: Number(e.target.value) })
+                      setEditing({ ...editing, position: Number(e.target.value) || 0 })
                     }
                   />
                 </div>
@@ -702,7 +741,10 @@ function TestimonialsEditor() {
               <ImageField
                 value={editing.image_url ?? ""}
                 onChange={(v) => setEditing({ ...editing, image_url: v })}
+                recommendedWidth={400}
+                recommendedHeight={400}
               />
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label>Name</Label>
@@ -734,9 +776,9 @@ function TestimonialsEditor() {
                     type="number"
                     min={1}
                     max={5}
-                    value={editing.rating}
+                    value={editing.rating || ""}
                     onChange={(e) =>
-                      setEditing({ ...editing, rating: Number(e.target.value) })
+                      setEditing({ ...editing, rating: Number(e.target.value) || 0 })
                     }
                   />
                 </div>
@@ -744,9 +786,9 @@ function TestimonialsEditor() {
                   <Label>Position</Label>
                   <Input
                     type="number"
-                    value={editing.position}
+                    value={editing.position || ""}
                     onChange={(e) =>
-                      setEditing({ ...editing, position: Number(e.target.value) })
+                      setEditing({ ...editing, position: Number(e.target.value) || 0 })
                     }
                   />
                 </div>

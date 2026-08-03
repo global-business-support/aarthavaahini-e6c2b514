@@ -210,7 +210,7 @@ function SchedulePage() {
                     </div>
                     <div>
                       <Label>Duration (min)</Label>
-                      <Input type="number" min={15} step={15} className="border-amber-200" value={form.duration_minutes} onChange={(e) => setForm({ ...form, duration_minutes: Number(e.target.value) })} />
+                      <Input type="number" min={15} step={15} className="border-amber-200" value={form.duration_minutes || ""} onChange={(e) => setForm({ ...form, duration_minutes: Number(e.target.value) || 0 })} />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3">

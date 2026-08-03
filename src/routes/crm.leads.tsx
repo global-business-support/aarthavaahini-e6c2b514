@@ -4528,6 +4528,9 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/crm/leads")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    stage: typeof s.stage === "string" ? s.stage : undefined,
+  }),
   component: LeadsPage,
 });
 
@@ -4566,11 +4569,25 @@ export function LeadsPage() {
   const [rows, setRows] = useState<Lead[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(true);
+<<<<<<< HEAD
   const [q, setQ] = useState("");
   const [productType, setProductType] = useState("all");
   const [status, setStatus] = useState("all");
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
+=======
+  const [filter, setFilter] = useState("");
+  const search = Route.useSearch();
+  const [stageFilter, setStageFilter] = useState<string>(search.stage ?? "all");
+  const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
+  const [bankFilter, setBankFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("recent");
+  const [open, setOpen] = useState(false);
+  const [noteLead, setNoteLead] = useState<Lead | null>(null);
+  const [approveLead, setApproveLead] = useState<Lead | null>(null);
+  const [rejectLead, setRejectLead] = useState<Lead | null>(null);
+  const [profileLead, setProfileLead] = useState<string | null>(null);
+>>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
 
   const loadData = async () => {
     setLoading(true);
@@ -4604,9 +4621,93 @@ export function LeadsPage() {
     };
   }, []);
 
+<<<<<<< HEAD
   const handleStageChange = async (id: string, stage: string) => {
     await supabase.from("leads").update({ stage }).eq("id", id);
     loadData();
+=======
+  const filtered = leads
+    .filter((l) => {
+      const term = filter.toLowerCase();
+      const stage = normaliseStage(l.status);
+
+      const matchesText =
+        !term ||
+        (l.lead_name ?? l.full_name ?? "").toLowerCase().includes(term) ||
+        l.phone.includes(term);
+
+      // Default view: only active leads (New / Qualified). Approved → Customers,
+      // Rejected → Rejected page, Disbursed/Closed → Loans. Filter dropdown still shows them.
+      const matchesStage =
+        stageFilter === "all"
+          ? stage === "New" || stage === "Qualified"
+          : stage === stageFilter;
+
+      const matchesAssignee =
+        assigneeFilter === "all" ||
+        (assigneeFilter === "unassigned"
+          ? !l.assigned_to
+          : l.assigned_to === assigneeFilter);
+
+      const matchesBank =
+        bankFilter === "all" ||
+        (bankFilter === "none" ? !l.bank_name : l.bank_name === bankFilter);
+
+      const partnerVisible =
+        !isAdmin ||
+        (l.lead_source ?? "").toLowerCase() !== "partner" ||
+        (!!user && l.assigned_to === user.id);
+
+      return (
+        matchesText &&
+        matchesStage &&
+        matchesAssignee &&
+        matchesBank &&
+        partnerVisible
+      );
+    })
+    .sort((a, b) => {
+      const nameA = (a.lead_name ?? a.full_name ?? "").toLowerCase();
+      const nameB = (b.lead_name ?? b.full_name ?? "").toLowerCase();
+
+      if (sortBy === "name_asc") return nameA.localeCompare(nameB);
+      if (sortBy === "name_desc") return nameB.localeCompare(nameA);
+      if (sortBy === "amount_desc")
+        return (Number(b.loan_amount) || 0) - (Number(a.loan_amount) || 0);
+      if (sortBy === "amount_asc")
+        return (Number(a.loan_amount) || 0) - (Number(b.loan_amount) || 0);
+      if (sortBy === "cibil_desc")
+        return (b.cibil_score ?? 0) - (a.cibil_score ?? 0);
+      if (sortBy === "oldest")
+        return (
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+
+      return (
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    });
+
+  const stageCounts = LEAD_STAGES.reduce<Record<Stage, number>>(
+    (acc, s) => {
+      acc[s] = leads.filter((l) => normaliseStage(l.status) === s).length;
+      return acc;
+    },
+    {
+      New: 0,
+      Qualified: 0,
+      Approved: 0,
+      Rejected: 0,
+      Disbursed: 0,
+      Closed: 0,
+    },
+  );
+
+  const staffLabel = (id: string | null) => {
+    if (!id) return "Unassigned";
+    const s = staff.find((x) => x.id === id);
+    return s?.full_name || s?.email || "Staff";
+>>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
   };
 
   const handleSaveNotes = async (id: string, notes: string) => {
@@ -4630,7 +4731,203 @@ export function LeadsPage() {
       r.email?.toLowerCase().includes(s) ||
       r.partner_name?.toLowerCase().includes(s)
     );
+<<<<<<< HEAD
   });
+=======
+
+    toast.success(bankName ? `Bank → ${bankName}` : "Bank cleared");
+  };
+
+  const updateAssignee = async (lead: Lead, value: string) => {
+    const newId = value === "unassigned" ? null : value;
+
+    const { error } = await supabase
+      .from("leads")
+      .update({ assigned_to: newId })
+      .eq("id", lead.id);
+
+    if (error) return toast.error(error.message);
+
+    setLeads((prev) =>
+      prev.map((l) => (l.id === lead.id ? { ...l, assigned_to: newId } : l)),
+    );
+
+    toast.success(`Assigned → ${staffLabel(newId)}`);
+  };
+
+  const updateStage = async (lead: Lead, status: Stage) => {
+    const { error } = await supabase
+      .from("leads")
+      .update({ status })
+      .eq("id", lead.id);
+
+    if (error) return toast.error(error.message);
+
+    setLeads((prev) =>
+      prev.map((l) => (l.id === lead.id ? { ...l, status } : l)),
+    );
+
+    toast.success(`Stage → ${status}`);
+
+    if (status === "Approved") {
+      const { data: existing } = await supabase
+        .from("customers")
+        .select("id")
+        .eq("lead_id", lead.id)
+        .maybeSingle();
+
+      if (!existing) {
+        const partnerRef = lead.lead_source
+          ? `Reference: ${lead.lead_source}${lead.lead_source.toLowerCase() === "partner" ? " (Partner)" : ""}`
+          : null;
+        await supabase.from("customers").insert({
+          customer_name: lead.lead_name ?? lead.full_name ?? "Unnamed",
+          mobile: lead.phone,
+          email: lead.email,
+          pan: lead.pan,
+          address: [lead.city, lead.state].filter(Boolean).join(", ") || null,
+          lead_id: lead.id,
+          loan_type: lead.loan_type,
+          loan_sub_type: lead.loan_sub_type,
+          loan_amount: amountToNumber(lead.loan_amount),
+          cibil_score: lead.cibil_score,
+          bank_name: lead.bank_name,
+          stage: "Docs Pending",
+          note: partnerRef,
+        });
+
+        toast.success("Approved → Customer created");
+      }
+    }
+  };
+
+  const approve = (lead: Lead) => setApproveLead(lead);
+  const reject = (lead: Lead) => setRejectLead(lead);
+
+  const confirmApprove = async (
+    lead: Lead,
+    payload: {
+      loan_type: string;
+      requested_amount: number | null;
+      sanction_amount: number | null;
+      tenure_months: number | null;
+      interest_rate: number | null;
+      bank_name: string;
+      notes: string;
+      docs: Record<string, boolean>;
+    },
+  ) => {
+    const finalAmount = payload.sanction_amount ?? payload.requested_amount;
+
+    const { error: leadErr } = await supabase
+      .from("leads")
+      .update({
+        status: "Approved",
+        loan_amount: payload.requested_amount,
+        bank_name: payload.bank_name || null,
+        loan_type: payload.loan_type,
+      })
+      .eq("id", lead.id);
+
+    if (leadErr) return toast.error(leadErr.message);
+
+    let customerId: string | null = null;
+
+    const { data: existing } = await supabase
+      .from("customers")
+      .select("id")
+      .eq("lead_id", lead.id)
+      .maybeSingle();
+
+    const partnerRef = lead.lead_source
+      ? `Reference: ${lead.lead_source}${lead.lead_source.toLowerCase() === "partner" ? " (Partner)" : ""}`
+      : null;
+    const combinedNote = [partnerRef, payload.notes || null].filter(Boolean).join("\n") || null;
+
+    if (existing) {
+      customerId = existing.id;
+    } else {
+      const { data: ins, error: cErr } = await supabase
+        .from("customers")
+        .insert({
+          customer_name: lead.lead_name ?? lead.full_name ?? "Unnamed",
+          mobile: lead.phone,
+          email: lead.email,
+          pan: lead.pan,
+          address: [lead.city, lead.state].filter(Boolean).join(", ") || null,
+          lead_id: lead.id,
+          loan_type: payload.loan_type,
+          loan_amount: finalAmount,
+          cibil_score: lead.cibil_score,
+          bank_name: payload.bank_name || null,
+          stage: "Approved",
+          note: combinedNote,
+        })
+        .select("id")
+        .single();
+
+      if (cErr) return toast.error(cErr.message);
+      customerId = ins.id;
+    }
+
+    if (customerId) {
+      await supabase
+        .from("leads")
+        .update({ converted_customer_id: customerId })
+        .eq("id", lead.id);
+    }
+
+    const { error: lcErr } = await supabase.from("loan_cases").insert({
+      customer_id: customerId,
+      lead_id: lead.id,
+      loan_type: payload.loan_type,
+      loan_amount: finalAmount,
+      requested_amount: payload.requested_amount,
+      sanction_amount: payload.sanction_amount,
+      tenure_months: payload.tenure_months,
+      interest_rate: payload.interest_rate,
+      lender_name: payload.bank_name || null,
+      stage: payload.sanction_amount ? "Sanction" : "Under Process",
+      notes: combinedNote,
+      documents_checklist: payload.docs,
+    });
+
+    if (lcErr) return toast.error(lcErr.message);
+
+    setLeads((prev) =>
+      prev.map((l) =>
+        l.id === lead.id
+          ? {
+              ...l,
+              status: "Approved",
+              loan_amount: payload.requested_amount,
+              bank_name: payload.bank_name || null,
+              loan_type: payload.loan_type,
+            }
+          : l,
+      ),
+    );
+
+    toast.success("Approved → Customer & Loan Case created");
+    setApproveLead(null);
+  };
+
+  const confirmReject = async (lead: Lead, reason: string) => {
+    const { error } = await supabase
+      .from("leads")
+      .update({ status: "Rejected", rejection_reason: reason })
+      .eq("id", lead.id);
+
+    if (error) return toast.error(error.message);
+
+    setLeads((prev) =>
+      prev.map((l) => (l.id === lead.id ? { ...l, status: "Rejected" } : l)),
+    );
+
+    toast.success("Lead rejected");
+    setRejectLead(null);
+  };
+>>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
 
   return (
     <div className="space-y-4 p-4 md:p-6">
@@ -4827,6 +5124,7 @@ export function LeadsPage() {
   );
 }
 
+<<<<<<< HEAD
 // Sub-component: Clean Side Drawer for Lead Notes
 function NotesDrawer({ lead, onSave }: { lead: Lead; onSave: (notes: string) => void }) {
   const [noteText, setNoteText] = useState(lead.notes || "");
@@ -4838,6 +5136,372 @@ function NotesDrawer({ lead, onSave }: { lead: Lead; onSave: (notes: string) => 
         <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
           <MessageSquare className="h-3.5 w-3.5 text-slate-500" />
           Notes
+=======
+function NewLeadForm({ onSaved }: { onSaved: () => void }) {
+  const initialLead = {
+    lead_name: "",
+    phone: "",
+    email: "",
+    pan: "",
+    aadhaar: "",
+    city: "",
+    state: "",
+    product_type: "loan",
+    lead_source: "Website",
+    loan_type: "",
+    loan_sub_type: "",
+    loan_amount: "",
+    cibil_score: "",
+    bank_name: "",
+  };
+
+  const [f, setF] = useState(initialLead);
+  const [saving, setSaving] = useState(false);
+
+  const subOptions = SUB_LOAN_TYPES[f.loan_type] ?? [];
+
+  const inputClass =
+    "h-11 w-full rounded-xl border bg-white px-4 text-sm outline-none transition focus:ring-2 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400";
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!f.lead_name.trim()) {
+      toast.error("Lead name is required");
+      return;
+    }
+
+    const letterCount = f.lead_name.replace(/[^A-Za-z]/g, "").length;
+    if (letterCount > 30) {
+      toast.error("Full name cannot exceed 30 alphabetic characters");
+      return;
+    }
+
+
+
+
+    if (!f.phone.trim()) {
+      toast.error("Mobile number is required");
+      return;
+    }
+
+    if (f.pan.trim() && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(f.pan.trim())) {
+      toast.error("PAN must be 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F)");
+      return;
+    }
+
+    if (f.aadhaar.trim() && !/^[0-9]{12}$/.test(f.aadhaar.trim())) {
+      toast.error("Aadhaar must be exactly 12 digits");
+      return;
+    }
+
+
+    const loanAmount = amountToNumber(f.loan_amount);
+
+    setSaving(true);
+
+    const { error } = await supabase.from("leads").insert({
+      lead_name: f.lead_name.trim(),
+      full_name: f.lead_name.trim(),
+      phone: f.phone.trim(),
+      email: f.email.trim() || null,
+      pan: f.pan.trim() || null,
+      aadhaar: f.aadhaar.trim() || null,
+      city: f.city.trim() || null,
+      state: f.state.trim() || null,
+      product_type: f.product_type,
+      lead_source: f.lead_source,
+      status: "New",
+      loan_type: f.loan_type || null,
+      loan_sub_type: f.loan_sub_type || null,
+      loan_amount: loanAmount,
+      amount: loanAmount,
+      cibil_score: f.cibil_score ? Number(f.cibil_score) : null,
+      product_name: f.loan_sub_type || f.loan_type || null,
+      bank_name: f.bank_name || null,
+    });
+
+    setSaving(false);
+
+    if (error) return toast.error(error.message);
+
+    toast.success("Lead created");
+    setF(initialLead);
+    onSaved();
+  };
+
+  return (
+    <form onSubmit={submit} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <Field label="Full Name *">
+        <Input
+          required
+          maxLength={60}
+          placeholder="Full name (max 30 letters)"
+
+          className="border-sky-200 focus-visible:ring-sky-400"
+          value={f.lead_name}
+          onChange={(e) => {
+            // Allow only letters and single spaces; cap at 30 alphabetic chars.
+            let cleaned = e.target.value
+              .replace(/[^A-Za-z\s]/g, "")
+              .replace(/\s+/g, " ");
+            let letters = 0;
+            let out = "";
+            for (const ch of cleaned) {
+              if (/[A-Za-z]/.test(ch)) {
+                if (letters >= 30) break;
+                letters++;
+              }
+              out += ch;
+            }
+            setF((prev) => ({ ...prev, lead_name: out }));
+          }}
+
+        />
+      </Field>
+
+
+
+      <Field label="Mobile *">
+        <Input
+          required
+          inputMode="numeric"
+          maxLength={12}
+          placeholder="Up to 12 digits"
+          className="border-rose-200 focus-visible:ring-rose-400"
+          value={f.phone}
+          onChange={(e) =>
+            setF((prev) => ({
+              ...prev,
+              phone: e.target.value.replace(/\D/g, "").slice(0, 12),
+            }))
+          }
+        />
+      </Field>
+
+      <Field label="Email">
+        <Input
+          type="email"
+          className="border-cyan-200 focus-visible:ring-cyan-400"
+          value={f.email}
+          placeholder="name@example.com"
+          onChange={(e) => {
+            let v = e.target.value.replace(/\s/g, "");
+            // Truncate anything typed after a top-level domain suffix
+            const m = v.match(/^(.*?\.(?:com|in|org|net|co|edu|gov|io|info|biz))/i);
+            if (m) v = m[1];
+            setF((prev) => ({ ...prev, email: v }));
+          }}
+        />
+      </Field>
+
+
+      <Field label="PAN">
+        <Input
+          className="border-amber-200 focus-visible:ring-amber-400"
+          value={f.pan}
+          maxLength={10}
+          placeholder="ABCDE1234F"
+          onChange={(e) => {
+            const raw = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10);
+            let out = "";
+            for (let i = 0; i < raw.length; i++) {
+              const ch = raw[i];
+              if (i < 5 || i === 9) {
+                if (/[A-Z]/.test(ch)) out += ch;
+              } else {
+                if (/[0-9]/.test(ch)) out += ch;
+              }
+            }
+            setF((prev) => ({ ...prev, pan: out }));
+          }}
+        />
+      </Field>
+
+      <Field label="Aadhaar">
+        <Input
+          className="border-emerald-200 focus-visible:ring-emerald-400"
+          value={f.aadhaar}
+          maxLength={12}
+          inputMode="numeric"
+          placeholder="12-digit Aadhaar"
+          onChange={(e) =>
+            setF((prev) => ({ ...prev, aadhaar: e.target.value.replace(/\D/g, "").slice(0, 12) }))
+          }
+        />
+      </Field>
+
+
+      <Field label="State">
+        <select
+          className="h-9 w-full rounded-md border border-indigo-200 bg-white px-3 text-sm"
+          value={f.state}
+          onChange={(e) =>
+            setF((prev) => ({ ...prev, state: e.target.value, city: "" }))
+          }
+        >
+          <option value="">Select state</option>
+          {INDIA_STATES.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      <Field label="City">
+        <select
+          className="h-9 w-full rounded-md border border-blue-200 bg-white px-3 text-sm disabled:opacity-60"
+          value={f.city}
+          onChange={(e) => setF((prev) => ({ ...prev, city: e.target.value }))}
+          disabled={!f.state}
+        >
+          <option value="">
+            {f.state ? "Select city" : "Select state first"}
+          </option>
+          {citiesForState(f.state).map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      <Field label="Product Interest">
+        <select
+          value={f.product_type}
+          onChange={(e) =>
+            setF((prev) => ({
+              ...prev,
+              product_type: e.target.value,
+              loan_type: "",
+              loan_sub_type: "",
+            }))
+          }
+          className={`${inputClass} border-violet-200 focus:border-violet-400 focus:ring-violet-100`}
+        >
+          {PRODUCT_TYPES.map((p) => (
+            <option key={p} value={p}>
+              {p.replace(/_/g, " ")}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      <Field label="Lead Source">
+        <select
+          value={f.lead_source}
+          onChange={(e) =>
+            setF((prev) => ({ ...prev, lead_source: e.target.value }))
+          }
+          className={`${inputClass} border-pink-200 focus:border-pink-400 focus:ring-pink-100`}
+        >
+          {LEAD_SOURCES.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      <Field label="Loan Type">
+        <select
+          value={f.loan_type}
+          onChange={(e) =>
+            setF((prev) => ({
+              ...prev,
+              loan_type: e.target.value,
+              loan_sub_type: "",
+            }))
+          }
+          className={`${inputClass} border-blue-200 focus:border-blue-400 focus:ring-blue-100`}
+        >
+          <option value="">Choose loan type</option>
+          {LOAN_TYPES.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      <Field label="Sub Loan Type">
+        <select
+          value={f.loan_sub_type}
+          onChange={(e) =>
+            setF((prev) => ({ ...prev, loan_sub_type: e.target.value }))
+          }
+          disabled={!subOptions.length}
+          className={`${inputClass} border-blue-200 focus:border-blue-400 focus:ring-blue-100`}
+        >
+          <option value="">
+            {subOptions.length ? "Choose sub type" : "Pick loan type first"}
+          </option>
+
+          {subOptions.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      <Field label="Loan Amount (₹)">
+        <Input
+          type="text"
+          inputMode="numeric"
+          className="border-emerald-200 focus-visible:ring-emerald-400"
+          placeholder="500000"
+          value={f.loan_amount}
+          onChange={(e) =>
+            setF((prev) => ({
+              ...prev,
+              loan_amount: cleanAmountValue(e.target.value),
+            }))
+          }
+        />
+      </Field>
+
+      <Field label="CIBIL Score">
+        <Input
+          type="number"
+          min={300}
+          max={900}
+          className="border-amber-200 focus-visible:ring-amber-400"
+          placeholder="750"
+          value={f.cibil_score}
+          onChange={(e) =>
+            setF((prev) => ({ ...prev, cibil_score: e.target.value }))
+          }
+        />
+      </Field>
+
+      <Field label="Bank (if approved)">
+        <select
+          value={f.bank_name}
+          onChange={(e) =>
+            setF((prev) => ({ ...prev, bank_name: e.target.value }))
+          }
+          className={`${inputClass} border-rose-200 focus:border-rose-400 focus:ring-rose-100`}
+        >
+          <option value="">Choose bank (optional)</option>
+          {BANK_OPTIONS.map((b) => (
+            <option key={b} value={b}>
+              {b}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      <div className="col-span-1 mt-2 flex justify-end sm:col-span-2">
+        <Button
+          type="submit"
+          disabled={saving}
+          className="bg-gradient-to-r from-sky-600 via-blue-600 to-cyan-600 text-white shadow-md hover:opacity-90"
+        >
+          {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          Create Lead
+>>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
         </Button>
       </SheetTrigger>
       <SheetContent className="w-[400px] sm:w-[500px] bg-white p-6">

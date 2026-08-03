@@ -74,6 +74,16 @@ function RouteComponent() {
 
         </div>
 
+        <div className="mt-12 rounded-2xl border border-green-100 bg-green-50/50 p-6">
+          <h3 className="text-lg font-semibold text-green-800">Related on Aarthvaahini</h3>
+          <ul className="mt-3 space-y-2 text-green-700">
+            <li>→ <a href="/mutual-funds" className="underline hover:text-green-900">Start SIP from ₹500 on Aarthvaahini</a></li>
+            <li>→ <a href="/insurance" className="underline hover:text-green-900">Secure your family with term insurance</a></li>
+            <li>→ <a href="/blogs/home-loan-guide" className="underline hover:text-green-900">Home Loan Guide for First-Time Buyers</a></li>
+            <li>→ <a href="/blogs/cibil-score" className="underline hover:text-green-900">Improve your CIBIL score in 30 days</a></li>
+          </ul>
+        </div>
+
       </main>
 
       <Footer />

@@ -88,10 +88,15 @@ export function CrmLayout() {
   const nav = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem("crm-sidebar-collapsed") === "1";
-  });
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+    if (typeof window !== "undefined") {
+      setCollapsed(window.localStorage.getItem("crm-sidebar-collapsed") === "1");
+    }
+  }, []);
 
   const visibleNav = NAV.filter((n) => {
     if (n.access === "admin") return isAdmin;
@@ -100,10 +105,11 @@ export function CrmLayout() {
   });
 
   useEffect(() => {
+    if (!hydrated) return;
     if (typeof window !== "undefined") {
       window.localStorage.setItem("crm-sidebar-collapsed", collapsed ? "1" : "0");
     }
-  }, [collapsed]);
+  }, [collapsed, hydrated]);
 
   const isLoginRoute = pathname === "/crm/login";
 
@@ -138,7 +144,7 @@ export function CrmLayout() {
 
   return (
     <TooltipProvider delayDuration={100}>
-      <div className="flex min-h-screen w-full bg-gradient-to-br from-sky-50 via-blue-50 to-cyan-50">
+      <div data-app="crm" className="flex min-h-screen w-full bg-gradient-to-br from-sky-50 via-blue-50 to-cyan-50">
         {/* Sidebar */}
         <aside
           className={cn(
@@ -282,7 +288,9 @@ export function CrmLayout() {
       </Badge>
 
       <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white">
-        Friday, 19 Jun
+        {hydrated
+          ? new Date().toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })
+          : ""}
       </span>
     </div>
   </div>

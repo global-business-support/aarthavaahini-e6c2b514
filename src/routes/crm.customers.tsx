@@ -2352,8 +2352,31 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+<<<<<<< HEAD
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Search, Phone, Mail, UserCheck } from "lucide-react";
+=======
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import {
+  Loader2,
+  User2,
+  Search,
+  Pencil,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { CustomerProfileDialog } from "@/components/crm/CustomerProfileDialog";
+>>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
+
 
 export const Route = createFileRoute("/crm/customers")({
   component: CustomersPage,
@@ -2377,6 +2400,13 @@ type Customer = {
 export function CustomersPage() {
   const [rows, setRows] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
+<<<<<<< HEAD
+=======
+  const [active, setActive] = useState<Row | null>(null);
+  const [editing, setEditing] = useState<Row | null>(null);
+
+
+>>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
   const [q, setQ] = useState("");
 
   const loadData = async () => {
@@ -2419,6 +2449,7 @@ export function CustomersPage() {
     return "Unnamed Customer";
   };
 
+<<<<<<< HEAD
   const filtered = rows.filter((r) => {
     if (!q) return true;
     const s = q.toLowerCase();
@@ -2429,6 +2460,154 @@ export function CustomersPage() {
       r.email?.toLowerCase().includes(s)
     );
   });
+=======
+  const filtered = useMemo(() => {
+    const term = q.trim().toLowerCase();
+
+    let data = rows.filter((row) => {
+      const matchesSearch =
+        !term ||
+        (row.customer_name ?? "").toLowerCase().includes(term) ||
+        (row.mobile ?? "").toLowerCase().includes(term) ||
+        (row.email ?? "").toLowerCase().includes(term) ||
+        (row.pan ?? "").toLowerCase().includes(term) ||
+        (row.loan_type ?? "").toLowerCase().includes(term) ||
+        (row.bank_name ?? "").toLowerCase().includes(term);
+
+      // Default view hides Disburement/Closed (moved to Loans) and Rejected (moved to Rejected page)
+      const normalized = normaliseStage(row.stage);
+      const matchesStage =
+        stageFilter === "all"
+          ? normalized !== "Disburement" && normalized !== "Closed" && normalized !== "Rejected"
+          : normalized === stageFilter;
+
+      const matchesBank =
+        bankFilter === "all" ||
+        (bankFilter === "none" && !row.bank_name) ||
+        row.bank_name === bankFilter;
+
+      return matchesSearch && matchesStage && matchesBank;
+    });
+
+    data = [...data].sort((a, b) => {
+      if (sortBy === "az") {
+        return (a.customer_name ?? "").localeCompare(b.customer_name ?? "");
+      }
+
+      if (sortBy === "za") {
+        return (b.customer_name ?? "").localeCompare(a.customer_name ?? "");
+      }
+
+      if (sortBy === "oldest") {
+        return (
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+      }
+
+      if (sortBy === "amount_high") {
+        return (Number(b.loan_amount) || 0) - (Number(a.loan_amount) || 0);
+      }
+
+      if (sortBy === "amount_low") {
+        return (Number(a.loan_amount) || 0) - (Number(b.loan_amount) || 0);
+      }
+
+      return (
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    });
+
+    return data;
+  }, [q, rows, stageFilter, bankFilter, sortBy]);
+
+  const updateBank = async (row: Row, value: string) => {
+    if (value === "__add_new__") {
+      await addNewBank();
+      return;
+    }
+
+    const bankName = value === "none" ? null : value;
+
+    const { error } = await supabase
+      .from("customers")
+      .update({ bank_name: bankName })
+      .eq("id", row.id);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    setRows((prev) =>
+      prev.map((item) =>
+        item.id === row.id ? { ...item, bank_name: bankName } : item,
+      ),
+    );
+
+    toast.success(bankName ? `Bank → ${bankName}` : "Bank cleared");
+  };
+
+  const updateStage = async (row: Row, stage: Stage) => {
+    const { error } = await supabase
+      .from("customers")
+      .update({ stage })
+      .eq("id", row.id);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    setRows((prev) =>
+      prev.map((item) => (item.id === row.id ? { ...item, stage } : item)),
+    );
+
+    toast.success(`Stage → ${stage}`);
+
+    if (stage === "Sanctioned" || stage === "Disburement" || stage === "Closed") {
+      const { data: existing } = await supabase
+        .from("loan_cases")
+        .select("id")
+        .eq("customer_id", row.id)
+        .maybeSingle();
+
+      if (!existing) {
+        const loanStage =
+          stage === "Closed"
+            ? "Completed"
+            : stage === "Disburement"
+              ? "Disbursed"
+              : "Sanctioned";
+
+        const { error: loanError } = await supabase.from("loan_cases").insert({
+          customer_id: row.id,
+          loan_type: row.loan_type ?? row.loan_sub_type ?? "Loan",
+          loan_amount: row.loan_amount,
+          requested_amount: row.loan_amount,
+          sanction_amount:
+            stage === "Sanctioned" || stage === "Disburement" || stage === "Closed"
+              ? row.loan_amount
+              : null,
+          disbursement_amount:
+            stage === "Disburement" || stage === "Closed" ? row.loan_amount : null,
+          lender_name: row.bank_name,
+          stage: loanStage,
+        });
+
+        if (loanError) toast.error(loanError.message);
+        else toast.success(`${stage} → Loan case created`);
+      }
+    }
+
+  };
+
+  const clearFilters = () => {
+    setQ("");
+    setStageFilter("all");
+    setBankFilter("all");
+    setSortBy("az");
+  };
+>>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
 
   return (
     <div className="space-y-4 p-4 md:p-6">
@@ -2470,12 +2649,25 @@ export function CustomersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+<<<<<<< HEAD
                   <TableHead className="w-[200px]">Customer Name</TableHead>
                   <TableHead className="w-[250px]">Contact</TableHead>
                   <TableHead>City</TableHead>
                   <TableHead>Product</TableHead>
                   <TableHead>Customer Status</TableHead>
                   <TableHead>Onboarded On</TableHead>
+=======
+                  <TableHead>Name</TableHead>
+                  <TableHead>Mobile</TableHead>
+                  <TableHead>Loan Type</TableHead>
+                  <TableHead>Loan Amount</TableHead>
+                  <TableHead>CIBIL</TableHead>
+                  <TableHead>Bank</TableHead>
+                  <TableHead>Stage</TableHead>
+                  <TableHead className="min-w-[220px]">Note</TableHead>
+                  <TableHead className="w-16 text-right">Edit</TableHead>
+
+>>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -2516,6 +2708,18 @@ export function CustomersPage() {
                       <TableCell className="text-xs text-slate-500 whitespace-nowrap">
                         {new Date(r.created_at).toLocaleDateString()}
                       </TableCell>
+
+                      <TableCell className="text-right">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8 text-sky-600 hover:bg-sky-50"
+                          title="Edit customer"
+                          onClick={() => setEditing(row)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -2524,6 +2728,369 @@ export function CustomersPage() {
           </div>
         )}
       </Card>
+<<<<<<< HEAD
     </div>
   );
 }
+=======
+
+      <CustomerProfileDialog
+        open={!!active}
+        onOpenChange={(value) => !value && setActive(null)}
+        customerId={active?.id ?? null}
+      />
+
+      <EditCustomerDialog
+        row={editing}
+        onClose={() => setEditing(null)}
+        onSaved={(updated) => {
+          setRows((prev) =>
+            prev.map((item) => (item.id === updated.id ? { ...item, ...updated } : item)),
+          );
+          setEditing(null);
+        }}
+      />
+    </div>
+  );
+}
+
+
+function NoteCell({
+  row,
+  onSaved,
+}: {
+  row: Row;
+  onSaved: (text: string) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState(row.note ?? "");
+  const [saving, setSaving] = useState(false);
+
+  const save = async () => {
+    setSaving(true);
+
+    const trimmed = text.trim();
+
+    const { error } = await supabase
+      .from("customers")
+      .update({ note: trimmed || null })
+      .eq("id", row.id);
+
+    setSaving(false);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    onSaved(trimmed);
+    setEditing(false);
+    toast.success("Note saved");
+  };
+
+  if (editing) {
+    return (
+      <div className="space-y-1.5">
+        <Textarea
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          rows={3}
+          placeholder="Quick note about this customer..."
+          className="border-amber-300 text-sm focus-visible:ring-amber-400"
+          autoFocus
+        />
+
+        <div className="flex justify-end gap-1.5">
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 px-2 text-xs"
+            onClick={() => {
+              setText(row.note ?? "");
+              setEditing(false);
+            }}
+          >
+            Cancel
+          </Button>
+
+          <Button
+            size="sm"
+            disabled={saving}
+            onClick={save}
+            className="h-7 bg-amber-500 px-2 text-xs text-white hover:bg-amber-600"
+          >
+            {saving && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
+            Save
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => setEditing(true)}
+      className={cn(
+        "group block w-full rounded-md border px-2 py-1.5 text-left text-xs transition",
+        row.note
+          ? "border-amber-200 bg-amber-50/60 text-slate-800 hover:bg-amber-50"
+          : "border-dashed border-slate-300 bg-white text-slate-400 hover:border-amber-300 hover:text-amber-700",
+      )}
+      title="Click to edit note"
+    >
+      {row.note ? (
+        <span className="line-clamp-2 whitespace-pre-wrap">{row.note}</span>
+      ) : (
+        <span>+ Add note</span>
+      )}
+    </button>
+  );
+}
+function EditCustomerDialog({
+  row,
+  onClose,
+  onSaved,
+}: {
+  row: Row | null;
+  onClose: () => void;
+  onSaved: (updated: Row) => void;
+}) {
+  const [form, setForm] = useState<Row | null>(row);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setForm(row);
+  }, [row]);
+
+  if (!form) return null;
+
+  const update = <K extends keyof Row>(k: K, v: Row[K]) =>
+    setForm((prev) => (prev ? { ...prev, [k]: v } : prev));
+
+  const save = async () => {
+    if (!form) return;
+    if (!form.customer_name?.trim()) {
+      toast.error("Name is required");
+      return;
+    }
+    if (form.mobile && !/^[0-9]{10,12}$/.test(form.mobile.trim())) {
+      toast.error("Mobile must be 10-12 digits");
+      return;
+    }
+    if (form.pan && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(form.pan.trim().toUpperCase())) {
+      toast.error("PAN must be like ABCDE1234F");
+      return;
+    }
+    if (form.aadhaar && !/^[0-9]{12}$/.test(form.aadhaar.trim())) {
+      toast.error("Aadhaar must be 12 digits");
+      return;
+    }
+
+    setSaving(true);
+
+    const payload = {
+      customer_name: form.customer_name.trim(),
+      mobile: form.mobile?.trim() || null,
+      email: form.email?.trim() || null,
+      pan: form.pan?.trim().toUpperCase() || null,
+      aadhaar: form.aadhaar?.trim() || null,
+      address: form.address?.trim() || null,
+      occupation: form.occupation?.trim() || null,
+      income: form.income == null || (form.income as unknown as string) === "" ? null : Number(form.income),
+      loan_type: form.loan_type?.trim() || null,
+      loan_sub_type: form.loan_sub_type?.trim() || null,
+      loan_amount:
+        form.loan_amount == null || (form.loan_amount as unknown as string) === ""
+          ? null
+          : Number(form.loan_amount),
+      cibil_score:
+        form.cibil_score == null || (form.cibil_score as unknown as string) === ""
+          ? null
+          : Number(form.cibil_score),
+      bank_name: form.bank_name?.trim() || null,
+      stage: form.stage || "Pre-Login Follow-Up",
+      note: form.note?.trim() || null,
+    };
+
+    const { error } = await supabase.from("customers").update(payload).eq("id", form.id);
+    setSaving(false);
+
+    if (error) return toast.error(error.message);
+
+    toast.success("Customer updated");
+    onSaved({ ...form, ...payload } as Row);
+  };
+
+  const input = "h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100";
+
+  return (
+    <Dialog open={!!row} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-w-2xl bg-white">
+        <DialogHeader>
+          <DialogTitle>Edit Customer</DialogTitle>
+        </DialogHeader>
+
+        <div className="grid max-h-[65vh] gap-3 overflow-y-auto pr-1 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <Label className="text-xs">Full Name *</Label>
+            <input
+              className={input}
+              value={form.customer_name ?? ""}
+              onChange={(e) => update("customer_name", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Mobile</Label>
+            <input
+              inputMode="numeric"
+              maxLength={12}
+              className={input}
+              value={form.mobile ?? ""}
+              onChange={(e) => update("mobile", e.target.value.replace(/\D/g, "").slice(0, 12))}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Email</Label>
+            <input
+              type="email"
+              className={input}
+              value={form.email ?? ""}
+              onChange={(e) => update("email", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">PAN</Label>
+            <input
+              maxLength={10}
+              className={input}
+              value={form.pan ?? ""}
+              onChange={(e) => update("pan", e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10))}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Aadhaar</Label>
+            <input
+              inputMode="numeric"
+              maxLength={12}
+              className={input}
+              value={form.aadhaar ?? ""}
+              onChange={(e) => update("aadhaar", e.target.value.replace(/\D/g, "").slice(0, 12))}
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <Label className="text-xs">Address</Label>
+            <input
+              className={input}
+              value={form.address ?? ""}
+              onChange={(e) => update("address", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Occupation</Label>
+            <input
+              className={input}
+              value={form.occupation ?? ""}
+              onChange={(e) => update("occupation", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Monthly Income</Label>
+            <input
+              inputMode="numeric"
+              className={input}
+              value={form.income ?? ""}
+              onChange={(e) => update("income", (e.target.value.replace(/\D/g, "") || null) as any)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Loan Type</Label>
+            <input
+              className={input}
+              value={form.loan_type ?? ""}
+              onChange={(e) => update("loan_type", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Loan Sub Type</Label>
+            <input
+              className={input}
+              value={form.loan_sub_type ?? ""}
+              onChange={(e) => update("loan_sub_type", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Loan Amount</Label>
+            <input
+              inputMode="numeric"
+              className={input}
+              value={form.loan_amount ?? ""}
+              onChange={(e) => update("loan_amount", (e.target.value.replace(/\D/g, "") || null) as any)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">CIBIL Score</Label>
+            <input
+              inputMode="numeric"
+              maxLength={3}
+              className={input}
+              value={form.cibil_score ?? ""}
+              onChange={(e) => update("cibil_score", (e.target.value.replace(/\D/g, "").slice(0, 3) || null) as any)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Bank</Label>
+            <input
+              className={input}
+              value={form.bank_name ?? ""}
+              onChange={(e) => update("bank_name", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs">Stage</Label>
+            <select
+              className={input}
+              value={normaliseStage(form.stage)}
+              onChange={(e) => update("stage", e.target.value)}
+            >
+              {CUSTOMER_STAGES.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="sm:col-span-2">
+            <Label className="text-xs">Note</Label>
+            <Textarea
+              rows={3}
+              value={form.note ?? ""}
+              onChange={(e) => update("note", e.target.value)}
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={saving}>Cancel</Button>
+          <Button onClick={save} disabled={saving} className="bg-sky-600 text-white hover:bg-sky-700">
+            {saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
+            Save Changes
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+>>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535

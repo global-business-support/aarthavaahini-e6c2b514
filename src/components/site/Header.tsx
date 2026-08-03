@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { LeadForm } from "./LeadForm";
+import { TopTicker } from "./TopTicker";
 
 import {
   ChevronDown,
@@ -48,8 +49,9 @@ export function Header() {
 
   return (
     <>
+      <TopTicker />
       {/* HEADER */}
-      <header className="fixed top-0 z-[9999] w-full border-b border-blue-100 bg-white/95 shadow-md backdrop-blur-xl">
+      <header className="fixed top-9 z-[9999] w-full border-b border-blue-100 bg-white/95 shadow-md backdrop-blur-xl sm:top-10">
         <div className="container mx-auto flex h-20 items-center justify-between gap-3 px-3 sm:px-4 lg:px-6">
           {/* LOGO */}
           <Link
@@ -78,7 +80,7 @@ export function Header() {
               to="/loans"
               className="rounded-xl px-4 py-2 text-[15px] font-semibold text-[#17357e] transition hover:bg-blue-50 xl:text-base"
             >
-              Loan
+              Loans
             </Link>
 
             <Link
@@ -259,7 +261,7 @@ export function Header() {
                 className="font-medium text-[#17357e]"
                 onClick={() => setMobileMenu(false)}
               >
-                Calculator
+                Calculators
               </a>
 
               {user && (

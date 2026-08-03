@@ -409,6 +409,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Table,
   TableBody,
@@ -422,6 +424,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -434,6 +438,7 @@ import {
   Eye,
   CheckCircle2,
   XCircle,
+  Plus,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -492,9 +497,68 @@ export default function PartnersPage() {
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
   const [view, setView] = useState<PartnerLead | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    full_name: "",
+    phone: "",
+    email: "",
+    city: "",
+    product_name: "",
+    organisation: "",
+    experience: "",
+    notes: "",
+  });
+
+  const resetForm = () =>
+    setForm({
+      full_name: "",
+      phone: "",
+      email: "",
+      city: "",
+      product_name: "",
+      organisation: "",
+      experience: "",
+      notes: "",
+    });
+
+  const addPartner = async () => {
+    if (!form.full_name.trim() || !form.phone.trim()) {
+      toast.error("Name and phone are required");
+      return;
+    }
+    setSaving(true);
+    const message = [
+      "Partner Application (Manual)",
+      form.organisation ? `Organisation: ${form.organisation}` : "",
+      form.experience ? `Experience: ${form.experience}` : "",
+      form.notes ? `Notes: ${form.notes}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+    const { error } = await supabase.from("leads").insert({
+      full_name: form.full_name.trim(),
+      lead_name: form.full_name.trim(),
+      phone: form.phone.trim(),
+      email: form.email.trim() || null,
+      city: form.city.trim() || null,
+      product_type: "partner",
+      product_name: form.product_name.trim() || null,
+      lead_source: "Manual",
+      status: "Approved",
+      message,
+    });
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    toast.success("Partner added");
+    setAddOpen(false);
+    resetForm();
+    load();
+  };
 
   const load = async () => {
     setLoading(true);
+
 
     const { data, error } = await supabase
       .from("leads")
@@ -586,6 +650,7 @@ export default function PartnersPage() {
             </p>
           </div>
 
+<<<<<<< HEAD
           <a
             href="/partner-signup"
             target="_blank"
@@ -594,6 +659,76 @@ export default function PartnersPage() {
           >
             View public signup →
           </a>
+=======
+          <div className="flex flex-wrap items-center gap-2">
+            <Dialog open={addOpen} onOpenChange={(o) => { setAddOpen(o); if (!o) resetForm(); }}>
+              <DialogTrigger asChild>
+                <Button className="bg-white text-sky-700 shadow-md hover:bg-sky-50">
+                  <Plus className="mr-1.5 h-4 w-4" /> Add Partner
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto bg-white">
+                <DialogHeader>
+                  <DialogTitle>Add Partner Manually</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>Full Name *</Label>
+                      <Input value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
+                    </div>
+                    <div>
+                      <Label>Phone *</Label>
+                      <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>Email</Label>
+                      <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                    </div>
+                    <div>
+                      <Label>City</Label>
+                      <Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>Category</Label>
+                      <Input value={form.product_name} onChange={(e) => setForm({ ...form, product_name: e.target.value })} placeholder="Loans / Insurance / MF" />
+                    </div>
+                    <div>
+                      <Label>Organisation</Label>
+                      <Input value={form.organisation} onChange={(e) => setForm({ ...form, organisation: e.target.value })} />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Experience</Label>
+                    <Input value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value })} placeholder="e.g. 5 years" />
+                  </div>
+                  <div>
+                    <Label>Notes</Label>
+                    <Textarea rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
+                  <Button onClick={addPartner} disabled={saving} className="bg-gradient-to-r from-sky-600 to-blue-600 text-white">
+                    {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Add Partner
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            <a
+              href="/partner-signup"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full bg-white/20 px-4 py-2 text-sm font-semibold text-white hover:bg-white/30"
+            >
+              Public signup →
+            </a>
+          </div>
+>>>>>>> ef512b67628c9f23bd4dce4bc5838e826a816535
         </div>
       </div>
 

@@ -112,7 +112,7 @@ function PartnerSignupPage() {
               {[
                 "Attractive commission on every disbursement",
                 "Dedicated Partner Portal with lead tracking",
-                "Access to 25+ banks & NBFCs",
+                "Access 50+ Banks & NBFCs",
                 "Marketing collateral & training support",
                 "Fast payouts and transparent reporting",
               ].map((b) => (
