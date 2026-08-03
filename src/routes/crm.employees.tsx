@@ -79,6 +79,7 @@ function EmployeesPage() {
   const create = useServerFn(createEmployee);
   const del = useServerFn(deleteEmployee);
   const reset = useServerFn(resetEmployeePassword);
+  const changeRole = useServerFn(updateEmployeeRole);
 
   const [emps, setEmps] = useState<Emp[]>([]);
   const [busy, setBusy] = useState(false);
@@ -88,6 +89,7 @@ function EmployeesPage() {
     full_name: "",
     phone: "",
     role: "sales_executive",
+    password: "",
   });
   const [creds, setCreds] = useState<{
     email: string;
