@@ -28,6 +28,7 @@ import {
   createEmployee,
   deleteEmployee,
   resetEmployeePassword,
+  updateEmployeeRole,
 } from "@/lib/employees.functions";
 import { toast } from "sonner";
 import {
