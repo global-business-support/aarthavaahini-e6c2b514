@@ -83,8 +83,17 @@ const NAV: NavItem[] = [
 ];
 
 
+const COORDINATOR_NAV = new Set([
+  "/crm",
+  "/crm/leads",
+  "/crm/customers",
+  "/crm/loans",
+  "/crm/insurance",
+  "/crm/mutual-funds",
+]);
+
 export function CrmLayout() {
-  const { user, isStaff, isAdmin, isManager, isPartner, primaryRole, loading } = useCrmAuth();
+  const { user, isStaff, isAdmin, isManager, isCoordinator, isPartner, primaryRole, loading } = useCrmAuth();
   const nav = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -99,10 +108,12 @@ export function CrmLayout() {
   }, []);
 
   const visibleNav = NAV.filter((n) => {
+    if (isCoordinator && !isAdmin && !isManager) return COORDINATOR_NAV.has(n.to);
     if (n.access === "admin") return isAdmin;
     if (n.access === "manager") return isAdmin || isManager;
     return true;
   });
+
 
   useEffect(() => {
     if (!hydrated) return;

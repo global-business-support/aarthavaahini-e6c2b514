@@ -11,6 +11,7 @@ const STAFF_ROLES = [
   "mf_executive",
   "accountant",
   "back_office_executive",
+  "coordinator",
 ] as const;
 
 export type StaffRole = (typeof STAFF_ROLES)[number];
@@ -70,6 +71,7 @@ export function useCrmAuth() {
   const isStaff = roles.length > 0;
   const isAdmin = roles.includes("admin");
   const isManager = roles.includes("manager");
+  const isCoordinator = roles.includes("coordinator");
   const primaryRole = roles[0] ?? null;
 
   // Access matrix
@@ -86,6 +88,7 @@ export function useCrmAuth() {
     isStaff,
     isAdmin,
     isManager,
+    isCoordinator,
     isPartner,
     primaryRole,
     loading,
