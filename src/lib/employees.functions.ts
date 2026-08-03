@@ -137,3 +137,22 @@ export const resetEmployeePassword = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { password };
   });
+
+export const updateEmployeeRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({
+      user_id: z.string().uuid(),
+      role: z.enum(STAFF_ROLES),
+    }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    await getAdminUserId(context.token);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("user_roles").delete().eq("user_id", data.user_id);
+    const { error } = await supabaseAdmin
+      .from("user_roles")
+      .insert({ user_id: data.user_id, role: data.role as StaffRole });
+    if (error) throw new Error(error.message);
+    return { ok: true, role: data.role };
+  });
