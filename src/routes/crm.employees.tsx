@@ -141,7 +141,9 @@ function EmployeesPage() {
     }
     setBusy(true);
     try {
-      const r = await create({ data: form as any });
+      const payload: any = { ...form };
+      if (!payload.password || payload.password.trim().length < 8) delete payload.password;
+      const r = await create({ data: payload });
       setCreds({
         email: r.employee.email,
         password: r.password,
@@ -149,7 +151,7 @@ function EmployeesPage() {
         name: r.employee.full_name ?? "",
       });
       setOpen(false);
-      setForm({ email: "", full_name: "", phone: "", role: "sales_executive" });
+      setForm({ email: "", full_name: "", phone: "", role: "sales_executive", password: "" });
       await load();
       toast.success("Employee created — login is ready");
     } catch (e: any) {
@@ -179,6 +181,17 @@ function EmployeesPage() {
         name: e.full_name ?? "",
       });
       toast.success("Password reset");
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleRoleChange = async (emp: Emp, role: string) => {
+    if (emp.roles[0] === role) return;
+    try {
+      await changeRole({ data: { user_id: emp.id, role: role as any } });
+      toast.success("Role updated");
+      await load();
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -271,6 +284,14 @@ function EmployeesPage() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div>
+                  <Label>Password (optional)</Label>
+                  <Input
+                    value={form.password}
+                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                    placeholder="Leave blank to auto-generate (min 8 chars)"
+                  />
+                </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
@@ -326,15 +347,33 @@ function EmployeesPage() {
                     <Phone className="mr-1 inline h-3 w-3 text-slate-400" />{e.phone || "—"}
                   </td>
                   <td className="px-4 py-3">
-                    {e.roles.map((r) => (
-                      <Badge
-                        key={r}
-                        variant="outline"
-                        className={`mr-1 border capitalize ${ROLE_TONES[r] ?? "bg-slate-100 text-slate-700 border-slate-200"}`}
-                      >
-                        {r.replace(/_/g, " ")}
-                      </Badge>
-                    ))}
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {e.roles.map((r) => (
+                        <Badge
+                          key={r}
+                          variant="outline"
+                          className={`border capitalize ${ROLE_TONES[r] ?? "bg-slate-100 text-slate-700 border-slate-200"}`}
+                        >
+                          {r.replace(/_/g, " ")}
+                        </Badge>
+                      ))}
+                      <Select value={e.roles[0] ?? ""} onValueChange={(v) => handleRoleChange(e, v)}>
+                        <SelectTrigger className="h-8 w-[170px] text-xs">
+                          <SelectValue placeholder="Change role" />
+                        </SelectTrigger>
+                        <SelectContent
+                          position="popper"
+                          sideOffset={6}
+                          className="z-[100] max-h-[300px] overflow-y-auto bg-white"
+                        >
+                          {ROLE_OPTIONS.map((r) => (
+                            <SelectItem key={r.value} value={r.value} className="cursor-pointer py-2 text-sm">
+                              {r.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Button
