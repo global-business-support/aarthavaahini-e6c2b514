@@ -33,6 +33,7 @@ import { Route as CrmWhatsappRouteImport } from './routes/crm.whatsapp'
 import { Route as CrmTasksRouteImport } from './routes/crm.tasks'
 import { Route as CrmSettingsRouteImport } from './routes/crm.settings'
 import { Route as CrmScheduleRouteImport } from './routes/crm.schedule'
+import { Route as CrmResetPasswordRouteImport } from './routes/crm.reset-password'
 import { Route as CrmReportsRouteImport } from './routes/crm.reports'
 import { Route as CrmRejectedRouteImport } from './routes/crm.rejected'
 import { Route as CrmPartnersRouteImport } from './routes/crm.partners'
@@ -173,6 +174,11 @@ const CrmScheduleRoute = CrmScheduleRouteImport.update({
   path: '/schedule',
   getParentRoute: () => CrmRoute,
 } as any)
+const CrmResetPasswordRoute = CrmResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => CrmRoute,
+} as any)
 const CrmReportsRoute = CrmReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -305,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/crm/partners': typeof CrmPartnersRoute
   '/crm/rejected': typeof CrmRejectedRoute
   '/crm/reports': typeof CrmReportsRoute
+  '/crm/reset-password': typeof CrmResetPasswordRoute
   '/crm/schedule': typeof CrmScheduleRoute
   '/crm/settings': typeof CrmSettingsRoute
   '/crm/tasks': typeof CrmTasksRoute
@@ -348,6 +355,7 @@ export interface FileRoutesByTo {
   '/crm/partners': typeof CrmPartnersRoute
   '/crm/rejected': typeof CrmRejectedRoute
   '/crm/reports': typeof CrmReportsRoute
+  '/crm/reset-password': typeof CrmResetPasswordRoute
   '/crm/schedule': typeof CrmScheduleRoute
   '/crm/settings': typeof CrmSettingsRoute
   '/crm/tasks': typeof CrmTasksRoute
@@ -394,6 +402,7 @@ export interface FileRoutesById {
   '/crm/partners': typeof CrmPartnersRoute
   '/crm/rejected': typeof CrmRejectedRoute
   '/crm/reports': typeof CrmReportsRoute
+  '/crm/reset-password': typeof CrmResetPasswordRoute
   '/crm/schedule': typeof CrmScheduleRoute
   '/crm/settings': typeof CrmSettingsRoute
   '/crm/tasks': typeof CrmTasksRoute
@@ -441,6 +450,7 @@ export interface FileRouteTypes {
     | '/crm/partners'
     | '/crm/rejected'
     | '/crm/reports'
+    | '/crm/reset-password'
     | '/crm/schedule'
     | '/crm/settings'
     | '/crm/tasks'
@@ -484,6 +494,7 @@ export interface FileRouteTypes {
     | '/crm/partners'
     | '/crm/rejected'
     | '/crm/reports'
+    | '/crm/reset-password'
     | '/crm/schedule'
     | '/crm/settings'
     | '/crm/tasks'
@@ -529,6 +540,7 @@ export interface FileRouteTypes {
     | '/crm/partners'
     | '/crm/rejected'
     | '/crm/reports'
+    | '/crm/reset-password'
     | '/crm/schedule'
     | '/crm/settings'
     | '/crm/tasks'
@@ -728,6 +740,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmScheduleRouteImport
       parentRoute: typeof CrmRoute
     }
+    '/crm/reset-password': {
+      id: '/crm/reset-password'
+      path: '/reset-password'
+      fullPath: '/crm/reset-password'
+      preLoaderRoute: typeof CrmResetPasswordRouteImport
+      parentRoute: typeof CrmRoute
+    }
     '/crm/reports': {
       id: '/crm/reports'
       path: '/reports'
@@ -905,6 +924,7 @@ interface CrmRouteChildren {
   CrmPartnersRoute: typeof CrmPartnersRoute
   CrmRejectedRoute: typeof CrmRejectedRoute
   CrmReportsRoute: typeof CrmReportsRoute
+  CrmResetPasswordRoute: typeof CrmResetPasswordRoute
   CrmScheduleRoute: typeof CrmScheduleRoute
   CrmSettingsRoute: typeof CrmSettingsRoute
   CrmTasksRoute: typeof CrmTasksRoute
@@ -927,6 +947,7 @@ const CrmRouteChildren: CrmRouteChildren = {
   CrmPartnersRoute: CrmPartnersRoute,
   CrmRejectedRoute: CrmRejectedRoute,
   CrmReportsRoute: CrmReportsRoute,
+  CrmResetPasswordRoute: CrmResetPasswordRoute,
   CrmScheduleRoute: CrmScheduleRoute,
   CrmSettingsRoute: CrmSettingsRoute,
   CrmTasksRoute: CrmTasksRoute,

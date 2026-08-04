@@ -40,13 +40,14 @@ function CrmLoginPage() {
     if (!em) return toast.error("Enter your email");
     setForgotBusy(true);
     const { error } = await supabase.auth.resetPasswordForEmail(em, {
-      redirectTo: `${window.location.origin}/crm/login`,
+      redirectTo: `${window.location.origin}/crm/reset-password`,
     });
     setForgotBusy(false);
     if (error) return toast.error(error.message);
-    toast.success("Password reset link sent — check your email");
+    toast.success("Reset email sent — use the link or the code from the email");
     setForgotOpen(false);
     setForgotEmail("");
+    nav({ to: "/crm/reset-password" });
   };
 
 
