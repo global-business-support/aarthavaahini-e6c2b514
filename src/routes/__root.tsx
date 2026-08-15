@@ -137,6 +137,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           },
         }),
       },
+      {
+        type: "text/javascript",
+        children: `(function(){
+  var d = new Date();
+  if (d.getMonth() === 7 && d.getDate() === 15) {
+    document.documentElement.classList.add('independence-day');
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', '#FF671F');
+  }
+})();`,
+      },
     ],
   }),
   shellComponent: RootShell,

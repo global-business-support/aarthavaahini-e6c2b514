@@ -120,7 +120,7 @@ export function Header() {
               <Link to="/partner-signup">
                 <button
                   type="button"
-                  className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[#17357e] to-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 xl:px-7 xl:text-base"
+                  className="independence-cta flex items-center gap-2 rounded-full bg-gradient-to-r from-[#17357e] to-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 xl:px-7 xl:text-base"
                 >
                   <Handshake className="h-4 w-4" />
                   Become a Partner
@@ -132,7 +132,7 @@ export function Header() {
             <div className="group relative">
               <button
                 type="button"
-                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[#17357e] to-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 xl:px-7 xl:text-base"
+                className="independence-cta flex items-center gap-2 rounded-full bg-gradient-to-r from-[#17357e] to-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 xl:px-7 xl:text-base"
               >
                 Apply Now
                 <ChevronDown className="h-4 w-4" />
@@ -278,14 +278,14 @@ export function Header() {
               )}
 
               <Link to="/partner-signup" onClick={() => setMobileMenu(false)}>
-                <Button className="mt-2 w-full rounded-full bg-gradient-to-r from-[#17357e] to-blue-600 text-white">
+                <Button className="independence-cta mt-2 w-full rounded-full bg-gradient-to-r from-[#17357e] to-blue-600 text-white">
                   <Handshake className="mr-2 h-4 w-4" />
                   Become a Partner
                 </Button>
               </Link>
 
               <Link to="/contact" onClick={() => setMobileMenu(false)}>
-                <Button className="w-full rounded-full bg-gradient-to-r from-[#17357e] to-blue-600">
+                <Button className="independence-cta w-full rounded-full bg-gradient-to-r from-[#17357e] to-blue-600">
                   Apply Now
                 </Button>
               </Link>
