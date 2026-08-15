@@ -236,6 +236,51 @@ html.dark.independence-day,
   color: #ffffff !important;
 }
 
+.independence-day header {
+  border-color: rgba(255, 103, 31, 0.25) !important;
+}
+
+.independence-day header nav a,
+.independence-day header a[href]:not(.text-white):not(.independence-cta) {
+  color: #FF671F;
+}
+
+.independence-day header nav a:hover,
+.independence-day header a[href]:not(.text-white):not(.independence-cta):hover {
+  background-color: rgba(255, 103, 31, 0.08);
+}
+
+.independence-day header a[href="/"] {
+  position: relative;
+}
+
+.independence-day header a[href="/"]::after {
+  content: "🇮🇳 80th Independence Day";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gradient-primary);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--shadow-soft);
+  z-index: 10;
+}
+
+@media (max-width: 1024px) {
+  .independence-day header a[href="/"]::after {
+    display: none;
+  }
+}
+
+
 
 @layer base {
   * {
