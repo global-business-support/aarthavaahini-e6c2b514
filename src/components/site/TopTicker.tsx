@@ -39,7 +39,7 @@ export function TopTicker() {
 
   return (
     <div
-      className="fixed left-0 right-0 top-0 z-[10000] h-9 w-full overflow-hidden border-b border-white/10 sm:h-10"
+      className="ticker-wrapper fixed left-0 right-0 top-0 z-[10000] h-9 w-full overflow-hidden border-b border-white/10 sm:h-10"
       style={{ backgroundColor: "#0B1F3A" }}
       aria-label="Live offers ticker"
     >
