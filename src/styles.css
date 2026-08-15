@@ -152,6 +152,91 @@ body {
   --ring: oklch(0.65 0.18 245);
 }
 
+/* =================================================
+   INDEPENDENCE DAY THEME — 15 AUGUST ONLY
+   =================================================
+   Uses the official Indian tricolour palette:
+   Saffron #FF671F, White #FFFFFF, Green #138808.
+   The script in __root.tsx adds the .independence-day
+   class to <html> on 15 Aug, so this auto-reverts
+   after midnight.
+   ================================================= */
+html.independence-day,
+.independence-day {
+  --background: #ffffff;
+  --foreground: #0b1b3f;
+
+  --card: #ffffff;
+  --card-foreground: #0b1b3f;
+  --popover: #ffffff;
+  --popover-foreground: #0b1b3f;
+
+  --primary: #FF671F;
+  --primary-foreground: #ffffff;
+  --primary-glow: #FF9A5C;
+
+  --secondary: #fff5ef;
+  --secondary-foreground: #138808;
+
+  --accent: #138808;
+  --accent-foreground: #ffffff;
+
+  --muted: #f5f8f5;
+  --muted-foreground: #4a5a48;
+
+  --destructive: #e23d3d;
+  --destructive-foreground: #ffffff;
+  --success: #138808;
+  --success-foreground: #ffffff;
+
+  --border: #f2e6e0;
+  --input: #fff5ef;
+  --ring: #FF671F;
+
+  --gradient-primary: linear-gradient(135deg, #FF671F 0%, #138808 100%);
+  --gradient-hero: linear-gradient(
+    180deg,
+    rgba(255, 103, 31, 0.12) 0%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(19, 136, 8, 0.12) 100%
+  );
+  --gradient-card: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(255, 245, 239, 0.96) 100%
+  );
+  --shadow-glow: 0 0 40px rgba(255, 103, 31, 0.35);
+  --shadow-elegant: 0 20px 60px -20px rgba(255, 103, 31, 0.25);
+}
+
+html.dark.independence-day,
+.dark .independence-day {
+  --background: #0d0a08;
+  --foreground: #fff5ef;
+  --primary: #FF9A5C;
+  --primary-foreground: #0d0a08;
+  --accent: #5cba54;
+  --accent-foreground: #0d0a08;
+  --ring: #FF9A5C;
+}
+
+.independence-day .ticker-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  z-index: 2;
+  background: linear-gradient(90deg, #FF671F 33.33%, #ffffff 33.33%, #ffffff 66.66%, #138808 66.66%);
+}
+
+.independence-day .independence-cta {
+  background: var(--gradient-primary) !important;
+  color: #ffffff !important;
+}
+
+
 @layer base {
   * {
     box-sizing: border-box;
