@@ -1754,9 +1754,10 @@ import { CustomerProfileDialog } from "@/components/crm/CustomerProfileDialog";
 import { INDIA_STATES, citiesForState } from "@/data/india-cities";
 
 export const Route = createFileRoute("/crm/leads")({
-  validateSearch: (s: Record<string, unknown>) => ({
-    stage: typeof s.stage === "string" ? s.stage : undefined,
-  }),
+  validateSearch: (s: Record<string, unknown>): { stage?: string } => {
+    const stage = typeof s.stage === "string" ? s.stage : undefined;
+    return stage ? { stage } : {};
+  },
   component: LeadsPage,
 });
 

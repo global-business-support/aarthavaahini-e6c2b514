@@ -19,9 +19,10 @@ import { toast } from "sonner";
 import aarthvaahiniLogo from "@/assets/aarthvaahini.png";
 
 export const Route = createFileRoute("/crm/login")({
-  validateSearch: (s: Record<string, unknown>) => ({
-    unauthorized: s.unauthorized === "1" ? "1" : undefined,
-  }),
+  validateSearch: (s: Record<string, unknown>): { unauthorized?: "1" } => {
+    const unauthorized = s.unauthorized === "1" ? "1" : undefined;
+    return unauthorized ? { unauthorized } : {};
+  },
   component: CrmLoginPage,
 });
 
