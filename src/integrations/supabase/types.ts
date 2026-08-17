@@ -831,6 +831,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "tasks_related_customer_id_fkey"
+            columns: ["related_customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_related_lead_id_fkey"
+            columns: ["related_lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "tasks_related_loan_case_id_fkey"
             columns: ["related_loan_case_id"]
             isOneToOne: false

@@ -351,7 +351,8 @@ function buildLogoSources(bank: Bank): string[] {
 
   if (bank.logo) sources.push(bank.logo);
 
-  sources.push(`https://logo.clearbit.com/${bank.domain}`);
+  // Note: logo.clearbit.com is discontinued (DNS no longer resolves) — using
+  // sources that are still live keeps the console clean and avoids blank slots.
   sources.push(`https://icons.duckduckgo.com/ip3/${bank.domain}.ico`);
   sources.push(
     `https://www.google.com/s2/favicons?domain=${bank.domain}&sz=128`,
@@ -359,6 +360,7 @@ function buildLogoSources(bank: Bank): string[] {
 
   return sources;
 }
+
 
 const PARTNER_CATEGORIES: PartnerCategory[] = [
   {
