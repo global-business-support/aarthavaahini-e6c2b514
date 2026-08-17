@@ -1,31 +1,56 @@
 import { useEffect, useState } from "react";
 import logo from "@/assets/logo.png";
 
+const SKIP_PREFIXES = ["/crm", "/partner", "/admin", "/dashboard", "/login"];
+
 export function SplashScreen() {
+  // Never rendered during SSR — avoids hydration mismatches, since whether the
+  // splash shows depends on sessionStorage + the current path.
+  const [show, setShow] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [hide, setHide] = useState(false);
-  const [remove, setRemove] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+
+    // Staff/app areas load straight away — no intro animation there.
+    const path = window.location.pathname;
+    if (SKIP_PREFIXES.some((p) => path === p || path.startsWith(p + "/"))) return;
+
+    const reduceMotion = window.matchMedia?.(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reduceMotion) return;
+
     try {
-      if (sessionStorage.getItem("av_splash_seen") === "1") {
-        setRemove(true);
-        return;
-      }
+      if (sessionStorage.getItem("av_splash_seen") === "1") return;
       sessionStorage.setItem("av_splash_seen", "1");
     } catch {}
 
-    setMounted(true);
-    const t1 = setTimeout(() => setHide(true), 2800);
-    const t2 = setTimeout(() => setRemove(true), 3600);
+    setShow(true);
+    const t0 = setTimeout(() => setMounted(true), 20);
+    const t1 = setTimeout(() => setHide(true), 1600);
+    const t2 = setTimeout(() => setShow(false), 2100);
+
+    const skip = () => {
+      setHide(true);
+      setTimeout(() => setShow(false), 400);
+    };
+    window.addEventListener("pointerdown", skip, { once: true });
+    window.addEventListener("keydown", skip, { once: true });
+
     return () => {
+      clearTimeout(t0);
       clearTimeout(t1);
       clearTimeout(t2);
+      window.removeEventListener("pointerdown", skip);
+      window.removeEventListener("keydown", skip);
     };
   }, []);
 
-  if (remove) return null;
+  if (!show) return null;
+
+
 
   return (
     <div
@@ -179,7 +204,7 @@ export function SplashScreen() {
           color: rgba(226, 232, 240, 0.75);
           letter-spacing: 0.24em;
           text-transform: uppercase;
-          animation: splashFadeUp 800ms ease 900ms both;
+          animation: splashFadeUp 600ms ease 450ms both;
         }
         .splash-progress {
           width: min(220px, 60vw);
@@ -188,13 +213,13 @@ export function SplashScreen() {
           background: rgba(255,255,255,0.14);
           border-radius: 4px;
           overflow: hidden;
-          animation: splashFadeUp 600ms ease 1100ms both;
+          animation: splashFadeUp 500ms ease 600ms both;
         }
         .splash-progress-bar {
           height: 100%;
           width: 0;
           background: linear-gradient(90deg, #7dd3fc, #a78bfa, #f0abfc);
-          animation: splashBar 1400ms ease-out 1200ms forwards;
+          animation: splashBar 1000ms ease-out 500ms forwards;
           box-shadow: 0 0 12px rgba(167,139,250,0.8);
         }
 

@@ -109,7 +109,7 @@ function BanksPage() {
     ).map((b, i) => ({
       name: b.name,
       domain: b.domain,
-      logo_url: b.logo ?? `https://logo.clearbit.com/${b.domain}`,
+      logo_url: b.logo ?? `https://icons.duckduckgo.com/ip3/${b.domain}.ico`,
       category: b.category,
       is_active: true,
       position: rows.length + i,
@@ -298,13 +298,23 @@ function BanksPage() {
                         src={b.logo_url}
                         alt={b.name}
                         className="h-10 w-10 object-contain"
+                        loading="lazy"
                         onError={(e) => {
-                          (e.currentTarget as HTMLImageElement).style.display = "none";
+                          const img = e.currentTarget as HTMLImageElement;
+                          const fallback = b.domain
+                            ? `https://www.google.com/s2/favicons?domain=${b.domain}&sz=128`
+                            : "";
+                          if (fallback && img.src !== fallback) {
+                            img.src = fallback;
+                          } else {
+                            img.style.display = "none";
+                          }
                         }}
                       />
                     ) : (
                       <Building2 className="h-5 w-5 text-sky-500" />
                     )}
+
                   </div>
 
                   <div className="min-w-0 flex-1">

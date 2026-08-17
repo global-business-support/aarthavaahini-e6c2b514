@@ -88,10 +88,14 @@ function SchedulePage() {
       setEmps(arr);
       if (arr.length === 0) toast.info("No employees found. Create one in Admin → Employees.");
     } catch (e: any) {
+      const msg = String(e?.message ?? "");
+      // Navigating away cancels the in-flight request — not a real failure.
+      if (/Failed to fetch|aborted|NetworkError/i.test(msg)) return;
       console.error("loadEmps failed", e);
-      toast.error(e?.message || "Failed to load employees");
+      toast.error(msg || "Failed to load employees");
     }
   };
+
 
   useEffect(() => { if (user) { load(); loadEmps(); } }, [user, isAdmin]);
 
