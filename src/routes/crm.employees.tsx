@@ -349,22 +349,19 @@ function EmployeesPage() {
                           {r.replace(/_/g, " ")}
                         </Badge>
                       ))}
-                      <Select value={e.roles[0] ?? ""} onValueChange={(v) => handleRoleChange(e, v)}>
-                        <SelectTrigger className="h-8 w-[170px] text-xs">
-                          <SelectValue placeholder="Change role" />
-                        </SelectTrigger>
-                        <SelectContent
-                          position="popper"
-                          sideOffset={6}
-                          className="z-[100] max-h-[300px] overflow-y-auto bg-white"
-                        >
-                          {ROLE_OPTIONS.map((r) => (
-                            <SelectItem key={r.value} value={r.value} className="cursor-pointer py-2 text-sm">
-                              {r.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <select
+                        value={e.roles[0] ?? ""}
+                        onChange={(ev) => handleRoleChange(e, ev.target.value)}
+                        className="h-8 w-[170px] rounded-md border border-slate-300 bg-white px-2 text-xs text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+                      >
+                        <option value="" disabled>Change role</option>
+                        {ROLE_OPTIONS.map((r) => (
+                          <option key={r.value} value={r.value}>
+                            {r.label}
+                          </option>
+                        ))}
+                      </select>
+
                     </div>
                   </td>
                   <td className="px-4 py-3 text-right">
