@@ -46,9 +46,16 @@ function RejectedPage() {
       .update({ status: "New", rejection_reason: null })
       .eq("id", id);
     if (error) return toast.error(error.message);
+    // Bring the linked customer record back into the active pipeline
+    await supabase
+      .from("customers")
+      .update({ stage: "Pre-Login Follow-Up" })
+      .eq("lead_id", id)
+      .eq("stage", "Rejected");
     toast.success("Lead re-opened → New");
     load();
   };
+
 
   return (
     <div className="space-y-4">

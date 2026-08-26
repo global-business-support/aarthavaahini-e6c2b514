@@ -2089,9 +2089,12 @@ function LeadsPage() {
       // Default view: only active leads (New / Qualified). Approved → Customers,
       // Rejected → Rejected page, Disbursed/Closed → Loans. Filter dropdown still shows them.
       const matchesStage =
-        stageFilter === "all"
-          ? stage === "New" || stage === "Qualified"
-          : stage === stageFilter;
+        stage === "Rejected"
+          ? false
+          : stageFilter === "all"
+            ? stage === "New" || stage === "Qualified"
+            : stage === stageFilter;
+
 
       const matchesAssignee =
         assigneeFilter === "all" ||
@@ -2103,18 +2106,13 @@ function LeadsPage() {
         bankFilter === "all" ||
         (bankFilter === "none" ? !l.bank_name : l.bank_name === bankFilter);
 
-      const partnerVisible =
-        !isAdmin ||
-        (l.lead_source ?? "").toLowerCase() !== "partner" ||
-        (!!user && l.assigned_to === user.id);
-
       return (
         matchesText &&
         matchesStage &&
         matchesAssignee &&
-        matchesBank &&
-        partnerVisible
+        matchesBank
       );
+
     })
     .sort((a, b) => {
       const nameA = (a.lead_name ?? a.full_name ?? "").toLowerCase();
@@ -2361,9 +2359,16 @@ function LeadsPage() {
 
     if (error) return toast.error(error.message);
 
+    // Keep the converted customer (if any) out of the Customers list too
+    await supabase
+      .from("customers")
+      .update({ stage: "Rejected", note: reason })
+      .eq("lead_id", lead.id);
+
     setLeads((prev) =>
       prev.map((l) => (l.id === lead.id ? { ...l, status: "Rejected" } : l)),
     );
+
 
     toast.success("Lead rejected");
     setRejectLead(null);

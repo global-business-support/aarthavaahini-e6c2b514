@@ -15,13 +15,6 @@ import {
   DialogFooter,
   DialogDescription,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useCrmAuth } from "@/hooks/useCrmAuth";
 import {
   listEmployees,
@@ -263,27 +256,19 @@ function EmployeesPage() {
                 </div>
                 <div>
                   <Label>Role</Label>
-                  <Select value={form.role} onValueChange={(v) => setForm({ ...form, role: v })}>
-                    <SelectTrigger className="h-10">
-                      <SelectValue placeholder="Select a role" />
-                    </SelectTrigger>
-                    <SelectContent
-                      position="popper"
-                      sideOffset={6}
-                      className="z-[100] max-h-[300px] w-[var(--radix-select-trigger-width)] overflow-y-auto bg-white"
-                    >
-                      {ROLE_OPTIONS.map((r) => (
-                        <SelectItem
-                          key={r.value}
-                          value={r.value}
-                          className="cursor-pointer py-2.5 pl-3 pr-8 text-sm leading-none"
-                        >
-                          {r.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <select
+                    value={form.role}
+                    onChange={(e) => setForm({ ...form, role: e.target.value })}
+                    className="mt-1 h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+                  >
+                    {ROLE_OPTIONS.map((r) => (
+                      <option key={r.value} value={r.value}>
+                        {r.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
+
                 <div>
                   <Label>Password (optional)</Label>
                   <Input
@@ -357,22 +342,19 @@ function EmployeesPage() {
                           {r.replace(/_/g, " ")}
                         </Badge>
                       ))}
-                      <Select value={e.roles[0] ?? ""} onValueChange={(v) => handleRoleChange(e, v)}>
-                        <SelectTrigger className="h-8 w-[170px] text-xs">
-                          <SelectValue placeholder="Change role" />
-                        </SelectTrigger>
-                        <SelectContent
-                          position="popper"
-                          sideOffset={6}
-                          className="z-[100] max-h-[300px] overflow-y-auto bg-white"
-                        >
-                          {ROLE_OPTIONS.map((r) => (
-                            <SelectItem key={r.value} value={r.value} className="cursor-pointer py-2 text-sm">
-                              {r.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <select
+                        value={e.roles[0] ?? ""}
+                        onChange={(ev) => handleRoleChange(e, ev.target.value)}
+                        className="h-8 w-[170px] rounded-md border border-slate-300 bg-white px-2 text-xs text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+                      >
+                        <option value="" disabled>Change role</option>
+                        {ROLE_OPTIONS.map((r) => (
+                          <option key={r.value} value={r.value}>
+                            {r.label}
+                          </option>
+                        ))}
+                      </select>
+
                     </div>
                   </td>
                   <td className="px-4 py-3 text-right">
