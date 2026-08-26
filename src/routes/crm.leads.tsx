@@ -2359,9 +2359,16 @@ function LeadsPage() {
 
     if (error) return toast.error(error.message);
 
+    // Keep the converted customer (if any) out of the Customers list too
+    await supabase
+      .from("customers")
+      .update({ stage: "Rejected", note: reason })
+      .eq("lead_id", lead.id);
+
     setLeads((prev) =>
       prev.map((l) => (l.id === lead.id ? { ...l, status: "Rejected" } : l)),
     );
+
 
     toast.success("Lead rejected");
     setRejectLead(null);
