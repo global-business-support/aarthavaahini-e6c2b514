@@ -2103,18 +2103,13 @@ function LeadsPage() {
         bankFilter === "all" ||
         (bankFilter === "none" ? !l.bank_name : l.bank_name === bankFilter);
 
-      const partnerVisible =
-        !isAdmin ||
-        (l.lead_source ?? "").toLowerCase() !== "partner" ||
-        (!!user && l.assigned_to === user.id);
-
       return (
         matchesText &&
         matchesStage &&
         matchesAssignee &&
-        matchesBank &&
-        partnerVisible
+        matchesBank
       );
+
     })
     .sort((a, b) => {
       const nameA = (a.lead_name ?? a.full_name ?? "").toLowerCase();
