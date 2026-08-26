@@ -2089,9 +2089,12 @@ function LeadsPage() {
       // Default view: only active leads (New / Qualified). Approved → Customers,
       // Rejected → Rejected page, Disbursed/Closed → Loans. Filter dropdown still shows them.
       const matchesStage =
-        stageFilter === "all"
-          ? stage === "New" || stage === "Qualified"
-          : stage === stageFilter;
+        stage === "Rejected"
+          ? false
+          : stageFilter === "all"
+            ? stage === "New" || stage === "Qualified"
+            : stage === stageFilter;
+
 
       const matchesAssignee =
         assigneeFilter === "all" ||
