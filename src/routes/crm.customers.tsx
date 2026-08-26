@@ -950,9 +950,12 @@ function CustomersPage() {
       // Default view hides Disburement/Closed (moved to Loans) and Rejected (moved to Rejected page)
       const normalized = normaliseStage(row.stage);
       const matchesStage =
-        stageFilter === "all"
-          ? normalized !== "Disburement" && normalized !== "Closed" && normalized !== "Rejected"
-          : normalized === stageFilter;
+        normalized === "Rejected"
+          ? false
+          : stageFilter === "all"
+            ? normalized !== "Disburement" && normalized !== "Closed"
+            : normalized === stageFilter;
+
 
       const matchesBank =
         bankFilter === "all" ||
