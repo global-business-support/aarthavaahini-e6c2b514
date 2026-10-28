@@ -26,11 +26,10 @@ export const Route = createFileRoute("/loans")({
       <Header />
       <main className="relative isolate overflow-hidden">
         <ProductHeroSlider
-          variant="watermark"
           slides={[
-            { title: "", subtitle: "", image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=80" },
-            { title: "", subtitle: "", image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1600&q=80" },
-            { title: "", subtitle: "", image: "https://images.unsplash.com/photo-1664575602554-2087b04935a5?auto=format&fit=crop&w=1600&q=80" },
+            { title: "Home Loans from 7.10%* p.a.", subtitle: "Compare offers from 50+ banks and get approval within 24 hours.", image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=80", cta: "Apply Now", href: "/contact" },
+            { title: "Personal & Business Loans", subtitle: "Rates starting 9.99%* — minimal paperwork, fast disbursal.", image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1600&q=80", cta: "Check Eligibility", href: "/contact" },
+            { title: "Loan Against Property", subtitle: "Unlock your property's value at the lowest interest rates.", image: "https://images.unsplash.com/photo-1664575602554-2087b04935a5?auto=format&fit=crop&w=1600&q=80", cta: "Talk to Advisor", href: "/contact" },
           ]}
         />
         <ProductPage
