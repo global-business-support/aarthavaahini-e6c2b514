@@ -25,11 +25,10 @@ export const Route = createFileRoute("/insurance")({
       <Header />
       <main className="relative isolate overflow-hidden">
         <ProductHeroSlider
-          variant="watermark"
           slides={[
-            { title: "", subtitle: "", image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1600&q=80" },
-            { title: "", subtitle: "", image: "https://images.unsplash.com/photo-1631815587646-b85a1bb027e1?auto=format&fit=crop&w=1600&q=80" },
-            { title: "", subtitle: "", image: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=1600&q=80" },
+            { title: "₹1 Cr Term Cover from ₹500/month", subtitle: "Secure your family's future with plans from India's top insurers.", image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1600&q=80", cta: "Get Quote", href: "/contact" },
+            { title: "Health Insurance for Every Family", subtitle: "Cashless treatment at 12,000+ hospitals across India.", image: "https://images.unsplash.com/photo-1631815587646-b85a1bb027e1?auto=format&fit=crop&w=1600&q=80", cta: "Compare Plans", href: "/contact" },
+            { title: "Motor, Travel & Home Insurance", subtitle: "Complete protection for everything that matters.", image: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=1600&q=80", cta: "Talk to Advisor", href: "/contact" },
           ]}
         />
         <ProductPage

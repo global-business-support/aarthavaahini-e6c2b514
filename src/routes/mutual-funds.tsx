@@ -26,11 +26,10 @@ export const Route = createFileRoute("/mutual-funds")({
       <Header />
       <main className="relative isolate overflow-hidden">
         <ProductHeroSlider
-          variant="watermark"
           slides={[
-            { title: "", subtitle: "", image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1600&q=80" },
-            { title: "", subtitle: "", image: "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&w=1600&q=80" },
-            { title: "", subtitle: "", image: "https://images.unsplash.com/photo-1554224154-22dec7ec8818?auto=format&fit=crop&w=1600&q=80" },
+            { title: "Start SIP from just ₹500", subtitle: "Long-term wealth creation guided by SEBI-registered advisors.", image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1600&q=80", cta: "Start SIP", href: "/contact" },
+            { title: "Save Tax with ELSS Funds", subtitle: "Save up to ₹46,800 in tax under Section 80C.", image: "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&w=1600&q=80", cta: "Explore ELSS", href: "/contact" },
+            { title: "Plan Your Retirement Corpus", subtitle: "NPS, PMS, SGB and more — one advisor for every goal.", image: "https://images.unsplash.com/photo-1554224154-22dec7ec8818?auto=format&fit=crop&w=1600&q=80", cta: "Plan Now", href: "/contact" },
           ]}
         />
         <ProductPage

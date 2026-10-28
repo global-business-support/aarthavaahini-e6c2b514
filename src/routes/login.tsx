@@ -56,6 +56,9 @@ function LoginPage() {
 
   const signUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (su.password.length < 8) {
+      return toast.error("Password must be at least 8 characters long.");
+    }
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email: su.email,
@@ -66,9 +69,18 @@ function LoginPage() {
       },
     });
     setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("Account created!");
-    if (data.user) await goAfterLogin(data.user.id);
+    if (error) {
+      if (error.message.toLowerCase().includes("already registered")) {
+        return toast.error("This email is already registered. Please login instead.");
+      }
+      return toast.error(error.message);
+    }
+    if (data.session && data.user) {
+      toast.success("Account created. Welcome!");
+      await goAfterLogin(data.user.id);
+    } else {
+      toast.success("Account created! Please check your email to verify before logging in.");
+    }
   };
 
   return (
