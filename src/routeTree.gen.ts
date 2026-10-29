@@ -9,119 +9,54 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as PartnerSignupRouteImport } from './routes/partner-signup'
-import { Route as PartnerRouteImport } from './routes/partner'
-import { Route as MutualFundsRouteImport } from './routes/mutual-funds'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as LoansRouteImport } from './routes/loans'
-import { Route as InsuranceRouteImport } from './routes/insurance'
-import { Route as DirectorsRouteImport } from './routes/directors'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as CrmRouteImport } from './routes/crm'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CibilRouteImport } from './routes/cibil'
-import { Route as BlogsRouteImport } from './routes/blogs'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PartnerIndexRouteImport } from './routes/partner.index'
-import { Route as CrmIndexRouteImport } from './routes/crm.index'
-import { Route as PartnerProfileRouteImport } from './routes/partner.profile'
-import { Route as PartnerLeadsRouteImport } from './routes/partner.leads'
-import { Route as CrmWhatsappRouteImport } from './routes/crm.whatsapp'
-import { Route as CrmTasksRouteImport } from './routes/crm.tasks'
-import { Route as CrmSettingsRouteImport } from './routes/crm.settings'
-import { Route as CrmScheduleRouteImport } from './routes/crm.schedule'
-import { Route as CrmResetPasswordRouteImport } from './routes/crm.reset-password'
-import { Route as CrmReportsRouteImport } from './routes/crm.reports'
-import { Route as CrmRejectedRouteImport } from './routes/crm.rejected'
-import { Route as CrmPartnersRouteImport } from './routes/crm.partners'
-import { Route as CrmMutualFundsRouteImport } from './routes/crm.mutual-funds'
-import { Route as CrmLoginRouteImport } from './routes/crm.login'
-import { Route as CrmLoansRouteImport } from './routes/crm.loans'
-import { Route as CrmLeadsRouteImport } from './routes/crm.leads'
-import { Route as CrmInsuranceRouteImport } from './routes/crm.insurance'
-import { Route as CrmEmployeesRouteImport } from './routes/crm.employees'
-import { Route as CrmDocumentsRouteImport } from './routes/crm.documents'
-import { Route as CrmCustomersRouteImport } from './routes/crm.customers'
-import { Route as CrmCmsRouteImport } from './routes/crm.cms'
-import { Route as CrmBanksRouteImport } from './routes/crm.banks'
-import { Route as CrmActivityRouteImport } from './routes/crm.activity'
-import { Route as BlogsSipGuideRouteImport } from './routes/blogs/sip-guide'
-import { Route as BlogsHomeLoanGuideRouteImport } from './routes/blogs/home-loan-guide'
-import { Route as BlogsCibilScoreRouteImport } from './routes/blogs/cibil-score'
-import { Route as AdminWhatsappRouteImport } from './routes/admin.whatsapp'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as BlogsRouteImport } from './routes/blogs'
+import { Route as CibilRouteImport } from './routes/cibil'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CrmRouteImport } from './routes/crm'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as DirectorsRouteImport } from './routes/directors'
+import { Route as InsuranceRouteImport } from './routes/insurance'
+import { Route as LoansRouteImport } from './routes/loans'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as MutualFundsRouteImport } from './routes/mutual-funds'
+import { Route as PartnerRouteImport } from './routes/partner'
+import { Route as PartnerSignupRouteImport } from './routes/partner-signup'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AdminEmployeesRouteImport } from './routes/admin.employees'
+import { Route as AdminWhatsappRouteImport } from './routes/admin.whatsapp'
+import { Route as BlogsCibilScoreRouteImport } from './routes/blogs/cibil-score'
+import { Route as BlogsHomeLoanGuideRouteImport } from './routes/blogs/home-loan-guide'
+import { Route as BlogsSipGuideRouteImport } from './routes/blogs/sip-guide'
+import { Route as CrmIndexRouteImport } from './routes/crm.index'
+import { Route as CrmActivityRouteImport } from './routes/crm.activity'
+import { Route as CrmBanksRouteImport } from './routes/crm.banks'
+import { Route as CrmCmsRouteImport } from './routes/crm.cms'
+import { Route as CrmCustomersRouteImport } from './routes/crm.customers'
+import { Route as CrmDocumentsRouteImport } from './routes/crm.documents'
+import { Route as CrmEmployeesRouteImport } from './routes/crm.employees'
+import { Route as CrmInsuranceRouteImport } from './routes/crm.insurance'
+import { Route as CrmLeadsRouteImport } from './routes/crm.leads'
+import { Route as CrmLoansRouteImport } from './routes/crm.loans'
+import { Route as CrmLoginRouteImport } from './routes/crm.login'
+import { Route as CrmMutualFundsRouteImport } from './routes/crm.mutual-funds'
+import { Route as CrmPartnersRouteImport } from './routes/crm.partners'
+import { Route as CrmRejectedRouteImport } from './routes/crm.rejected'
+import { Route as CrmReportsRouteImport } from './routes/crm.reports'
+import { Route as CrmResetPasswordRouteImport } from './routes/crm.reset-password'
+import { Route as CrmScheduleRouteImport } from './routes/crm.schedule'
+import { Route as CrmSettingsRouteImport } from './routes/crm.settings'
+import { Route as CrmTasksRouteImport } from './routes/crm.tasks'
+import { Route as CrmWhatsappRouteImport } from './routes/crm.whatsapp'
+import { Route as PartnerIndexRouteImport } from './routes/partner.index'
+import { Route as PartnerLeadsRouteImport } from './routes/partner.leads'
+import { Route as PartnerProfileRouteImport } from './routes/partner.profile'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PartnerSignupRoute = PartnerSignupRouteImport.update({
-  id: '/partner-signup',
-  path: '/partner-signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PartnerRoute = PartnerRouteImport.update({
-  id: '/partner',
-  path: '/partner',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MutualFundsRoute = MutualFundsRouteImport.update({
-  id: '/mutual-funds',
-  path: '/mutual-funds',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoansRoute = LoansRouteImport.update({
-  id: '/loans',
-  path: '/loans',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InsuranceRoute = InsuranceRouteImport.update({
-  id: '/insurance',
-  path: '/insurance',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DirectorsRoute = DirectorsRouteImport.update({
-  id: '/directors',
-  path: '/directors',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CrmRoute = CrmRouteImport.update({
-  id: '/crm',
-  path: '/crm',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CibilRoute = CibilRouteImport.update({
-  id: '/cibil',
-  path: '/cibil',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BlogsRoute = BlogsRouteImport.update({
-  id: '/blogs',
-  path: '/blogs',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -129,129 +64,89 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PartnerIndexRoute = PartnerIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => PartnerRoute,
+const BlogsRoute = BlogsRouteImport.update({
+  id: '/blogs',
+  path: '/blogs',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const CrmIndexRoute = CrmIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CrmRoute,
+const CibilRoute = CibilRouteImport.update({
+  id: '/cibil',
+  path: '/cibil',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const PartnerProfileRoute = PartnerProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => PartnerRoute,
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const PartnerLeadsRoute = PartnerLeadsRouteImport.update({
-  id: '/leads',
-  path: '/leads',
-  getParentRoute: () => PartnerRoute,
+const CrmRoute = CrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const CrmWhatsappRoute = CrmWhatsappRouteImport.update({
-  id: '/whatsapp',
-  path: '/whatsapp',
-  getParentRoute: () => CrmRoute,
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const CrmTasksRoute = CrmTasksRouteImport.update({
-  id: '/tasks',
-  path: '/tasks',
-  getParentRoute: () => CrmRoute,
+const DirectorsRoute = DirectorsRouteImport.update({
+  id: '/directors',
+  path: '/directors',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const CrmSettingsRoute = CrmSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => CrmRoute,
-} as any)
-const CrmScheduleRoute = CrmScheduleRouteImport.update({
-  id: '/schedule',
-  path: '/schedule',
-  getParentRoute: () => CrmRoute,
-} as any)
-const CrmResetPasswordRoute = CrmResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => CrmRoute,
-} as any)
-const CrmReportsRoute = CrmReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
-  getParentRoute: () => CrmRoute,
-} as any)
-const CrmRejectedRoute = CrmRejectedRouteImport.update({
-  id: '/rejected',
-  path: '/rejected',
-  getParentRoute: () => CrmRoute,
-} as any)
-const CrmPartnersRoute = CrmPartnersRouteImport.update({
-  id: '/partners',
-  path: '/partners',
-  getParentRoute: () => CrmRoute,
-} as any)
-const CrmMutualFundsRoute = CrmMutualFundsRouteImport.update({
-  id: '/mutual-funds',
-  path: '/mutual-funds',
-  getParentRoute: () => CrmRoute,
-} as any)
-const CrmLoginRoute = CrmLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => CrmRoute,
-} as any)
-const CrmLoansRoute = CrmLoansRouteImport.update({
-  id: '/loans',
-  path: '/loans',
-  getParentRoute: () => CrmRoute,
-} as any)
-const CrmLeadsRoute = CrmLeadsRouteImport.update({
-  id: '/leads',
-  path: '/leads',
-  getParentRoute: () => CrmRoute,
-} as any)
-const CrmInsuranceRoute = CrmInsuranceRouteImport.update({
+const InsuranceRoute = InsuranceRouteImport.update({
   id: '/insurance',
   path: '/insurance',
-  getParentRoute: () => CrmRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-const CrmEmployeesRoute = CrmEmployeesRouteImport.update({
+const LoansRoute = LoansRouteImport.update({
+  id: '/loans',
+  path: '/loans',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MutualFundsRoute = MutualFundsRouteImport.update({
+  id: '/mutual-funds',
+  path: '/mutual-funds',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartnerRoute = PartnerRouteImport.update({
+  id: '/partner',
+  path: '/partner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartnerSignupRoute = PartnerSignupRouteImport.update({
+  id: '/partner-signup',
+  path: '/partner-signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminEmployeesRoute = AdminEmployeesRouteImport.update({
   id: '/employees',
   path: '/employees',
-  getParentRoute: () => CrmRoute,
+  getParentRoute: () => AdminRoute,
 } as any)
-const CrmDocumentsRoute = CrmDocumentsRouteImport.update({
-  id: '/documents',
-  path: '/documents',
-  getParentRoute: () => CrmRoute,
+const AdminWhatsappRoute = AdminWhatsappRouteImport.update({
+  id: '/whatsapp',
+  path: '/whatsapp',
+  getParentRoute: () => AdminRoute,
 } as any)
-const CrmCustomersRoute = CrmCustomersRouteImport.update({
-  id: '/customers',
-  path: '/customers',
-  getParentRoute: () => CrmRoute,
-} as any)
-const CrmCmsRoute = CrmCmsRouteImport.update({
-  id: '/cms',
-  path: '/cms',
-  getParentRoute: () => CrmRoute,
-} as any)
-const CrmBanksRoute = CrmBanksRouteImport.update({
-  id: '/banks',
-  path: '/banks',
-  getParentRoute: () => CrmRoute,
-} as any)
-const CrmActivityRoute = CrmActivityRouteImport.update({
-  id: '/activity',
-  path: '/activity',
-  getParentRoute: () => CrmRoute,
-} as any)
-const BlogsSipGuideRoute = BlogsSipGuideRouteImport.update({
-  id: '/sip-guide',
-  path: '/sip-guide',
+const BlogsCibilScoreRoute = BlogsCibilScoreRouteImport.update({
+  id: '/cibil-score',
+  path: '/cibil-score',
   getParentRoute: () => BlogsRoute,
 } as any)
 const BlogsHomeLoanGuideRoute = BlogsHomeLoanGuideRouteImport.update({
@@ -259,20 +154,125 @@ const BlogsHomeLoanGuideRoute = BlogsHomeLoanGuideRouteImport.update({
   path: '/home-loan-guide',
   getParentRoute: () => BlogsRoute,
 } as any)
-const BlogsCibilScoreRoute = BlogsCibilScoreRouteImport.update({
-  id: '/cibil-score',
-  path: '/cibil-score',
+const BlogsSipGuideRoute = BlogsSipGuideRouteImport.update({
+  id: '/sip-guide',
+  path: '/sip-guide',
   getParentRoute: () => BlogsRoute,
 } as any)
-const AdminWhatsappRoute = AdminWhatsappRouteImport.update({
-  id: '/whatsapp',
-  path: '/whatsapp',
-  getParentRoute: () => AdminRoute,
+const CrmIndexRoute = CrmIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CrmRoute,
 } as any)
-const AdminEmployeesRoute = AdminEmployeesRouteImport.update({
+const CrmActivityRoute = CrmActivityRouteImport.update({
+  id: '/activity',
+  path: '/activity',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmBanksRoute = CrmBanksRouteImport.update({
+  id: '/banks',
+  path: '/banks',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmCmsRoute = CrmCmsRouteImport.update({
+  id: '/cms',
+  path: '/cms',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmCustomersRoute = CrmCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmDocumentsRoute = CrmDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmEmployeesRoute = CrmEmployeesRouteImport.update({
   id: '/employees',
   path: '/employees',
-  getParentRoute: () => AdminRoute,
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmInsuranceRoute = CrmInsuranceRouteImport.update({
+  id: '/insurance',
+  path: '/insurance',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmLeadsRoute = CrmLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmLoansRoute = CrmLoansRouteImport.update({
+  id: '/loans',
+  path: '/loans',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmLoginRoute = CrmLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmMutualFundsRoute = CrmMutualFundsRouteImport.update({
+  id: '/mutual-funds',
+  path: '/mutual-funds',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmPartnersRoute = CrmPartnersRouteImport.update({
+  id: '/partners',
+  path: '/partners',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmRejectedRoute = CrmRejectedRouteImport.update({
+  id: '/rejected',
+  path: '/rejected',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmReportsRoute = CrmReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmResetPasswordRoute = CrmResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmScheduleRoute = CrmScheduleRouteImport.update({
+  id: '/schedule',
+  path: '/schedule',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmSettingsRoute = CrmSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmTasksRoute = CrmTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => CrmRoute,
+} as any)
+const CrmWhatsappRoute = CrmWhatsappRouteImport.update({
+  id: '/whatsapp',
+  path: '/whatsapp',
+  getParentRoute: () => CrmRoute,
+} as any)
+const PartnerIndexRoute = PartnerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PartnerRoute,
+} as any)
+const PartnerLeadsRoute = PartnerLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => PartnerRoute,
+} as any)
+const PartnerProfileRoute = PartnerProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => PartnerRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -572,102 +572,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/partner-signup': {
-      id: '/partner-signup'
-      path: '/partner-signup'
-      fullPath: '/partner-signup'
-      preLoaderRoute: typeof PartnerSignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/partner': {
-      id: '/partner'
-      path: '/partner'
-      fullPath: '/partner'
-      preLoaderRoute: typeof PartnerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mutual-funds': {
-      id: '/mutual-funds'
-      path: '/mutual-funds'
-      fullPath: '/mutual-funds'
-      preLoaderRoute: typeof MutualFundsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/loans': {
-      id: '/loans'
-      path: '/loans'
-      fullPath: '/loans'
-      preLoaderRoute: typeof LoansRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/insurance': {
-      id: '/insurance'
-      path: '/insurance'
-      fullPath: '/insurance'
-      preLoaderRoute: typeof InsuranceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/directors': {
-      id: '/directors'
-      path: '/directors'
-      fullPath: '/directors'
-      preLoaderRoute: typeof DirectorsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/crm': {
-      id: '/crm'
-      path: '/crm'
-      fullPath: '/crm'
-      preLoaderRoute: typeof CrmRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cibil': {
-      id: '/cibil'
-      path: '/cibil'
-      fullPath: '/cibil'
-      preLoaderRoute: typeof CibilRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blogs': {
-      id: '/blogs'
-      path: '/blogs'
-      fullPath: '/blogs'
-      preLoaderRoute: typeof BlogsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -677,179 +586,123 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/partner/': {
-      id: '/partner/'
-      path: '/'
-      fullPath: '/partner/'
-      preLoaderRoute: typeof PartnerIndexRouteImport
-      parentRoute: typeof PartnerRoute
+    '/blogs': {
+      id: '/blogs'
+      path: '/blogs'
+      fullPath: '/blogs'
+      preLoaderRoute: typeof BlogsRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/crm/': {
-      id: '/crm/'
-      path: '/'
-      fullPath: '/crm/'
-      preLoaderRoute: typeof CrmIndexRouteImport
-      parentRoute: typeof CrmRoute
+    '/cibil': {
+      id: '/cibil'
+      path: '/cibil'
+      fullPath: '/cibil'
+      preLoaderRoute: typeof CibilRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/partner/profile': {
-      id: '/partner/profile'
-      path: '/profile'
-      fullPath: '/partner/profile'
-      preLoaderRoute: typeof PartnerProfileRouteImport
-      parentRoute: typeof PartnerRoute
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/partner/leads': {
-      id: '/partner/leads'
-      path: '/leads'
-      fullPath: '/partner/leads'
-      preLoaderRoute: typeof PartnerLeadsRouteImport
-      parentRoute: typeof PartnerRoute
+    '/crm': {
+      id: '/crm'
+      path: '/crm'
+      fullPath: '/crm'
+      preLoaderRoute: typeof CrmRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/crm/whatsapp': {
-      id: '/crm/whatsapp'
-      path: '/whatsapp'
-      fullPath: '/crm/whatsapp'
-      preLoaderRoute: typeof CrmWhatsappRouteImport
-      parentRoute: typeof CrmRoute
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/crm/tasks': {
-      id: '/crm/tasks'
-      path: '/tasks'
-      fullPath: '/crm/tasks'
-      preLoaderRoute: typeof CrmTasksRouteImport
-      parentRoute: typeof CrmRoute
+    '/directors': {
+      id: '/directors'
+      path: '/directors'
+      fullPath: '/directors'
+      preLoaderRoute: typeof DirectorsRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/crm/settings': {
-      id: '/crm/settings'
-      path: '/settings'
-      fullPath: '/crm/settings'
-      preLoaderRoute: typeof CrmSettingsRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/crm/schedule': {
-      id: '/crm/schedule'
-      path: '/schedule'
-      fullPath: '/crm/schedule'
-      preLoaderRoute: typeof CrmScheduleRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/crm/reset-password': {
-      id: '/crm/reset-password'
-      path: '/reset-password'
-      fullPath: '/crm/reset-password'
-      preLoaderRoute: typeof CrmResetPasswordRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/crm/reports': {
-      id: '/crm/reports'
-      path: '/reports'
-      fullPath: '/crm/reports'
-      preLoaderRoute: typeof CrmReportsRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/crm/rejected': {
-      id: '/crm/rejected'
-      path: '/rejected'
-      fullPath: '/crm/rejected'
-      preLoaderRoute: typeof CrmRejectedRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/crm/partners': {
-      id: '/crm/partners'
-      path: '/partners'
-      fullPath: '/crm/partners'
-      preLoaderRoute: typeof CrmPartnersRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/crm/mutual-funds': {
-      id: '/crm/mutual-funds'
-      path: '/mutual-funds'
-      fullPath: '/crm/mutual-funds'
-      preLoaderRoute: typeof CrmMutualFundsRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/crm/login': {
-      id: '/crm/login'
-      path: '/login'
-      fullPath: '/crm/login'
-      preLoaderRoute: typeof CrmLoginRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/crm/loans': {
-      id: '/crm/loans'
-      path: '/loans'
-      fullPath: '/crm/loans'
-      preLoaderRoute: typeof CrmLoansRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/crm/leads': {
-      id: '/crm/leads'
-      path: '/leads'
-      fullPath: '/crm/leads'
-      preLoaderRoute: typeof CrmLeadsRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/crm/insurance': {
-      id: '/crm/insurance'
+    '/insurance': {
+      id: '/insurance'
       path: '/insurance'
-      fullPath: '/crm/insurance'
-      preLoaderRoute: typeof CrmInsuranceRouteImport
-      parentRoute: typeof CrmRoute
+      fullPath: '/insurance'
+      preLoaderRoute: typeof InsuranceRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/crm/employees': {
-      id: '/crm/employees'
+    '/loans': {
+      id: '/loans'
+      path: '/loans'
+      fullPath: '/loans'
+      preLoaderRoute: typeof LoansRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mutual-funds': {
+      id: '/mutual-funds'
+      path: '/mutual-funds'
+      fullPath: '/mutual-funds'
+      preLoaderRoute: typeof MutualFundsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partner': {
+      id: '/partner'
+      path: '/partner'
+      fullPath: '/partner'
+      preLoaderRoute: typeof PartnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partner-signup': {
+      id: '/partner-signup'
+      path: '/partner-signup'
+      fullPath: '/partner-signup'
+      preLoaderRoute: typeof PartnerSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/employees': {
+      id: '/admin/employees'
       path: '/employees'
-      fullPath: '/crm/employees'
-      preLoaderRoute: typeof CrmEmployeesRouteImport
-      parentRoute: typeof CrmRoute
+      fullPath: '/admin/employees'
+      preLoaderRoute: typeof AdminEmployeesRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/crm/documents': {
-      id: '/crm/documents'
-      path: '/documents'
-      fullPath: '/crm/documents'
-      preLoaderRoute: typeof CrmDocumentsRouteImport
-      parentRoute: typeof CrmRoute
+    '/admin/whatsapp': {
+      id: '/admin/whatsapp'
+      path: '/whatsapp'
+      fullPath: '/admin/whatsapp'
+      preLoaderRoute: typeof AdminWhatsappRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/crm/customers': {
-      id: '/crm/customers'
-      path: '/customers'
-      fullPath: '/crm/customers'
-      preLoaderRoute: typeof CrmCustomersRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/crm/cms': {
-      id: '/crm/cms'
-      path: '/cms'
-      fullPath: '/crm/cms'
-      preLoaderRoute: typeof CrmCmsRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/crm/banks': {
-      id: '/crm/banks'
-      path: '/banks'
-      fullPath: '/crm/banks'
-      preLoaderRoute: typeof CrmBanksRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/crm/activity': {
-      id: '/crm/activity'
-      path: '/activity'
-      fullPath: '/crm/activity'
-      preLoaderRoute: typeof CrmActivityRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/blogs/sip-guide': {
-      id: '/blogs/sip-guide'
-      path: '/sip-guide'
-      fullPath: '/blogs/sip-guide'
-      preLoaderRoute: typeof BlogsSipGuideRouteImport
+    '/blogs/cibil-score': {
+      id: '/blogs/cibil-score'
+      path: '/cibil-score'
+      fullPath: '/blogs/cibil-score'
+      preLoaderRoute: typeof BlogsCibilScoreRouteImport
       parentRoute: typeof BlogsRoute
     }
     '/blogs/home-loan-guide': {
@@ -859,26 +712,173 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogsHomeLoanGuideRouteImport
       parentRoute: typeof BlogsRoute
     }
-    '/blogs/cibil-score': {
-      id: '/blogs/cibil-score'
-      path: '/cibil-score'
-      fullPath: '/blogs/cibil-score'
-      preLoaderRoute: typeof BlogsCibilScoreRouteImport
+    '/blogs/sip-guide': {
+      id: '/blogs/sip-guide'
+      path: '/sip-guide'
+      fullPath: '/blogs/sip-guide'
+      preLoaderRoute: typeof BlogsSipGuideRouteImport
       parentRoute: typeof BlogsRoute
     }
-    '/admin/whatsapp': {
-      id: '/admin/whatsapp'
-      path: '/whatsapp'
-      fullPath: '/admin/whatsapp'
-      preLoaderRoute: typeof AdminWhatsappRouteImport
-      parentRoute: typeof AdminRoute
+    '/crm/': {
+      id: '/crm/'
+      path: '/'
+      fullPath: '/crm/'
+      preLoaderRoute: typeof CrmIndexRouteImport
+      parentRoute: typeof CrmRoute
     }
-    '/admin/employees': {
-      id: '/admin/employees'
+    '/crm/activity': {
+      id: '/crm/activity'
+      path: '/activity'
+      fullPath: '/crm/activity'
+      preLoaderRoute: typeof CrmActivityRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/banks': {
+      id: '/crm/banks'
+      path: '/banks'
+      fullPath: '/crm/banks'
+      preLoaderRoute: typeof CrmBanksRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/cms': {
+      id: '/crm/cms'
+      path: '/cms'
+      fullPath: '/crm/cms'
+      preLoaderRoute: typeof CrmCmsRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/customers': {
+      id: '/crm/customers'
+      path: '/customers'
+      fullPath: '/crm/customers'
+      preLoaderRoute: typeof CrmCustomersRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/documents': {
+      id: '/crm/documents'
+      path: '/documents'
+      fullPath: '/crm/documents'
+      preLoaderRoute: typeof CrmDocumentsRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/employees': {
+      id: '/crm/employees'
       path: '/employees'
-      fullPath: '/admin/employees'
-      preLoaderRoute: typeof AdminEmployeesRouteImport
-      parentRoute: typeof AdminRoute
+      fullPath: '/crm/employees'
+      preLoaderRoute: typeof CrmEmployeesRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/insurance': {
+      id: '/crm/insurance'
+      path: '/insurance'
+      fullPath: '/crm/insurance'
+      preLoaderRoute: typeof CrmInsuranceRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/leads': {
+      id: '/crm/leads'
+      path: '/leads'
+      fullPath: '/crm/leads'
+      preLoaderRoute: typeof CrmLeadsRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/loans': {
+      id: '/crm/loans'
+      path: '/loans'
+      fullPath: '/crm/loans'
+      preLoaderRoute: typeof CrmLoansRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/login': {
+      id: '/crm/login'
+      path: '/login'
+      fullPath: '/crm/login'
+      preLoaderRoute: typeof CrmLoginRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/mutual-funds': {
+      id: '/crm/mutual-funds'
+      path: '/mutual-funds'
+      fullPath: '/crm/mutual-funds'
+      preLoaderRoute: typeof CrmMutualFundsRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/partners': {
+      id: '/crm/partners'
+      path: '/partners'
+      fullPath: '/crm/partners'
+      preLoaderRoute: typeof CrmPartnersRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/rejected': {
+      id: '/crm/rejected'
+      path: '/rejected'
+      fullPath: '/crm/rejected'
+      preLoaderRoute: typeof CrmRejectedRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/reports': {
+      id: '/crm/reports'
+      path: '/reports'
+      fullPath: '/crm/reports'
+      preLoaderRoute: typeof CrmReportsRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/reset-password': {
+      id: '/crm/reset-password'
+      path: '/reset-password'
+      fullPath: '/crm/reset-password'
+      preLoaderRoute: typeof CrmResetPasswordRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/schedule': {
+      id: '/crm/schedule'
+      path: '/schedule'
+      fullPath: '/crm/schedule'
+      preLoaderRoute: typeof CrmScheduleRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/settings': {
+      id: '/crm/settings'
+      path: '/settings'
+      fullPath: '/crm/settings'
+      preLoaderRoute: typeof CrmSettingsRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/tasks': {
+      id: '/crm/tasks'
+      path: '/tasks'
+      fullPath: '/crm/tasks'
+      preLoaderRoute: typeof CrmTasksRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/crm/whatsapp': {
+      id: '/crm/whatsapp'
+      path: '/whatsapp'
+      fullPath: '/crm/whatsapp'
+      preLoaderRoute: typeof CrmWhatsappRouteImport
+      parentRoute: typeof CrmRoute
+    }
+    '/partner/': {
+      id: '/partner/'
+      path: '/'
+      fullPath: '/partner/'
+      preLoaderRoute: typeof PartnerIndexRouteImport
+      parentRoute: typeof PartnerRoute
+    }
+    '/partner/leads': {
+      id: '/partner/leads'
+      path: '/leads'
+      fullPath: '/partner/leads'
+      preLoaderRoute: typeof PartnerLeadsRouteImport
+      parentRoute: typeof PartnerRoute
+    }
+    '/partner/profile': {
+      id: '/partner/profile'
+      path: '/profile'
+      fullPath: '/partner/profile'
+      preLoaderRoute: typeof PartnerProfileRouteImport
+      parentRoute: typeof PartnerRoute
     }
   }
 }
