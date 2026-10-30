@@ -1545,6 +1545,27 @@ export function Footer() {
                 Blogs
               </Link>
 
+              <Link
+                to="/terms-and-conditions"
+                className="transition hover:text-primary"
+              >
+                Terms &amp; Conditions
+              </Link>
+
+              <Link
+                to="/privacy-policy"
+                className="transition hover:text-primary"
+              >
+                Privacy Policy
+              </Link>
+
+              <Link
+                to="/disclaimers"
+                className="transition hover:text-primary"
+              >
+                Disclaimers &amp; Policies
+              </Link>
+
               <a href="#faqs" className="transition hover:text-primary">
                 FAQs
               </a>
