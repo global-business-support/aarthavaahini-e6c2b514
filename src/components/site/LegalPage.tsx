@@ -12,7 +12,7 @@ export interface LegalSection {
 interface LegalPageProps {
   tag: string;
   title: string;
-  subtitle: string;
+  subtitle: ReactNode;
   updated: string;
   intro?: ReactNode;
   sections: LegalSection[];
