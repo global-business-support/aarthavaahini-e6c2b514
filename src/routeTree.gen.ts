@@ -18,13 +18,16 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CrmRouteImport } from './routes/crm'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DirectorsRouteImport } from './routes/directors'
+import { Route as DisclaimersRouteImport } from './routes/disclaimers'
 import { Route as InsuranceRouteImport } from './routes/insurance'
 import { Route as LoansRouteImport } from './routes/loans'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MutualFundsRouteImport } from './routes/mutual-funds'
 import { Route as PartnerRouteImport } from './routes/partner'
 import { Route as PartnerSignupRouteImport } from './routes/partner-signup'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-conditions'
 import { Route as AdminEmployeesRouteImport } from './routes/admin.employees'
 import { Route as AdminWhatsappRouteImport } from './routes/admin.whatsapp'
 import { Route as BlogsCibilScoreRouteImport } from './routes/blogs/cibil-score'
@@ -99,6 +102,11 @@ const DirectorsRoute = DirectorsRouteImport.update({
   path: '/directors',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DisclaimersRoute = DisclaimersRouteImport.update({
+  id: '/disclaimers',
+  path: '/disclaimers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InsuranceRoute = InsuranceRouteImport.update({
   id: '/insurance',
   path: '/insurance',
@@ -129,9 +137,19 @@ const PartnerSignupRoute = PartnerSignupRouteImport.update({
   path: '/partner-signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsAndConditionsRoute = TermsAndConditionsRouteImport.update({
+  id: '/terms-and-conditions',
+  path: '/terms-and-conditions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminEmployeesRoute = AdminEmployeesRouteImport.update({
@@ -285,13 +303,16 @@ export interface FileRoutesByFullPath {
   '/crm': typeof CrmRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/directors': typeof DirectorsRoute
+  '/disclaimers': typeof DisclaimersRoute
   '/insurance': typeof InsuranceRoute
   '/loans': typeof LoansRoute
   '/login': typeof LoginRoute
   '/mutual-funds': typeof MutualFundsRoute
   '/partner': typeof PartnerRouteWithChildren
   '/partner-signup': typeof PartnerSignupRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/whatsapp': typeof AdminWhatsappRoute
   '/blogs/cibil-score': typeof BlogsCibilScoreRoute
@@ -330,12 +351,15 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/directors': typeof DirectorsRoute
+  '/disclaimers': typeof DisclaimersRoute
   '/insurance': typeof InsuranceRoute
   '/loans': typeof LoansRoute
   '/login': typeof LoginRoute
   '/mutual-funds': typeof MutualFundsRoute
   '/partner-signup': typeof PartnerSignupRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/whatsapp': typeof AdminWhatsappRoute
   '/blogs/cibil-score': typeof BlogsCibilScoreRoute
@@ -376,13 +400,16 @@ export interface FileRoutesById {
   '/crm': typeof CrmRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/directors': typeof DirectorsRoute
+  '/disclaimers': typeof DisclaimersRoute
   '/insurance': typeof InsuranceRoute
   '/loans': typeof LoansRoute
   '/login': typeof LoginRoute
   '/mutual-funds': typeof MutualFundsRoute
   '/partner': typeof PartnerRouteWithChildren
   '/partner-signup': typeof PartnerSignupRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/whatsapp': typeof AdminWhatsappRoute
   '/blogs/cibil-score': typeof BlogsCibilScoreRoute
@@ -424,13 +451,16 @@ export interface FileRouteTypes {
     | '/crm'
     | '/dashboard'
     | '/directors'
+    | '/disclaimers'
     | '/insurance'
     | '/loans'
     | '/login'
     | '/mutual-funds'
     | '/partner'
     | '/partner-signup'
+    | '/privacy-policy'
     | '/sitemap.xml'
+    | '/terms-and-conditions'
     | '/admin/employees'
     | '/admin/whatsapp'
     | '/blogs/cibil-score'
@@ -469,12 +499,15 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dashboard'
     | '/directors'
+    | '/disclaimers'
     | '/insurance'
     | '/loans'
     | '/login'
     | '/mutual-funds'
     | '/partner-signup'
+    | '/privacy-policy'
     | '/sitemap.xml'
+    | '/terms-and-conditions'
     | '/admin/employees'
     | '/admin/whatsapp'
     | '/blogs/cibil-score'
@@ -514,13 +547,16 @@ export interface FileRouteTypes {
     | '/crm'
     | '/dashboard'
     | '/directors'
+    | '/disclaimers'
     | '/insurance'
     | '/loans'
     | '/login'
     | '/mutual-funds'
     | '/partner'
     | '/partner-signup'
+    | '/privacy-policy'
     | '/sitemap.xml'
+    | '/terms-and-conditions'
     | '/admin/employees'
     | '/admin/whatsapp'
     | '/blogs/cibil-score'
@@ -561,13 +597,16 @@ export interface RootRouteChildren {
   CrmRoute: typeof CrmRouteWithChildren
   DashboardRoute: typeof DashboardRoute
   DirectorsRoute: typeof DirectorsRoute
+  DisclaimersRoute: typeof DisclaimersRoute
   InsuranceRoute: typeof InsuranceRoute
   LoansRoute: typeof LoansRoute
   LoginRoute: typeof LoginRoute
   MutualFundsRoute: typeof MutualFundsRoute
   PartnerRoute: typeof PartnerRouteWithChildren
   PartnerSignupRoute: typeof PartnerSignupRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TermsAndConditionsRoute: typeof TermsAndConditionsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -635,6 +674,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DirectorsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/disclaimers': {
+      id: '/disclaimers'
+      path: '/disclaimers'
+      fullPath: '/disclaimers'
+      preLoaderRoute: typeof DisclaimersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/insurance': {
       id: '/insurance'
       path: '/insurance'
@@ -677,11 +723,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PartnerSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms-and-conditions': {
+      id: '/terms-and-conditions'
+      path: '/terms-and-conditions'
+      fullPath: '/terms-and-conditions'
+      preLoaderRoute: typeof TermsAndConditionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/employees': {
@@ -982,13 +1042,16 @@ const rootRouteChildren: RootRouteChildren = {
   CrmRoute: CrmRouteWithChildren,
   DashboardRoute: DashboardRoute,
   DirectorsRoute: DirectorsRoute,
+  DisclaimersRoute: DisclaimersRoute,
   InsuranceRoute: InsuranceRoute,
   LoansRoute: LoansRoute,
   LoginRoute: LoginRoute,
   MutualFundsRoute: MutualFundsRoute,
   PartnerRoute: PartnerRouteWithChildren,
   PartnerSignupRoute: PartnerSignupRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TermsAndConditionsRoute: TermsAndConditionsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

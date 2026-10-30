@@ -23,6 +23,9 @@ const entries: SitemapEntry[] = [
   { path: "/blogs/home-loan-guide", changefreq: "monthly", priority: "0.6" },
   { path: "/blogs/sip-guide", changefreq: "monthly", priority: "0.6" },
   { path: "/partner-signup", changefreq: "monthly", priority: "0.6" },
+  { path: "/disclaimers", changefreq: "yearly", priority: "0.5" },
+  { path: "/privacy-policy", changefreq: "yearly", priority: "0.5" },
+  { path: "/terms-and-conditions", changefreq: "yearly", priority: "0.5" },
   { path: "/login", changefreq: "yearly", priority: "0.3" },
 ];
 
