@@ -144,7 +144,11 @@ function PrivacyPolicyPage() {
     <LegalPage
       tag="Legal"
       title="Privacy Policy"
-      subtitle="Aarthvaahini Financial Services Pvt. Ltd. ("Aarthvaahini", "we", "us" or "our") respects your privacy and is committed to protecting personal information provided through www.aarthvaahini.com ("Website"), our forms, communication channels and related services."
+      subtitle={
+        <>
+          Aarthvaahini Financial Services Pvt. Ltd. (&ldquo;Aarthvaahini&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo; or &ldquo;our&rdquo;) respects your privacy and is committed to protecting personal information provided through www.aarthvaahini.com (&ldquo;Website&rdquo;), our forms, communication channels and related services.
+        </>
+      }
       updated="30/10/2026"
       sections={sections}
       closing={
